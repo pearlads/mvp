@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pearl ADS | Central Asian AdTech Engine</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- DotLottie Player Script -->
+  <script type="module" src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              900: '#14532d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Completely hide scrollbars across all browsers */
+    html, body {
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+    }
+    html::-webkit-scrollbar, body::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #ffffff;
+      color: #0f172a;
+    }
+    .hero-glow {
+      background: radial-gradient(circle at 50% 40%, rgba(241, 245, 249, 0.9) 0%, rgba(255, 255, 255, 1) 75%);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body class="bg-white text-slate-900 antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- FULL WHITE LOTTIE LOADER OVERLAY -->
+  <div id="lottie-loader" class="fixed inset-0 z-[9999] bg-white flex items-center justify-center transition-opacity duration-500">
+    <dotlottie-player src="loader.json" background="transparent" speed="1" style="width: 220px; height: 220px;" loop autoplay></dotlottie-player>
+  </div>
+
+  <!-- ================= TOP NAVIGATION BAR ================= -->
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-center sm:justify-between">
+      
+      <!-- Brand Logo (Centered on Mobile, Left-aligned on Desktop) -->
+      <div class="flex items-center gap-3">
+        <img src="logo.webp" alt="Pearl ADS Logo" class="h-9 w-9 object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100x100/16a34a/ffffff?text=P';" />
+        <span class="text-2xl font-extrabold tracking-tight text-slate-900">
+          Pearl <span class="text-emerald-600">ADS</span>
+        </span>
+      </div>
+
+      <!-- Right side: Navigation Links (Hidden on Mobile, Visible on Desktop) -->
+      <div class="hidden sm:flex items-center gap-6">
+        <a href="#how-it-works" class="text-sm font-semibold text-slate-700 hover:text-emerald-600 transition-colors">
+          How does it work?
+        </a>
+        <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
+          Accelerator Stage
+        </span>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= HERO SECTION WITH 5 DEPTH-LAYERED FLAT CARDS ================= -->
+  <section class="relative min-h-[85vh] flex items-center justify-center overflow-hidden py-24 hero-glow">
+    
+    <!-- Floating Cards (No tilt, varying sizes/depths, distinct X/Z positions) -->
+    <div class="absolute inset-0 w-full pointer-events-none hidden lg:block overflow-visible">
+      
+      <!-- Card 1: Local ROAS (Blurred for depth) -->
+      <div class="absolute top-16 left-[5%] bg-white px-5 py-4 rounded-2xl border border-slate-100 shadow-2xl blur-[1px]">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <i data-lucide="trending-up" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <p class="text-xs text-slate-400 font-medium leading-none">Local ROAS</p>
+            <p class="text-base font-extrabold text-slate-900 mt-1">+140%</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Central Asia CPA -->
+      <div class="absolute top-72 left-[8%] bg-white px-6 py-5 rounded-2xl border border-slate-200 shadow-xl">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <i data-lucide="target" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Performance Engine</p>
+            <p class="text-base font-extrabold text-slate-900 mt-0.5">Central Asia CPA</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Publisher Yield -->
+      <div class="absolute top-20 right-[5%] bg-white px-5 py-4 rounded-2xl border border-slate-100 shadow-lg">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+            <i data-lucide="coins" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <p class="text-xs text-slate-400 font-medium leading-none">Publisher Yield</p>
+            <p class="text-base font-extrabold text-slate-900 mt-1">High CPM</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: UGC Monetization (Moved slightly to the left and a bit lower) -->
+      <div class="absolute top-[60%] right-[16%] bg-white px-5 py-4 rounded-2xl border border-slate-100 shadow-md blur-[1px]">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+          </div>
+          <span class="text-xs font-bold text-slate-800">UGC Monetization</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Central Hero Content -->
+    <div class="relative z-10 max-w-3xl mx-auto text-center px-4 sm:px-6">
+
+      <!-- Big Title: "ADS" is pure solid emerald green -->
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.1] mb-6">
+        Pearl <span class="text-emerald-500">ADS</span>
+      </h1>
+
+      <!-- Description Text -->
+      <p class="text-lg sm:text-xl text-slate-600 font-normal max-w-xl mx-auto leading-relaxed mb-10">
+        Building the tailored AdTech, UGC, and performance network for Uzbekistan and Central Asia. Helping local businesses scale while giving publishers fair monetization.
+      </p>
+
+      <!-- AUDIENCE SWITCHER TOGGLE (Advertisers vs Publishers) -->
+      <div class="inline-flex p-1.5 rounded-full bg-slate-100 border border-slate-200 shadow-inner max-w-md w-full sm:w-auto">
+        <button id="btn-advertisers" onclick="switchAudience('advertisers')" class="flex-1 sm:flex-none px-6 py-3 rounded-full text-sm font-bold transition-all duration-200 bg-slate-900 text-white shadow-md">
+          <i data-lucide="briefcase" class="w-4 h-4 inline-block mr-2"></i> For Advertisers
+        </button>
+        <button id="btn-publishers" onclick="switchAudience('publishers')" class="flex-1 sm:flex-none px-6 py-3 rounded-full text-sm font-bold transition-all duration-200 text-slate-600 hover:text-slate-900">
+          <i data-lucide="globe" class="w-4 h-4 inline-block mr-2"></i> For Publishers
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= DYNAMIC SECTION: ADVERTISERS VIEW ================= -->
+  <div id="view-advertisers" class="tab-content active">
+    
+    <!-- How does it work for Advertisers -->
+    <section id="how-it-works" class="py-20 bg-slate-50/50 border-t border-slate-100">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <h2 class="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-3">For Central Asian Brands</h2>
+          <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">How Pearl ADS Scales Local Businesses</p>
+          <p class="text-slate-600 mt-4 text-base">Global platforms treat Uzbekistan as a low-priority market. Pearl ADS offers localized targeting, performance CPA models, and real Uzbek audience insights.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          
+          <div class="space-y-8">
+            <div class="flex gap-5">
+              <div class="w-12 h-12 rounded-2xl bg-slate-900 text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-sm">
+                01
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Hyper-Local Audience Segmentation</h3>
+                <p class="text-slate-600 leading-relaxed text-sm">Target users across Tashkent, Samarkand, Fergana Valley, and Central Asian hubs with high precision language and behavior profiling.</p>
+              </div>
+            </div>
+
+            <div class="flex gap-5">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-md">
+                02
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Performance CPA & Hybrid Ad Models</h3>
+                <p class="text-slate-600 leading-relaxed text-sm">Pay for real business outcomes—leads, orders, and verified conversions—rather than empty impressions from generic international networks.</p>
+              </div>
+            </div>
+
+            <div class="flex gap-5">
+              <div class="w-12 h-12 rounded-2xl bg-slate-900 text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-sm">
+                03
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Integrated Uzbek Creator & UGC Network</h3>
+                <p class="text-slate-600 leading-relaxed text-sm">Leverage authentic local content creators and user-generated ads that build trust and drive purchase intent among Central Asian consumers.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-3xl border border-slate-200/80 p-8 shadow-xl">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-6">Advertiser Advantage Overview</h4>
+            
+            <div class="space-y-4">
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-bold text-slate-900">Local Payment Gateway Support</p>
+                  <p class="text-xs text-slate-500">Pay directly via local payment systems</p>
+                </div>
+                <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">Uzbekistan Native</span>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-bold text-slate-900">Regional Click Fraud Protection</p>
+                  <p class="text-xs text-slate-500">Filters bot traffic tailored for CIS networks</p>
+                </div>
+                <span class="text-xs font-bold bg-blue-100 text-blue-800 px-3 py-1 rounded-full">Secure</span>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-bold text-slate-900">High ROAS Guarantee Focus</p>
+                  <p class="text-xs text-slate-500">Engineered for retail, fintech & e-commerce</p>
+                </div>
+                <span class="text-xs font-bold bg-purple-100 text-purple-800 px-3 py-1 rounded-full">High Return</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ================= DYNAMIC SECTION: PUBLISHERS VIEW ================= -->
+  <div id="view-publishers" class="tab-content">
+    
+    <!-- How does it work for Publishers -->
+    <section class="py-20 bg-slate-50/50 border-t border-slate-100">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <h2 class="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-3">Fair Yield For Content Creators & Media</h2>
+          <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Earn What Your Uzbek Audience Is Really Worth</p>
+          <p class="text-slate-600 mt-4 text-base">Global ad giants undervalue Central Asian traffic. Global UGC platforms barely compensate regional creators (with rare exceptions like Creata.gg). Pearl ADS changes the rules.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          
+          <div class="bg-white rounded-3xl border border-slate-200/80 p-8 shadow-xl">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-6">Payout Comparison (Central Asian Traffic)</h4>
+            
+            <div class="space-y-4">
+              <!-- Competitor 1 -->
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between opacity-70">
+                <div>
+                  <p class="text-sm font-bold text-slate-700">Google AdSense / Yandex Advertising Network</p>
+                  <p class="text-xs text-slate-500">Low tier CPM for Central Asian traffic</p>
+                </div>
+                <span class="text-xs font-bold text-red-600">Below Average</span>
+              </div>
+
+              <!-- Competitor 2 -->
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between opacity-70">
+                <div>
+                  <p class="text-sm font-bold text-slate-700">Global UGC Platforms</p>
+                  <p class="text-xs text-slate-500">Monetization not supported in UZ (except Creata.gg)</p>
+                </div>
+                <span class="text-xs font-bold text-amber-600">Restricted</span>
+              </div>
+
+              <!-- Pearl ADS -->
+              <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-bold text-emerald-950">Pearl ADS Publisher Network</p>
+                  <p class="text-xs text-emerald-700 font-medium">Direct local brand budgets & fair CPM/CPA</p>
+                </div>
+                <span class="text-xs font-bold bg-emerald-600 text-white px-3 py-1 rounded-full">Top Yield</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-8">
+            <div class="flex gap-5">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-md">
+                01
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Direct Local Brand Budgets</h3>
+                <p class="text-slate-600 leading-relaxed text-sm">Instead of receiving pennies from global ad networks, connect directly with fast-growing domestic brands willing to pay top value for local eyeballs.</p>
+              </div>
+            </div>
+
+            <div class="flex gap-5">
+              <div class="w-12 h-12 rounded-2xl bg-slate-900 text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-sm">
+                02
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Fair Monetization for Local UGC</h3>
+                <p class="text-slate-600 leading-relaxed text-sm">Most international monetization platforms ignore creators in Central Asia. Pearl ADS ensures Uzbek content creators earn predictable income for their audience engagement.</p>
+              </div>
+            </div>
+
+            <div class="flex gap-5">
+              <div class="w-12 h-12 rounded-2xl bg-slate-900 text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-sm">
+                03
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Instant Local Payments</h3>
+                <p class="text-slate-600 leading-relaxed text-sm">No complex wire transfers or high international fees. Receive earnings reliably directly into local banking infrastructure.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ================= ACCELERATOR VISION & MISSION ================= -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="bg-gradient-to-br from-slate-50 to-emerald-50/40 rounded-3xl p-8 sm:p-12 border border-slate-200/80">
+        <div class="max-w-3xl">
+          <span class="text-xs font-bold text-emerald-600 uppercase tracking-widest block mb-2">Early Stage Accelerator Project</span>
+          <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4">Unlocking the Untapped Potential of Central Asian AdTech</h3>
+          <p class="text-slate-600 leading-relaxed mb-6 text-sm sm:text-base">
+            Central Asia is experiencing a digital boom with millions of active internet users, yet regional ad infrastructure remains fragmented. Pearl ADS is being built to bridge the gap between local enterprise demand, performance CPA marketing, and creator monetization across Uzbekistan and neighbor markets.
+          </p>
+          <div class="flex flex-wrap items-center gap-6 text-xs sm:text-sm font-semibold text-slate-700">
+            <span class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Idea & Accelerator Stage</span>
+            <span class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Focused on Uzbekistan & Regional Market</span>
+            <span class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Ecosystem for Brands & Creators</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= UNIFIED DARK NAVY FOOTER & STATISTICS ================= -->
+  <footer class="bg-slate-900 text-white border-t border-slate-800">
+    
+    <!-- Statistics Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-b border-slate-800/80">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+        
+        <div>
+          <p class="text-3xl sm:text-4xl font-extrabold text-emerald-400 mb-2">35M+</p>
+          <p class="text-xs sm:text-sm text-slate-400 font-medium">Target Central Asian Audience</p>
+        </div>
+
+        <div>
+          <p class="text-3xl sm:text-4xl font-extrabold text-white mb-2">Higher Yield</p>
+          <p class="text-xs sm:text-sm text-slate-400 font-medium">vs. AdSense & YAN in UZ</p>
+        </div>
+
+        <div>
+          <p class="text-3xl sm:text-4xl font-extrabold text-emerald-400 mb-2">CPA & UGC</p>
+          <p class="text-xs sm:text-sm text-slate-400 font-medium">Performance Driven Model</p>
+        </div>
+
+        <div>
+          <p class="text-3xl sm:text-4xl font-extrabold text-white mb-2">Early Stage</p>
+          <p class="text-xs sm:text-sm text-slate-400 font-medium">Accelerator Candidate</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Main Footer Links & Copyright -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+        
+        <div class="flex items-center gap-3">
+          <!-- Footer Logo converted to PURE WHITE using CSS brightness-0 invert filter -->
+          <img src="logo.webp" alt="Pearl ADS Logo" class="h-8 w-8 object-contain filter brightness-0 invert" onerror="this.onerror=null; this.src='https://placehold.co/100x100/ffffff/ffffff?text=P';" />
+          <span class="text-xl font-extrabold tracking-tight text-white">
+            Pearl <span class="text-emerald-400">ADS</span>
+          </span>
+        </div>
+
+        <p class="text-xs text-slate-400 text-center md:text-left max-w-md">
+          Next-generation advertising ecosystem built specifically for Central Asia, Uzbekistan local businesses, and regional content publishers.
+        </p>
+
+        <div class="text-xs text-slate-400 font-medium text-right">
+          <p>In the name of God, The Most Merciful</p>
+          <p class="mt-1 text-slate-500">© 2026 Pearl ADS. Early Stage Startup.</p>
+        </div>
+
+      </div>
+    </div>
+
+  </footer>
+
+  <!-- Script for Dynamic Tab Switching & Loader -->
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Ensure the Lottie loader stays visible for at least 1.7 seconds
+    window.addEventListener('load', function() {
+      const loader = document.getElementById('lottie-loader');
+      if (loader) {
+        setTimeout(() => {
+          loader.style.opacity = '0';
+          loader.style.transition = 'opacity 0.5s ease-in-out';
+          setTimeout(() => {
+            loader.style.display = 'none';
+          }, 500); // Matches the 0.5s transition fade out
+        }, 1700); // 1700ms = 1.7 seconds minimum display time
+      }
+    });
+
+    // Switch between Advertisers and Publishers views
+    function switchAudience(type) {
+      const btnAdvertisers = document.getElementById('btn-advertisers');
+      const btnPublishers = document.getElementById('btn-publishers');
+      const viewAdvertisers = document.getElementById('view-advertisers');
+      const viewPublishers = document.getElementById('view-publishers');
+
+      if (type === 'advertisers') {
+        btnAdvertisers.className = 'flex-1 sm:flex-none px-6 py-3 rounded-full text-sm font-bold transition-all duration-200 bg-slate-900 text-white shadow-md';
+        btnPublishers.className = 'flex-1 sm:flex-none px-6 py-3 rounded-full text-sm font-bold transition-all duration-200 text-slate-600 hover:text-slate-900';
+        
+        viewAdvertisers.classList.add('active');
+        viewPublishers.classList.remove('active');
+      } else {
+        btnPublishers.className = 'flex-1 sm:flex-none px-6 py-3 rounded-full text-sm font-bold transition-all duration-200 bg-slate-900 text-white shadow-md';
+        btnAdvertisers.className = 'flex-1 sm:flex-none px-6 py-3 rounded-full text-sm font-bold transition-all duration-200 text-slate-600 hover:text-slate-900';
+        
+        viewPublishers.classList.add('active');
+        viewAdvertisers.classList.remove('active');
+      }
+    }
+  </script>
+</body>
+</html>
