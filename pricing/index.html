@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tariflar va Xizmatlar | Pearl ADS</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Exact Match with Main Landing Page (Uzbek, Russian & English Support) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&family=Oswald:wght@600;700&family=Unbounded:wght@700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            beige: {
+              50: '#FAF8F3',
+              100: '#F5F1E8',
+              200: '#EBE4D5',
+              300: '#DDD3BE',
+            },
+            ink: {
+              900: '#111111',
+              800: '#1E1E1E',
+              600: '#4A4741',
+              400: '#7D786E',
+            }
+          },
+          fontFamily: {
+            display: ['"Unbounded"', '"Oswald"', 'sans-serif'],
+            editorial: ['"Oswald"', '"Unbounded"', 'sans-serif'],
+            sans: ['"Golos Text"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* ==========================================================================
+       PEARL ADS — GLOBAL DESIGN TOKENS & WORN-OUT EDITORIAL THEME
+       ========================================================================== */
+    :root {
+      --bg-beige: #F5F1E8;
+      --bg-beige-elevated: #FAF7F0;
+      --bg-beige-dark: #E8E1D3;
+      --ink-black: #111111;
+      --ink-muted: #4A4741;
+      --ink-subtle: #78736A;
+      --border-ink: #111111;
+    }
+
+    * {
+      box-sizing: border-box;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    *::-webkit-scrollbar,
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-beige);
+      color: var(--ink-black);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Golos Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-beige);
+      color: var(--ink-black);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    ::selection {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
+    }
+
+    /* Subtle tactile paper noise overlay across the page */
+    .paper-grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 60;
+      opacity: 0.045;
+      background-image: radial-gradient(#111111 0.65px, transparent 0.65px), radial-gradient(#111111 0.5px, #F5F1E8 0.5px);
+      background-size: 26px 26px;
+      background-position: 0 0, 13px 13px;
+    }
+
+    /* Ranfgih-inspired bold worn-out stamp display typography */
+    .font-worn-display {
+      font-family: 'Unbounded', 'Oswald', sans-serif;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      filter: url(#worn-ink-filter);
+      text-shadow: 1px 1px 0px rgba(17, 17, 17, 0.14);
+    }
+
+    .font-worn-heading {
+      font-family: 'Unbounded', 'Oswald', sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+    }
+
+    /* ==========================================================================
+       SCROLL-TRIGGERED TOP HEADER ANIMATION
+       ========================================================================== */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      height: 76px;
+      background-color: transparent;
+      border-bottom: 1.5px solid transparent;
+      transition: background-color 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                  border-color 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                  backdrop-filter 0.38s ease;
+    }
+
+    .site-header.is-scrolled {
+      background-color: rgba(245, 241, 232, 0.94);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1.5px solid var(--ink-black);
+    }
+
+    .header-inner {
+      position: relative;
+      max-width: 1280px;
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+      display: flex;
+      align-items: center;
+    }
+
+    @media (min-width: 640px) {
+      .header-inner {
+        padding: 0 2rem;
+      }
+    }
+
+    /* Logo starts dead-center, smoothly glides to the left on scroll */
+    .brand-mover {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      text-decoration: none;
+      color: var(--ink-black);
+      transition: left 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+      white-space: nowrap;
+    }
+
+    .site-header.is-scrolled .brand-mover {
+      left: 1.25rem;
+      transform: translateX(0);
+    }
+
+    @media (min-width: 640px) {
+      .site-header.is-scrolled .brand-mover {
+        left: 2rem;
+      }
+    }
+
+    /* Header START button hidden at top, animates in from right on scroll */
+    .header-start-btn {
+      margin-left: auto;
+      opacity: 0;
+      transform: translateX(18px) scale(0.95);
+      pointer-events: none;
+      transition: opacity 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+                  background-color 0.2s ease;
+    }
+
+    .site-header.is-scrolled .header-start-btn {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      pointer-events: auto;
+    }
+
+    /* Primary Black Button with Beige Font */
+    .btn-ink {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
+      border: 2px solid var(--ink-black);
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+                  background-color 0.2s ease,
+                  color 0.2s ease,
+                  box-shadow 0.2s ease;
+    }
+
+    .btn-ink:hover {
+      background-color: var(--bg-beige);
+      color: var(--ink-black);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 var(--ink-black);
+    }
+
+    .btn-ink:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 0 var(--ink-black);
+    }
+
+    /* Editorial Brutalist-Classic Card */
+    .editorial-card {
+      background-color: var(--bg-beige-elevated);
+      border: 2px solid var(--ink-black);
+      border-radius: 1.25rem;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .editorial-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 6px 6px 0px var(--ink-black);
+    }
+
+    /* FAQ Accordion */
+    .faq-item {
+      background-color: var(--bg-beige-elevated);
+      border: 2px solid var(--ink-black);
+      border-radius: 1.1rem;
+      overflow: hidden;
+      transition: box-shadow 0.2s ease;
+    }
+
+    .faq-item:hover {
+      box-shadow: 4px 4px 0px var(--ink-black);
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-[#111111] selection:text-[#F5F1E8]">
+
+  <!-- SVG Distress / Worn-out Print Texture Filter -->
+  <svg width="0" height="0" class="hidden" aria-hidden="true">
+    <defs>
+      <filter id="worn-ink-filter" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.35" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Subtle Paper Grain Overlay -->
+  <div class="paper-grain" aria-hidden="true"></div>
+
+  <!-- ========================================================================
+       1. TOP NAVBAR (Blends at top; border + left logo + right START on scroll)
+       ======================================================================== -->
+  <header id="main-header" class="site-header">
+    <div class="header-inner">
+      <!-- Logo Image & Brand Text (Centered initially, slides left on scroll) -->
+      <a href="/index.html" class="brand-mover" aria-label="Pearl ADS Bosh sahifa">
+        <img
+          src="/logo.webp"
+          alt="Pearl ADS"
+          class="h-8 w-8 sm:h-9 sm:w-9 object-contain grayscale contrast-125"
+          onerror="this.onerror=null; this.src='https://placehold.co/96x96/111111/F5F1E8?text=P';"
+        />
+        <span class="font-worn-heading text-xl sm:text-2xl tracking-tight text-[#111111]">
+          Pearl ADS
+        </span>
+      </a>
+
+      <!-- Right-side START button (Hidden at top, animates in on scroll) -->
+      <a
+        href="/authentication/"
+        class="header-start-btn btn-ink px-5 py-2 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider inline-flex items-center gap-2"
+      >
+        <span>START</span>
+        <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+      </a>
+    </div>
+  </header>
+
+  <main class="pt-28 sm:pt-36 pb-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- ====================================================================
+           2. HERO / PAGE HEADER (Product Development + Ad Network Synergy)
+           ==================================================================== -->
+      <section class="mb-14 sm:mb-20">
+        <!-- Back to Home Pill -->
+        <div class="mb-6">
+          <a
+            href="/index.html"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 border-[#111111] bg-[#FAF7F0] font-mono text-xs font-bold uppercase tracking-wider text-[#111111] hover:bg-[#111111] hover:text-[#F5F1E8] transition-colors"
+          >
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Bosh sahifaga qaytish</span>
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+          <div class="lg:col-span-8">
+            <h1 class="font-worn-display text-3xl sm:text-5xl md:text-6xl uppercase text-[#111111] leading-[1.03] mb-5">
+              Biznesingizni quramiz va mijoz olib kelamiz
+            </h1>
+            <p class="text-base sm:text-lg text-[#2A2824] max-w-2xl leading-relaxed">
+              Pearl ADS — bu shunchaki reklama tarmog‘i emas. Biz biznesingiz uchun zamonaviy <strong class="font-bold text-[#111111]">Telegram bot, veb-sayt va Telegram Mini App</strong> ishlab chiqamiz, hosting va texnik boshqaruvni o‘z zimmamizga olamiz hamda o‘z reklama tarmog‘imiz orqali tayyor mijozlar oqimini ulab beramiz.
+            </p>
+          </div>
+
+          <!-- 3-Pillar Ecosystem Summary Box -->
+          <div class="lg:col-span-4 rounded-2xl border-2 border-[#111111] bg-[#EBE4D5] p-5 sm:p-6">
+            <div class="font-mono text-[11px] uppercase tracking-widest text-[#4A4741] mb-3">
+              Bitta oylik obuna ichida:
+            </div>
+            <div class="space-y-2.5 text-sm font-semibold text-[#111111]">
+              <div class="flex items-center gap-2.5">
+                <i data-lucide="bot" class="w-4 h-4 shrink-0"></i>
+                <span>Telegram Bot + Mini App + Veb-sayt</span>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <i data-lucide="server" class="w-4 h-4 shrink-0"></i>
+                <span>24/7 Hosting, domen va texnik nazorat</span>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <i data-lucide="zap" class="w-4 h-4 shrink-0"></i>
+                <span>Pearl ADS tarmog‘ida bepul reklama kreditlari</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           3. THREE PAID TIER CARDS (BASIC, BLAZE, PRO)
+           ==================================================================== -->
+      <section aria-labelledby="paid-tiers-heading" class="mb-10 sm:mb-12">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-8">
+          <h2 id="paid-tiers-heading" class="font-worn-heading text-xl sm:text-2xl uppercase text-[#111111]">
+            Oylik tarif rejalari
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-stretch">
+
+          <!-- ================================================================
+               TIER 1: BASIC (70,000 UZS / oyiga)
+               ================================================================ -->
+          <article class="editorial-card p-7 sm:p-8 flex flex-col justify-between bg-[#FAF7F0]">
+            <div>
+              <!-- Title & Tag -->
+              <div class="flex items-center justify-between gap-2">
+                <h3 class="font-worn-display text-2xl sm:text-3xl uppercase text-[#111111]">
+                  Basic
+                </h3>
+                <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-full border border-[#111111] text-[#111111]">
+                  START
+                </span>
+              </div>
+
+              <!-- Separating line -->
+              <hr class="border-t-2 border-[#111111] my-5" />
+
+              <!-- Description -->
+              <p class="text-sm text-[#3A3732] leading-relaxed mb-6">
+                Kichik bizneslar va o‘z xizmatlarini onlayn qabul qilishni tez boshlamoqchi bo‘lgan tadbirkorlar uchun tayyor bazaviy yechim.
+              </p>
+
+              <!-- Bullet Points -->
+              <ul class="space-y-3.5 text-sm font-medium text-[#111111] mb-8">
+                <li class="flex items-start gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                  <span>Bazaviy web-app (Mini App) yoki Telegram bot yaratish</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                  <span>Ishonchli tezkor hosting va doimiy texnik qo‘llab-quvvatlash</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                  <span>Buyurtma va murojaatlarni qabul qiluvchi kichik avtomatizatsiya</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                  <span>Pearl ADS reklama kabinetiga tezkor ulanish</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Price & CTA at bottom -->
+            <div>
+              <div class="pt-5 border-t-2 border-[#111111]/20 mb-5">
+                <div class="flex items-baseline gap-1.5 flex-wrap">
+                  <span class="font-worn-display text-2xl sm:text-3xl text-[#111111]">70,000</span>
+                  <span class="font-mono text-xs font-bold text-[#111111]">UZS / oyiga</span>
+                </div>
+                <p class="font-mono text-[11px] text-[#4A4741] mt-1">
+                  Hosting va boshqaruv narx ichida
+                </p>
+              </div>
+
+              <a
+                href="/authentication/?plan=basic"
+                class="btn-ink w-full py-3.5 px-5 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider inline-flex items-center justify-center gap-2"
+              >
+                <span>Basic ni tanlash</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </a>
+            </div>
+          </article>
+
+          <!-- ================================================================
+               TIER 2: BLAZE (120,000 UZS / oyiga — FEATURED)
+               ================================================================ -->
+          <article class="editorial-card p-7 sm:p-8 flex flex-col justify-between bg-[#EBE4D5] relative">
+            <div>
+              <!-- Title & Tag -->
+              <div class="flex items-center justify-between gap-2">
+                <h3 class="font-worn-display text-2xl sm:text-3xl uppercase text-[#111111]">
+                  Blaze
+                </h3>
+                <span class="font-mono text-xs font-bold px-3 py-1 rounded-full bg-[#111111] text-[#F5F1E8]">
+                  ENG OMMABOP
+                </span>
+              </div>
+
+              <!-- Separating line -->
+              <hr class="border-t-2 border-[#111111] my-5" />
+
+              <!-- Description -->
+              <p class="text-sm text-[#2A2824] leading-relaxed mb-6">
+                To‘liq katalogli professional Telegram Mini App va reklama tarmog‘imizda bepul kreditlar bilan savdoni oshirish paketi.
+              </p>
+
+              <!-- Bullet Points -->
+              <ul class="space-y-3.5 text-sm font-medium text-[#111111] mb-8">
+                <li class="flex items-start gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                  <span><strong>Basic tarifidagi barcha imkoniyatlar</strong> (hosting va texnik boshqaruv)</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                  <span>Maxsus dizayndagi yuqori sifatli <strong>Telegram Mini App</strong></span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                  <span>To‘liq mahsulotlar katalogi va qulay <strong>Admin Panel</strong></span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                  <span>Biznesingizni reklama qilish uchun <strong>bepul Ad Credits</strong></span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Price & CTA at bottom -->
+            <div>
+              <div class="pt-5 border-t-2 border-[#111111]/25 mb-5">
+                <div class="flex items-baseline gap-1.5 flex-wrap">
+                  <span class="font-worn-display text-2xl sm:text-3xl text-[#111111]">120,000</span>
+                  <span class="font-mono text-xs font-bold text-[#111111]">UZS / oyiga</span>
+                </div>
+                <p class="font-mono text-[11px] text-[#2A2824] mt-1">
+                  + Bepul reklama kreditlari bonusi
+                </p>
+              </div>
+
+              <a
+                href="/authentication/?plan=blaze"
+                class="btn-ink w-full py-3.5 px-5 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider inline-flex items-center justify-center gap-2"
+              >
+                <span>Blaze ni tanlash</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </a>
+            </div>
+          </article>
+
+          <!-- ================================================================
+               TIER 3: PRO / SCALE (300,000 – 500,000 UZS / oyiga)
+               ================================================================ -->
+          <article class="editorial-card p-7 sm:p-8 flex flex-col justify-between bg-[#FAF7F0]">
+            <div>
+              <!-- Title & Tag -->
+              <div class="flex items-center justify-between gap-2">
+                <h3 class="font-worn-display text-2xl sm:text-3xl uppercase text-[#111111]">
+                  Pro
+                </h3>
+                <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-full border border-[#111111] text-[#111111]">
+                  FULL + AI
+                </span>
+              </div>
+
+              <!-- Separating line -->
+              <hr class="border-t-2 border-[#111111] my-5" />
+
+              <!-- Description -->
+              <p class="text-sm text-[#3A3732] leading-relaxed mb-6">
+                Keng ko‘lamli bizneslar uchun: professional Mini App, alohida veb-sayt, shaxsiy domen, katta reklama kreditlari va AI avtomatizatsiya.
+              </p>
+
+              <!-- Bullet Points -->
+              <ul class="space-y-3.5 text-sm font-medium text-[#111111] mb-8">
+                <li class="flex items-start gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                  <span><strong>Basic va Blaze</strong> tariflaridagi barcha imkoniyatlar</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                  <span>Professional Mini App + to‘liq <strong>Veb-sayt, Domen va Hosting</strong></span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                  <span>Platformamizda kengaytirilgan <strong>bepul reklama kreditlari</strong></span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                  <span>Buyurtmalarni qabul qilishda <strong>AI Avtomatizatsiya (Beta)</strong></span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Price & CTA at bottom -->
+            <div>
+              <div class="pt-5 border-t-2 border-[#111111]/20 mb-5">
+                <div class="flex items-baseline gap-1.5 flex-wrap">
+                  <span class="font-worn-display text-xl sm:text-2xl text-[#111111]">300,000 – 500,000</span>
+                  <span class="font-mono text-xs font-bold text-[#111111]">UZS / oyiga</span>
+                </div>
+                <p class="font-mono text-[11px] text-[#4A4741] mt-1">
+                  Loyiha hajmi va AI moduliga qarab
+                </p>
+              </div>
+
+              <a
+                href="/authentication/?plan=pro"
+                class="btn-ink w-full py-3.5 px-5 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider inline-flex items-center justify-center gap-2"
+              >
+                <span>Pro ni boshlash</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </a>
+            </div>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           4. FREE TIER FOR EARLY ENTREPRENEURS (WATCH ADS -> EARN AD CREDITS)
+           ==================================================================== -->
+      <section aria-labelledby="free-tier-heading" class="mb-20 sm:mb-28">
+        <div class="editorial-card p-7 sm:p-10 lg:p-12 bg-[#111111] text-[#F5F1E8]">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            <!-- Left Content -->
+            <div class="lg:col-span-8">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#F5F1E8]/40 font-mono text-xs uppercase tracking-widest text-[#DDD3BE] mb-4">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                <span>YOSH TADBIRKORLAR UCHUN MAXSUS</span>
+              </div>
+
+              <h2 id="free-tier-heading" class="font-worn-display text-2xl sm:text-4xl uppercase text-[#F5F1E8] leading-tight mb-4">
+                Free Tier: 0 UZS / oyiga
+              </h2>
+
+              <p class="text-sm sm:text-base text-[#DDD3BE] leading-relaxed max-w-2xl mb-6">
+                Boshlang‘ich sarmoyangiz yo‘qmi? Muammo emas. Yosh tadbirkorlar platformamizda reklamalarni tomosha qilish orqali <strong class="text-[#F5F1E8]">bepul reklama kreditlari</strong> yig‘ishlari va ularni o‘z bizneslarini targ‘ib qilish uchun sarflashlari mumkin.
+              </p>
+
+              <!-- 3 Simple Steps -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-[#F5F1E8]/20">
+                <div>
+                  <span class="font-mono text-xs text-[#7D786E] block mb-1">01 / QADAM</span>
+                  <span class="font-worn-heading text-sm text-[#F5F1E8]">Reklamalarni ko‘ring</span>
+                </div>
+                <div>
+                  <span class="font-mono text-xs text-[#7D786E] block mb-1">02 / QADAM</span>
+                  <span class="font-worn-heading text-sm text-[#F5F1E8]">Ad Credits yig‘ing</span>
+                </div>
+                <div>
+                  <span class="font-mono text-xs text-[#7D786E] block mb-1">03 / QADAM</span>
+                  <span class="font-worn-heading text-sm text-[#F5F1E8]">O‘z biznesingizni reklama qiling</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right CTA Box -->
+            <div class="lg:col-span-4 rounded-2xl border-2 border-[#F5F1E8]/25 bg-[#1E1E1E] p-6 sm:p-7 flex flex-col justify-between">
+              <div class="mb-6">
+                <span class="font-mono text-xs uppercase tracking-wider text-[#DDD3BE] block mb-1">
+                  Oylik to‘lov
+                </span>
+                <div class="font-worn-display text-3xl sm:text-4xl text-[#F5F1E8]">
+                  0 UZS
+                </div>
+              </div>
+
+              <a
+                href="/authentication/?plan=free"
+                class="w-full py-4 px-6 rounded-full bg-[#F5F1E8] text-[#111111] border-2 border-[#F5F1E8] font-worn-heading text-xs sm:text-sm uppercase tracking-wider inline-flex items-center justify-center gap-2 hover:bg-transparent hover:text-[#F5F1E8] transition-colors"
+              >
+                <span>Bepul boshlash</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           5. FEATURE COMPARISON TABLE
+           ==================================================================== -->
+      <section class="border-t-2 border-[#111111] pt-16 sm:pt-20 mb-20 sm:mb-28">
+        <div class="max-w-2xl mb-10">
+          <p class="font-mono text-xs uppercase tracking-[0.2em] text-[#4A4741] mb-2">02 / Batafsil taqqoslash</p>
+          <h2 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111] leading-tight">
+            Tariflar farqi
+          </h2>
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl border-2 border-[#111111] bg-[#FAF7F0]">
+          <table class="w-full text-left border-collapse min-w-[680px]">
+            <thead>
+              <tr class="border-b-2 border-[#111111] bg-[#EBE4D5]">
+                <th class="py-4 px-5 font-worn-heading text-xs sm:text-sm uppercase text-[#111111]">Imkoniyatlar</th>
+                <th class="py-4 px-4 font-worn-heading text-xs sm:text-sm uppercase text-[#111111] text-center">Free</th>
+                <th class="py-4 px-4 font-worn-heading text-xs sm:text-sm uppercase text-[#111111] text-center">Basic</th>
+                <th class="py-4 px-4 font-worn-heading text-xs sm:text-sm uppercase text-[#111111] text-center bg-[#111111] text-[#F5F1E8]">Blaze</th>
+                <th class="py-4 px-4 font-worn-heading text-xs sm:text-sm uppercase text-[#111111] text-center">Pro</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#111111]/20 text-sm">
+              <tr>
+                <td class="py-4 px-5 font-medium text-[#111111]">Oylik narx</td>
+                <td class="py-4 px-4 font-mono text-xs font-bold text-center">0 UZS</td>
+                <td class="py-4 px-4 font-mono text-xs font-bold text-center">70,000 UZS</td>
+                <td class="py-4 px-4 font-mono text-xs font-bold text-center bg-[#EBE4D5]/60">120,000 UZS</td>
+                <td class="py-4 px-4 font-mono text-xs font-bold text-center">300k–500k UZS</td>
+              </tr>
+              <tr>
+                <td class="py-4 px-5 font-medium text-[#111111]">Telegram Bot / Bazaviy Web-App + Hosting</td>
+                <td class="py-4 px-4 text-center text-[#78736A]">—</td>
+                <td class="py-4 px-4 text-center font-bold text-[#111111]">✓</td>
+                <td class="py-4 px-4 text-center font-bold text-[#111111] bg-[#EBE4D5]/60">✓</td>
+                <td class="py-4 px-4 text-center font-bold text-[#111111]">✓</td>
+              </tr>
+              <tr>
+                <td class="py-4 px-5 font-medium text-[#111111]">Buyurtmalarni avtomatlashtirish</td>
+                <td class="py-4 px-4 text-center text-[#78736A]">—</td>
+                <td class="py-4 px-4 font-mono text-xs text-center">Bazaviy</td>
+                <td class="py-4 px-4 font-mono text-xs text-center bg-[#EBE4D5]/60">To‘liq</td>
+                <td class="py-4 px-4 font-mono text-xs font-bold text-center">AI (Beta)</td>
+              </tr>
+              <tr>
+                <td class="py-4 px-5 font-medium text-[#111111]">Yuqori sifatli Mini App + Katalog + Admin Panel</td>
+                <td class="py-4 px-4 text-center text-[#78736A]">—</td>
+                <td class="py-4 px-4 text-center text-[#78736A]">—</td>
+                <td class="py-4 px-4 text-center font-bold text-[#111111] bg-[#EBE4D5]/60">✓</td>
+                <td class="py-4 px-4 text-center font-bold text-[#111111]">✓ (Pro)</td>
+              </tr>
+              <tr>
+                <td class="py-4 px-5 font-medium text-[#111111]">Alohida Veb-sayt + Shaxsiy Domen va Hosting</td>
+                <td class="py-4 px-4 text-center text-[#78736A]">—</td>
+                <td class="py-4 px-4 text-center text-[#78736A]">—</td>
+                <td class="py-4 px-4 text-center text-[#78736A] bg-[#EBE4D5]/60">—</td>
+                <td class="py-4 px-4 text-center font-bold text-[#111111]">✓</td>
+              </tr>
+              <tr>
+                <td class="py-4 px-5 font-medium text-[#111111]">Pearl ADS tarmog‘ida Bepul Reklama Kreditlari</td>
+                <td class="py-4 px-4 font-mono text-xs text-center">Reklama ko‘rib yig‘ish</td>
+                <td class="py-4 px-4 text-center text-[#78736A]">—</td>
+                <td class="py-4 px-4 font-mono text-xs font-bold text-center bg-[#EBE4D5]/60">Bonus kiritilgan</td>
+                <td class="py-4 px-4 font-mono text-xs font-bold text-center">Katta bonus</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           6. FAQ SECTION
+           ==================================================================== -->
+      <section class="border-t-2 border-[#111111] pt-16 sm:pt-20">
+        <div class="max-w-2xl mb-10">
+          <p class="font-mono text-xs uppercase tracking-[0.2em] text-[#4A4741] mb-2">03 / Ko‘p beriladigan savollar</p>
+          <h2 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111] leading-tight">
+            Savol va javoblar
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="faq-item p-6 sm:p-7">
+            <h3 class="font-worn-heading text-base sm:text-lg text-[#111111] mb-2.5">
+              Hosting va texnik boshqaruv uchun alohida to‘lanadimi?
+            </h3>
+            <p class="text-sm text-[#3A3732] leading-relaxed">
+              Yo‘q. Basic, Blaze va Pro tariflaridagi oylik to‘lov ichiga server hostingi, bot va Mini App ishlashini 24/7 kuzatish hamda texnik yangilanishlar to‘liq kiritilgan.
+            </p>
+          </div>
+
+          <div class="faq-item p-6 sm:p-7">
+            <h3 class="font-worn-heading text-base sm:text-lg text-[#111111] mb-2.5">
+              Bepul reklama kreditlari qanday ishlaydi?
+            </h3>
+            <p class="text-sm text-[#3A3732] leading-relaxed">
+              Blaze va Pro tariflarida har oy hisobingizga tayyor reklama kreditlari beriladi. Free tarifida esa siz platformadagi reklamalarni ko‘rib kredit ishlaysiz va ularni o‘z biznesingiz reklamasiga sarflaysiz.
+            </p>
+          </div>
+
+          <div class="faq-item p-6 sm:p-7">
+            <h3 class="font-worn-heading text-base sm:text-lg text-[#111111] mb-2.5">
+              Pro tarifidagi AI Avtomatizatsiya (Beta) nima qiladi?
+            </h3>
+            <p class="text-sm text-[#3A3732] leading-relaxed">
+              Sun’iy intellekt mijozlarning savollariga javob beradi, katalogdan mos mahsulotni tavsiya qiladi va buyurtmalarni operator ishtirokisiz avtomatik rasmiylashtiradi.
+            </p>
+          </div>
+
+          <div class="faq-item p-6 sm:p-7">
+            <h3 class="font-worn-heading text-base sm:text-lg text-[#111111] mb-2.5">
+              Keyinchalik tarifni yuqoriroq rejaga o‘tkazish mumkinmi?
+            </h3>
+            <p class="text-sm text-[#3A3732] leading-relaxed">
+              Albatta. Siz Free yoki Basic tarifidan boshlab, biznesingiz o‘sishi bilan barcha ma’lumotlar va katalogingizni saqlagan holda Blaze yoki Pro tarifiga o‘tishingiz mumkin.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ========================================================================
+       7. FOOTER (Exact Match with Main Landing Page)
+       ======================================================================== -->
+  <footer class="bg-[#111111] text-[#F5F1E8] border-t-2 border-[#111111]">
+    
+    <!-- Key Regional Metrics Strip -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 border-b border-[#F5F1E8]/15">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+        <div>
+          <p class="font-worn-display text-2xl sm:text-4xl text-[#F5F1E8] mb-1.5">35M+</p>
+          <p class="font-mono text-xs text-[#DDD3BE]">Markaziy Osiyo auditoriyasi</p>
+        </div>
+        <div>
+          <p class="font-worn-display text-2xl sm:text-4xl text-[#F5F1E8] mb-1.5">BOT & APP</p>
+          <p class="font-mono text-xs text-[#DDD3BE]">Tayyor raqamli infratuzilma</p>
+        </div>
+        <div>
+          <p class="font-worn-display text-2xl sm:text-4xl text-[#F5F1E8] mb-1.5">UZ / RU / EN</p>
+          <p class="font-mono text-xs text-[#DDD3BE]">To‘liq ko‘p tilli ekotizim</p>
+        </div>
+        <div>
+          <p class="font-worn-display text-2xl sm:text-4xl text-[#F5F1E8] mb-1.5">2026</p>
+          <p class="font-mono text-xs text-[#DDD3BE]">Akselerator bosqichi</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Brand & Copyright Bar -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+        
+        <div class="flex items-center gap-3">
+          <img
+            src="/logo.webp"
+            alt="Pearl ADS Logotipi"
+            class="h-8 w-8 object-contain brightness-0 invert"
+            onerror="this.onerror=null; this.src='https://placehold.co/96x96/F5F1E8/111111?text=P';"
+          />
+          <span class="font-worn-heading text-xl tracking-tight text-[#F5F1E8]">
+            Pearl ADS
+          </span>
+        </div>
+
+        <p class="text-xs text-[#DDD3BE] text-center md:text-left max-w-md leading-relaxed">
+          Markaziy Osiyo va O‘zbekiston mahalliy bizneslari uchun Telegram bot, Mini App, veb-sayt va AdTech ekotizimi.
+        </p>
+
+        <div class="text-xs font-mono text-[#DDD3BE] text-center md:text-right">
+          <p>Mehribon va Rahmli Alloh nomi bilan</p>
+          <p class="mt-1 text-[#7D786E]">© 2026 Pearl ADS. Barcha huquqlar himoyalangan.</p>
+        </div>
+
+      </div>
+    </div>
+
+  </footer>
+
+  <!-- ========================================================================
+       SCRIPTS: Icons & Scroll-Triggered Navbar Animation
+       ======================================================================== -->
+  <script>
+    lucide.createIcons();
+
+    const mainHeader = document.getElementById('main-header');
+    function handleHeaderScroll() {
+      if (window.scrollY > 36) {
+        mainHeader.classList.add('is-scrolled');
+      } else {
+        mainHeader.classList.remove('is-scrolled');
+      }
+    }
+    window.addEventListener('scroll', handleHeaderScroll, { passive: true });
+    handleHeaderScroll();
+  </script>
+</body>
+</html>

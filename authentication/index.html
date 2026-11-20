@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hisobga Kirish | Pearl ADS</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Exact Match with Main Landing Page (Uzbek, Russian & English Support) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&family=Oswald:wght@600;700&family=Unbounded:wght@700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Firebase Compat SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            beige: {
+              50: '#FAF8F3',
+              100: '#F5F1E8',
+              200: '#EBE4D5',
+              300: '#DDD3BE',
+            },
+            ink: {
+              900: '#111111',
+              800: '#1E1E1E',
+              600: '#4A4741',
+              400: '#7D786E',
+            }
+          },
+          fontFamily: {
+            display: ['"Unbounded"', '"Oswald"', 'sans-serif'],
+            editorial: ['"Oswald"', '"Unbounded"', 'sans-serif'],
+            sans: ['"Golos Text"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* ==========================================================================
+       PEARL ADS — EXACT DESIGN TOKENS & WORN-OUT EDITORIAL THEME FROM MAIN FILE
+       ========================================================================== */
+    :root {
+      --bg-beige: #F5F1E8;
+      --bg-beige-elevated: #FAF7F0;
+      --bg-beige-dark: #E8E1D3;
+      --ink-black: #111111;
+      --ink-muted: #4A4741;
+      --ink-subtle: #78736A;
+      --border-ink: #111111;
+    }
+
+    * {
+      box-sizing: border-box;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    *::-webkit-scrollbar,
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-beige);
+      color: var(--ink-black);
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100dvh;
+      font-family: 'Golos Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-beige);
+      color: var(--ink-black);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    ::selection {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
+    }
+
+    /* Subtle tactile paper noise overlay across the page */
+    .paper-grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 60;
+      opacity: 0.045;
+      background-image: radial-gradient(#111111 0.65px, transparent 0.65px), radial-gradient(#111111 0.5px, #F5F1E8 0.5px);
+      background-size: 26px 26px;
+      background-position: 0 0, 13px 13px;
+    }
+
+    /* Ranfgih-inspired bold worn-out stamp display typography */
+    .font-worn-display {
+      font-family: 'Unbounded', 'Oswald', sans-serif;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      filter: url(#worn-ink-filter);
+      text-shadow: 1px 1px 0px rgba(17, 17, 17, 0.14);
+    }
+
+    .font-worn-heading {
+      font-family: 'Unbounded', 'Oswald', sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+    }
+
+    /* Primary Black Button with Beige Font */
+    .btn-ink {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
+      border: 2px solid var(--ink-black);
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+                  background-color 0.2s ease,
+                  color 0.2s ease,
+                  box-shadow 0.2s ease;
+    }
+
+    .btn-ink:hover:not(:disabled) {
+      background-color: var(--bg-beige);
+      color: var(--ink-black);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 var(--ink-black);
+    }
+
+    .btn-ink:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 2px 0 var(--ink-black);
+    }
+
+    .btn-ink:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    /* Top Navbar: No borderlines, centered logo + text, blends with #F5F1E8 */
+    .auth-navbar {
+      height: 76px;
+      width: 100%;
+      background-color: var(--bg-beige);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 20;
+      flex-shrink: 0;
+    }
+
+    /* Single-column vertical viewport shell */
+    .auth-shell {
+      min-height: calc(100dvh - 76px);
+      width: 100%;
+      max-width: 460px;
+      margin: 0 auto;
+      padding: 0.5rem 1.25rem max(1.75rem, env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Smooth stage transitions */
+    .auth-stage {
+      display: none;
+    }
+
+    .auth-stage.active {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+      animation: stageEnter 0.34s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .auth-stage.leaving {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+      animation: stageLeave 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
+    }
+
+    @keyframes stageEnter {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes stageLeave {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+    }
+
+    /* Big Choice Cards */
+    .choice-card {
+      width: 100%;
+      background-color: var(--bg-beige-elevated);
+      border: 2px solid var(--ink-black);
+      border-radius: 1rem;
+      padding: 1.35rem 1.35rem;
+      text-align: left;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+                  background-color 0.2s ease,
+                  color 0.2s ease;
+    }
+
+    .choice-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 6px 6px 0px var(--ink-black);
+      background-color: #FFFFFF;
+    }
+
+    .choice-card:active {
+      transform: translateY(0);
+      box-shadow: 2px 2px 0px var(--ink-black);
+    }
+
+    /* Form Inputs */
+    .editorial-field {
+      width: 100%;
+      background-color: var(--bg-beige-elevated);
+      border: 2px solid var(--ink-black);
+      border-radius: 1rem;
+      padding: 0.95rem 1.1rem;
+      font-family: 'Golos Text', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--ink-black);
+      transition: box-shadow 0.18s ease, background-color 0.18s ease;
+    }
+
+    .editorial-field:focus {
+      outline: none;
+      background-color: #FFFFFF;
+      box-shadow: 5px 5px 0px var(--ink-black);
+    }
+
+    .editorial-field::placeholder {
+      color: var(--ink-subtle);
+    }
+
+    /* Budget quick-select pills */
+    .budget-chip {
+      border: 1.5px solid var(--ink-black);
+      background-color: var(--bg-beige-elevated);
+      color: var(--ink-black);
+      border-radius: 9999px;
+      padding: 0.45rem 0.9rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .budget-chip:hover,
+    .budget-chip.selected {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
+    }
+
+    /* Fullscreen ASCII Launch Overlay */
+    .rocket-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 55;
+      background-color: var(--bg-beige);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .rocket-screen.visible {
+      display: flex;
+      opacity: 1;
+    }
+
+    /* Bold 3D ASCII Launch Stage */
+    .ascii-launch-box {
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 0.25rem 0;
+    }
+
+    .ascii-launch-box pre {
+      margin: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: clamp(6.5px, 1.8vw, 11.5px);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      color: var(--ink-black);
+      text-align: center;
+      white-space: pre;
+    }
+
+    .status-fade {
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .status-fade.out {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-[#111111] selection:text-[#F5F1E8]">
+
+  <!-- SVG Distress / Worn-out Print Texture Filter (Exact Match from Main File) -->
+  <svg width="0" height="0" class="hidden" aria-hidden="true">
+    <defs>
+      <filter id="worn-ink-filter" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.35" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Subtle Paper Grain Overlay -->
+  <div class="paper-grain" aria-hidden="true"></div>
+
+  <!-- ======================================================================
+       1. TOP NAVBAR (No borderlines, blends with #F5F1E8, centered logo + text)
+       ====================================================================== -->
+  <header id="auth-header" class="auth-navbar">
+    <a href="/index.html" class="inline-flex items-center gap-2.5 text-[#111111] no-underline" aria-label="Pearl ADS Bosh sahifa">
+      <img
+        src="/logo.webp"
+        alt="Pearl ADS"
+        class="h-8 w-8 sm:h-9 sm:w-9 object-contain grayscale contrast-125"
+        onerror="this.onerror=null; this.src='https://placehold.co/96x96/111111/F5F1E8?text=P';"
+      />
+      <span class="font-worn-heading text-xl sm:text-2xl tracking-tight text-[#111111]">
+        Pearl ADS
+      </span>
+    </a>
+  </header>
+
+  <!-- ======================================================================
+       2. SINGLE-COLUMN VERTICAL VIEWPORT SHELL
+       ====================================================================== -->
+  <main id="auth-container" class="auth-shell">
+
+    <!-- Inline Validation / Error Banner -->
+    <div
+      id="error-banner"
+      class="hidden mb-4 px-4 py-3 rounded-2xl border-2 border-[#111111] bg-[#E8E1D3] text-[#111111] font-mono text-xs font-bold text-center"
+      role="alert"
+    ></div>
+
+    <!-- ====================================================================
+         STEP 1: INITIAL AUTH METHOD ("Hisobga Kirish" -> Google or Email)
+         ==================================================================== -->
+    <section id="stage-method" class="auth-stage active">
+      <div class="my-auto py-4">
+        <h1 class="font-worn-display text-3xl sm:text-4xl uppercase text-center text-[#111111] mb-8">
+          Hisobga Kirish
+        </h1>
+
+        <div class="space-y-4">
+          <!-- Card 1: Google orqali kirish -->
+          <button type="button" id="btn-google-method" onclick="chooseGoogleMethod()" class="choice-card flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl border-2 border-[#111111] bg-[#F5F1E8] flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#111111" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#111111" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#111111" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#111111" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+            </div>
+            <span class="font-worn-heading text-base sm:text-lg text-[#111111] flex-1">
+              Google orqali kirish
+            </span>
+            <i data-lucide="arrow-right" class="w-5 h-5 text-[#111111] shrink-0"></i>
+          </button>
+
+          <!-- Card 2: Email orqali kirish -->
+          <button type="button" id="btn-email-method" onclick="chooseEmailMethod()" class="choice-card flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl border-2 border-[#111111] bg-[#F5F1E8] flex items-center justify-center shrink-0">
+              <i data-lucide="mail" class="w-5 h-5 text-[#111111]"></i>
+            </div>
+            <span class="font-worn-heading text-base sm:text-lg text-[#111111] flex-1">
+              Email orqali kirish
+            </span>
+            <i data-lucide="arrow-right" class="w-5 h-5 text-[#111111] shrink-0"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="h-1"></div>
+    </section>
+
+    <!-- ====================================================================
+         STEP 2: EMAIL PATH (2-Tab Navbar: Kirish / Login vs Ro‘yxatdan o‘tish / Sign Up)
+         ==================================================================== -->
+    <section id="stage-email" class="auth-stage">
+      <div>
+        <!-- Back Button + Top 2-Tab Switcher -->
+        <div class="mb-4">
+          <button type="button" onclick="backFromEmail()" class="inline-flex items-center gap-1.5 font-mono text-xs font-bold uppercase tracking-wider text-[#4A4741] hover:text-[#111111]">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Orqaga</span>
+          </button>
+        </div>
+
+        <!-- 2-Tab Navbar ("Kirish" / "Ro‘yxatdan o‘tish") -->
+        <div class="grid grid-cols-2 p-1.5 rounded-full border-2 border-[#111111] bg-[#FAF7F0] mb-6">
+          <button
+            type="button"
+            id="tab-login"
+            onclick="setEmailTab('login')"
+            class="py-2.5 px-3 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider transition-all bg-[#111111] text-[#F5F1E8]"
+          >
+            Kirish
+          </button>
+          <button
+            type="button"
+            id="tab-signup"
+            onclick="setEmailTab('signup')"
+            class="py-2.5 px-3 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider transition-all text-[#111111]"
+          >
+            Ro‘yxatdan o‘tish
+          </button>
+        </div>
+
+        <!-- PANEL A: LOGIN ("Kirish") -->
+        <div id="panel-login" class="space-y-4">
+          <h2 class="font-worn-display text-2xl sm:text-3xl uppercase text-[#111111] mb-2">
+            Kirish
+          </h2>
+
+          <div>
+            <label for="login-email" class="block font-mono text-xs uppercase tracking-wider text-[#4A4741] mb-1.5">
+              Email
+            </label>
+            <input type="email" id="login-email" class="editorial-field" placeholder="siz@email.com" autocomplete="email" />
+          </div>
+
+          <div>
+            <label for="login-password" class="block font-mono text-xs uppercase tracking-wider text-[#4A4741] mb-1.5">
+              Parol
+            </label>
+            <input type="password" id="login-password" class="editorial-field" placeholder="••••••" autocomplete="current-password" />
+          </div>
+        </div>
+
+        <!-- PANEL B: SIGN UP ("Ro‘yxatdan o‘tish") -->
+        <div id="panel-signup" class="hidden space-y-4">
+          
+          <!-- Step 2.1: Role Selection inside Sign Up -->
+          <div id="signup-role-step" class="space-y-4">
+            <h2 class="font-worn-display text-xl sm:text-2xl uppercase text-[#111111] leading-snug mb-4">
+              Siz reklama bermoqchimisiz yoki blogermisiz?
+            </h2>
+
+            <button type="button" onclick="pickSignupRole('advertiser')" class="choice-card py-5 px-5 flex items-center justify-between gap-3">
+              <div>
+                <span class="font-mono text-[11px] uppercase tracking-widest text-[#4A4741] block mb-1">
+                  Advertiser
+                </span>
+                <span class="font-worn-heading text-base sm:text-lg text-[#111111] leading-snug block">
+                  Men reklama bermoqchiman
+                </span>
+              </div>
+              <i data-lucide="megaphone" class="w-5 h-5 text-[#111111] shrink-0"></i>
+            </button>
+
+            <button type="button" onclick="pickSignupRole('publisher')" class="choice-card py-5 px-5 flex items-center justify-between gap-3">
+              <div>
+                <span class="font-mono text-[11px] uppercase tracking-widest text-[#4A4741] block mb-1">
+                  Publisher
+                </span>
+                <span class="font-worn-heading text-base sm:text-lg text-[#111111] leading-snug block">
+                  Men Kontentimdan Daromad qilmoqchiman
+                </span>
+              </div>
+              <i data-lucide="sparkles" class="w-5 h-5 text-[#111111] shrink-0"></i>
+            </button>
+          </div>
+
+          <!-- Step 2.2: One Question at a Time after Role Selection -->
+          <div id="signup-questions-step" class="hidden space-y-4">
+            <div class="flex items-center justify-between font-mono text-xs text-[#4A4741]">
+              <span id="su-progress-label">1 / 5</span>
+              <span id="su-role-tag" class="uppercase font-bold text-[#111111]">Advertiser</span>
+            </div>
+
+            <!-- Question 0: Full Name -->
+            <div id="su-q-0" class="space-y-3">
+              <h2 class="font-worn-display text-2xl sm:text-3xl uppercase text-[#111111]">
+                To‘liq ismingiz
+              </h2>
+              <input type="text" id="su-name" class="editorial-field" placeholder="Masalan: Sardor Karimov" autocomplete="name" />
+            </div>
+
+            <!-- Question 1: Email & Password -->
+            <div id="su-q-1" class="hidden space-y-3">
+              <h2 class="font-worn-display text-2xl sm:text-3xl uppercase text-[#111111]">
+                Email va parol
+              </h2>
+              <input type="email" id="su-email" class="editorial-field" placeholder="siz@email.com" autocomplete="email" />
+              <input type="password" id="su-password" class="editorial-field" placeholder="Parol (kamida 6 belgi)" autocomplete="new-password" />
+            </div>
+
+            <!-- Question 2: Address / City -->
+            <div id="su-q-2" class="hidden space-y-3">
+              <h2 class="font-worn-display text-2xl sm:text-3xl uppercase text-[#111111]">
+                Manzil / Shahar
+              </h2>
+              <input type="text" id="su-address" class="editorial-field" placeholder="Masalan: Toshkent, Chilonzor" autocomplete="street-address" />
+            </div>
+
+            <!-- Question 3 (Role-specific: Business info OR Social link) -->
+            <div id="su-q-3" class="hidden space-y-3">
+              <h2 id="su-q3-title" class="font-worn-display text-2xl sm:text-3xl uppercase text-[#111111]">
+                Biznesingiz haqida qisqacha
+              </h2>
+              <textarea id="su-q3-textarea" rows="3" class="editorial-field resize-none" placeholder="Nima sotishingiz yoki xizmatlaringiz haqida..."></textarea>
+              <input type="url" id="su-q3-url" class="editorial-field hidden" placeholder="https://t.me/kanalingiz yoki instagram.com/..." />
+            </div>
+
+            <!-- Question 4 (Role-specific LAST question: Budget OR Content info) -->
+            <div id="su-q-4" class="hidden space-y-3">
+              <h2 id="su-q4-title" class="font-worn-display text-2xl sm:text-3xl uppercase text-[#111111]">
+                Oylik reklama byudjetingiz
+              </h2>
+              <div id="su-budget-chips" class="flex flex-wrap gap-2">
+                <button type="button" class="budget-chip" onclick="selectBudgetChip(this, 'su-q4-input', '$100 - $300')">$100 - $300</button>
+                <button type="button" class="budget-chip" onclick="selectBudgetChip(this, 'su-q4-input', '$300 - $1,000')">$300 - $1,000</button>
+                <button type="button" class="budget-chip" onclick="selectBudgetChip(this, 'su-q4-input', '$1,000+')">$1,000+</button>
+              </div>
+              <input type="text" id="su-q4-input" class="editorial-field" placeholder="Masalan: $500" />
+              <textarea id="su-q4-textarea" rows="3" class="editorial-field hidden resize-none" placeholder="Mavzu, auditoriya soni va format haqida..."></textarea>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Bottom Button ("Kirish" for login; "Keyingi" -> "Tayyor" for signup questions) -->
+      <div id="email-footer-action" class="pt-6">
+        <button type="button" id="email-action-btn" onclick="handleEmailAction()" class="btn-ink w-full py-4 px-6 rounded-full font-worn-heading text-sm sm:text-base uppercase tracking-wider inline-flex items-center justify-center gap-2.5">
+          <span id="email-action-label">Kirish</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         STEP 3: GOOGLE NEW USER ONBOARDING (Role -> 1 Question at a Time)
+         ==================================================================== -->
+    <section id="stage-google" class="auth-stage">
+      <div>
+        <div class="mb-4">
+          <button type="button" onclick="backFromGoogle()" class="inline-flex items-center gap-1.5 font-mono text-xs font-bold uppercase tracking-wider text-[#4A4741] hover:text-[#111111]">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Orqaga</span>
+          </button>
+        </div>
+
+        <!-- Step 3.1: Role Selection -->
+        <div id="google-role-step" class="space-y-4">
+          <h2 class="font-worn-display text-xl sm:text-2xl uppercase text-[#111111] leading-snug mb-4">
+            Siz reklama bermoqchimisiz yoki blogermisiz?
+          </h2>
+
+          <button type="button" onclick="pickGoogleRole('advertiser')" class="choice-card py-5 px-5 flex items-center justify-between gap-3">
+            <div>
+              <span class="font-mono text-[11px] uppercase tracking-widest text-[#4A4741] block mb-1">
+                Advertiser
+              </span>
+              <span class="font-worn-heading text-base sm:text-lg text-[#111111] leading-snug block">
+                Men reklama bermoqchiman
+              </span>
+            </div>
+            <i data-lucide="megaphone" class="w-5 h-5 text-[#111111] shrink-0"></i>
+          </button>
+
+          <button type="button" onclick="pickGoogleRole('publisher')" class="choice-card py-5 px-5 flex items-center justify-between gap-3">
+            <div>
+              <span class="font-mono text-[11px] uppercase tracking-widest text-[#4A4741] block mb-1">
+                Publisher
+              </span>
+              <span class="font-worn-heading text-base sm:text-lg text-[#111111] leading-snug block">
+                Men Kontentimdan Daromad qilmoqchiman
+              </span>
+            </div>
+            <i data-lucide="sparkles" class="w-5 h-5 text-[#111111] shrink-0"></i>
+          </button>
+        </div>
+
+        <!-- Step 3.2: Google Role-Specific Questions (One at a time) -->
+        <div id="google-questions-step" class="hidden space-y-4">
+          <div class="flex items-center justify-between font-mono text-xs text-[#4A4741]">
+            <span id="g-progress-label">1 / 2</span>
+            <span id="g-role-tag" class="uppercase font-bold text-[#111111]">Advertiser</span>
+          </div>
+
+          <!-- Google Q0 -->
+          <div id="g-q-0" class="space-y-3">
+            <h2 id="g-q0-title" class="font-worn-display text-2xl sm:text-3xl uppercase text-[#111111]">
+              Biznesingiz haqida qisqacha
+            </h2>
+            <textarea id="g-q0-textarea" rows="3" class="editorial-field resize-none" placeholder="Biznesingiz haqida qisqacha..."></textarea>
+            <input type="url" id="g-q0-url" class="editorial-field hidden" placeholder="https://t.me/kanalingiz yoki instagram.com/..." />
+          </div>
+
+          <!-- Google Q1 (LAST question -> "Tayyor") -->
+          <div id="g-q-1" class="hidden space-y-3">
+            <h2 id="g-q1-title" class="font-worn-display text-2xl sm:text-3xl uppercase text-[#111111]">
+              Oylik reklama byudjetingiz
+            </h2>
+            <div id="g-budget-chips" class="flex flex-wrap gap-2">
+              <button type="button" class="budget-chip" onclick="selectBudgetChip(this, 'g-q1-input', '$100 - $300')">$100 - $300</button>
+              <button type="button" class="budget-chip" onclick="selectBudgetChip(this, 'g-q1-input', '$300 - $1,000')">$300 - $1,000</button>
+              <button type="button" class="budget-chip" onclick="selectBudgetChip(this, 'g-q1-input', '$1,000+')">$1,000+</button>
+            </div>
+            <input type="text" id="g-q1-input" class="editorial-field" placeholder="Masalan: $500" />
+            <textarea id="g-q1-textarea" rows="3" class="editorial-field hidden resize-none" placeholder="Mavzu, auditoriya soni va format haqida..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Button ("Keyingi" -> "Tayyor") -->
+      <div id="google-footer-action" class="hidden pt-6">
+        <button type="button" id="google-action-btn" onclick="handleGoogleQuestionNext()" class="btn-ink w-full py-4 px-6 rounded-full font-worn-heading text-sm sm:text-base uppercase tracking-wider inline-flex items-center justify-center gap-2.5">
+          <span id="google-action-label">Keyingi</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================================
+       4. FULL-SCREEN 3D ASCII PRISM LAUNCH & 8-SECOND PROGRESS SEQUENCE
+       ====================================================================== -->
+  <div id="rocket-overlay" class="rocket-screen" aria-live="polite">
+    <div class="w-full max-w-sm flex flex-col items-center text-center">
+
+      <!-- Bold 3D ASCII Launch Stage -->
+      <div class="ascii-launch-box mb-5">
+        <pre id="ascii-launch-canvas" aria-label="Pearl ADS 3D ASCII Launch"></pre>
+      </div>
+
+      <!-- Sleek Black-and-Beige Progress Bar -->
+      <div class="w-full h-4 rounded-full border-2 border-[#111111] bg-[#FAF7F0] p-0.5 overflow-hidden mb-4">
+        <div
+          id="rocket-progress-bar"
+          class="h-full rounded-full bg-[#111111]"
+          style="width: 0%;"
+        ></div>
+      </div>
+
+      <!-- Randomly Cycling Status Text -> "Tayyor!" -->
+      <p id="rocket-status-label" class="status-fade font-worn-display text-lg sm:text-xl uppercase text-[#111111] tracking-wide">
+        Tayyorlayapmiz...
+      </p>
+
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       JAVASCRIPT: FIREBASE AUTH, ONBOARDING FLOW & 3D ASCII PRISM ENGINE
+       ====================================================================== -->
+  <script>
+    lucide.createIcons();
+
+    // Firebase Configuration (pearlads-f7018)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCu3EYefkYrRDskqIWqeyMxaWGlEIe7RXg",
+      authDomain: "pearlads-f7018.firebaseapp.com",
+      projectId: "pearlads-f7018",
+      storageBucket: "pearlads-f7018.firebasestorage.app",
+      messagingSenderId: "67374785504",
+      appId: "1:67374785504:web:b063d4750b6224fd7ec185"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Application State
+    let currentEmailTab = 'login';      // 'login' | 'signup'
+    let signupRole = null;              // 'advertiser' | 'publisher'
+    let signupQuestionIdx = 0;          // 0..4
+    let googleUserObj = null;
+    let googleRole = null;              // 'advertiser' | 'publisher'
+    let googleQuestionIdx = 0;          // 0..1
+    let launchStarted = false;
+
+    function showError(msg) {
+      const banner = document.getElementById('error-banner');
+      if (!msg) {
+        banner.classList.add('hidden');
+        banner.textContent = '';
+        return;
+      }
+      banner.textContent = msg;
+      banner.classList.remove('hidden');
+    }
+
+    function goStage(nextId) {
+      showError('');
+      const current = document.querySelector('.auth-stage.active');
+      const next = document.getElementById(nextId);
+      if (!next || current === next) return;
+
+      if (current) {
+        current.classList.remove('active');
+        current.classList.add('leaving');
+        setTimeout(() => {
+          current.classList.remove('leaving');
+          next.classList.add('active');
+          lucide.createIcons();
+        }, 200);
+      } else {
+        next.classList.add('active');
+        lucide.createIcons();
+      }
+    }
+
+    // ------------------------------------------------------------------------
+    // 1. INITIAL METHOD SELECTION
+    // ------------------------------------------------------------------------
+    function chooseEmailMethod() {
+      setEmailTab('login');
+      goStage('stage-email');
+    }
+
+    async function chooseGoogleMethod() {
+      showError('');
+      const btn = document.getElementById('btn-google-method');
+      btn.style.pointerEvents = 'none';
+      const provider = new firebase.auth.GoogleAuthProvider();
+
+      try {
+        const res = await auth.signInWithPopup(provider);
+        const user = res.user;
+        const docSnap = await db.collection('users').doc(user.uid).get();
+
+        if (docSnap.exists && docSnap.data().role) {
+          launchRocketAndRedirect(docSnap.data().role);
+          return;
+        }
+
+        googleUserObj = user;
+        googleRole = null;
+        googleQuestionIdx = 0;
+        document.getElementById('google-role-step').classList.remove('hidden');
+        document.getElementById('google-questions-step').classList.add('hidden');
+        document.getElementById('google-footer-action').classList.add('hidden');
+        goStage('stage-google');
+      } catch (err) {
+        btn.style.pointerEvents = 'auto';
+        if (err && err.code === 'auth/popup-closed-by-user') return;
+        if (err && (err.code === 'auth/unauthorized-domain' || err.code === 'auth/operation-not-supported-in-this-environment')) {
+          googleUserObj = {
+            uid: 'preview_' + Date.now(),
+            displayName: 'Google User',
+            email: 'user@gmail.com',
+            isPreview: true
+          };
+          googleRole = null;
+          googleQuestionIdx = 0;
+          document.getElementById('google-role-step').classList.remove('hidden');
+          document.getElementById('google-questions-step').classList.add('hidden');
+          document.getElementById('google-footer-action').classList.add('hidden');
+          goStage('stage-google');
+          return;
+        }
+        showError(translateError(err));
+      } finally {
+        btn.style.pointerEvents = 'auto';
+      }
+    }
+
+    // ------------------------------------------------------------------------
+    // 2. EMAIL PATH (Login vs Sign Up)
+    // ------------------------------------------------------------------------
+    function backFromEmail() {
+      if (currentEmailTab === 'signup' && signupRole !== null) {
+        if (signupQuestionIdx > 0) {
+          signupQuestionIdx--;
+          renderSignupQuestion();
+          return;
+        }
+        signupRole = null;
+        document.getElementById('signup-questions-step').classList.add('hidden');
+        document.getElementById('signup-role-step').classList.remove('hidden');
+        document.getElementById('email-footer-action').classList.add('hidden');
+        return;
+      }
+      goStage('stage-method');
+    }
+
+    function setEmailTab(tab) {
+      currentEmailTab = tab;
+      showError('');
+
+      const tabLogin = document.getElementById('tab-login');
+      const tabSignup = document.getElementById('tab-signup');
+      const panelLogin = document.getElementById('panel-login');
+      const panelSignup = document.getElementById('panel-signup');
+      const footerAction = document.getElementById('email-footer-action');
+      const actionLabel = document.getElementById('email-action-label');
+
+      if (tab === 'login') {
+        tabLogin.className = 'py-2.5 px-3 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider transition-all bg-[#111111] text-[#F5F1E8]';
+        tabSignup.className = 'py-2.5 px-3 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider transition-all text-[#111111]';
+        panelLogin.classList.remove('hidden');
+        panelSignup.classList.add('hidden');
+        footerAction.classList.remove('hidden');
+        actionLabel.textContent = 'Kirish';
+      } else {
+        tabSignup.className = 'py-2.5 px-3 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider transition-all bg-[#111111] text-[#F5F1E8]';
+        tabLogin.className = 'py-2.5 px-3 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider transition-all text-[#111111]';
+        panelLogin.classList.add('hidden');
+        panelSignup.classList.remove('hidden');
+
+        if (!signupRole) {
+          document.getElementById('signup-role-step').classList.remove('hidden');
+          document.getElementById('signup-questions-step').classList.add('hidden');
+          footerAction.classList.add('hidden');
+        } else {
+          document.getElementById('signup-role-step').classList.add('hidden');
+          document.getElementById('signup-questions-step').classList.remove('hidden');
+          footerAction.classList.remove('hidden');
+          renderSignupQuestion();
+        }
+      }
+      lucide.createIcons();
+    }
+
+    function pickSignupRole(role) {
+      signupRole = role;
+      signupQuestionIdx = 0;
+      document.getElementById('su-role-tag').textContent =
+        role === 'advertiser' ? 'Advertiser' : 'Publisher';
+
+      document.getElementById('signup-role-step').classList.add('hidden');
+      document.getElementById('signup-questions-step').classList.remove('hidden');
+      document.getElementById('email-footer-action').classList.remove('hidden');
+      renderSignupQuestion();
+    }
+
+    function renderSignupQuestion() {
+      showError('');
+      document.getElementById('su-progress-label').textContent = `${signupQuestionIdx + 1} / 5`;
+
+      for (let i = 0; i < 5; i++) {
+        document.getElementById(`su-q-${i}`).classList.toggle('hidden', i !== signupQuestionIdx);
+      }
+
+      if (signupRole === 'advertiser') {
+        document.getElementById('su-q3-title').textContent = 'Biznesingiz haqida qisqacha';
+        document.getElementById('su-q3-textarea').classList.remove('hidden');
+        document.getElementById('su-q3-url').classList.add('hidden');
+
+        document.getElementById('su-q4-title').textContent = 'Oylik reklama byudjetingiz';
+        document.getElementById('su-budget-chips').classList.remove('hidden');
+        document.getElementById('su-q4-input').classList.remove('hidden');
+        document.getElementById('su-q4-textarea').classList.add('hidden');
+      } else {
+        document.getElementById('su-q3-title').textContent = 'Ijtimoiy tarmoq havolasi';
+        document.getElementById('su-q3-textarea').classList.add('hidden');
+        document.getElementById('su-q3-url').classList.remove('hidden');
+
+        document.getElementById('su-q4-title').textContent = 'Kontentingiz haqida qisqacha';
+        document.getElementById('su-budget-chips').classList.add('hidden');
+        document.getElementById('su-q4-input').classList.add('hidden');
+        document.getElementById('su-q4-textarea').classList.remove('hidden');
+      }
+
+      document.getElementById('email-action-label').textContent =
+        signupQuestionIdx === 4 ? 'Tayyor' : 'Keyingi';
+    }
+
+    async function handleEmailAction() {
+      showError('');
+      const btn = document.getElementById('email-action-btn');
+
+      if (currentEmailTab === 'login') {
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+
+        if (!email || !email.includes('@')) {
+          showError('To‘g‘ri email manzilini kiriting.');
+          return;
+        }
+        if (password.length < 6) {
+          showError('Parol kamida 6 ta belgidan iborat bo‘lsin.');
+          return;
+        }
+
+        btn.disabled = true;
+        try {
+          const cred = await auth.signInWithEmailAndPassword(email, password);
+          const snap = await db.collection('users').doc(cred.user.uid).get();
+          const role = (snap.exists && snap.data().role) ? snap.data().role : 'advertiser';
+          launchRocketAndRedirect(role);
+        } catch (err) {
+          btn.disabled = false;
+          showError(translateError(err));
+        }
+        return;
+      }
+
+      if (signupQuestionIdx === 0) {
+        if (!document.getElementById('su-name').value.trim()) {
+          showError('To‘liq ismingizni kiriting.');
+          return;
+        }
+        signupQuestionIdx = 1;
+        renderSignupQuestion();
+        return;
+      }
+
+      if (signupQuestionIdx === 1) {
+        const email = document.getElementById('su-email').value.trim();
+        const password = document.getElementById('su-password').value;
+        if (!email || !email.includes('@')) {
+          showError('To‘g‘ri email manzilini kiriting.');
+          return;
+        }
+        if (password.length < 6) {
+          showError('Parol kamida 6 ta belgidan iborat bo‘lsin.');
+          return;
+        }
+        signupQuestionIdx = 2;
+        renderSignupQuestion();
+        return;
+      }
+
+      if (signupQuestionIdx === 2) {
+        if (!document.getElementById('su-address').value.trim()) {
+          showError('Manzil yoki shahringizni kiriting.');
+          return;
+        }
+        signupQuestionIdx = 3;
+        renderSignupQuestion();
+        return;
+      }
+
+      if (signupQuestionIdx === 3) {
+        if (signupRole === 'advertiser') {
+          if (!document.getElementById('su-q3-textarea').value.trim()) {
+            showError('Biznesingiz haqida qisqacha yozing.');
+            return;
+          }
+        } else {
+          if (!document.getElementById('su-q3-url').value.trim()) {
+            showError('Ijtimoiy tarmoq havolasini kiriting.');
+            return;
+          }
+        }
+        signupQuestionIdx = 4;
+        renderSignupQuestion();
+        return;
+      }
+
+      const fullName = document.getElementById('su-name').value.trim();
+      const email = document.getElementById('su-email').value.trim();
+      const password = document.getElementById('su-password').value;
+      const address = document.getElementById('su-address').value.trim();
+
+      let rolePayload = {};
+      if (signupRole === 'advertiser') {
+        const aboutBusiness = document.getElementById('su-q3-textarea').value.trim();
+        const budget = document.getElementById('su-q4-input').value.trim();
+        if (!budget) {
+          showError('Oylik reklama byudjetingizni kiriting.');
+          return;
+        }
+        rolePayload = { aboutBusiness, budget };
+      } else {
+        const socialLink = document.getElementById('su-q3-url').value.trim();
+        const aboutContent = document.getElementById('su-q4-textarea').value.trim();
+        if (!aboutContent) {
+          showError('Kontentingiz haqida qisqacha yozing.');
+          return;
+        }
+        rolePayload = { socialLink, aboutContent };
+      }
+
+      btn.disabled = true;
+      try {
+        const cred = await auth.createUserWithEmailAndPassword(email, password);
+        const user = cred.user;
+        await user.updateProfile({ displayName: fullName });
+
+        await db.collection('users').doc(user.uid).set({
+          uid: user.uid,
+          name: fullName,
+          email,
+          address,
+          role: signupRole,
+          ...rolePayload,
+          provider: 'email',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        launchRocketAndRedirect(signupRole);
+      } catch (err) {
+        btn.disabled = false;
+        showError(translateError(err));
+      }
+    }
+
+    // ------------------------------------------------------------------------
+    // 3. GOOGLE PATH (Role Selection -> 1 Question at a Time)
+    // ------------------------------------------------------------------------
+    function backFromGoogle() {
+      if (googleRole !== null) {
+        if (googleQuestionIdx > 0) {
+          googleQuestionIdx--;
+          renderGoogleQuestion();
+          return;
+        }
+        googleRole = null;
+        document.getElementById('google-questions-step').classList.add('hidden');
+        document.getElementById('google-role-step').classList.remove('hidden');
+        document.getElementById('google-footer-action').classList.add('hidden');
+        return;
+      }
+      googleUserObj = null;
+      goStage('stage-method');
+    }
+
+    function pickGoogleRole(role) {
+      googleRole = role;
+      googleQuestionIdx = 0;
+      document.getElementById('g-role-tag').textContent =
+        role === 'advertiser' ? 'Advertiser' : 'Publisher';
+
+      document.getElementById('google-role-step').classList.add('hidden');
+      document.getElementById('google-questions-step').classList.remove('hidden');
+      document.getElementById('google-footer-action').classList.remove('hidden');
+      renderGoogleQuestion();
+    }
+
+    function renderGoogleQuestion() {
+      showError('');
+      document.getElementById('g-progress-label').textContent = `${googleQuestionIdx + 1} / 2`;
+
+      document.getElementById('g-q-0').classList.toggle('hidden', googleQuestionIdx !== 0);
+      document.getElementById('g-q-1').classList.toggle('hidden', googleQuestionIdx !== 1);
+
+      if (googleRole === 'advertiser') {
+        document.getElementById('g-q0-title').textContent = 'Biznesingiz haqida qisqacha';
+        document.getElementById('g-q0-textarea').classList.remove('hidden');
+        document.getElementById('g-q0-url').classList.add('hidden');
+
+        document.getElementById('g-q1-title').textContent = 'Oylik reklama byudjetingiz';
+        document.getElementById('g-budget-chips').classList.remove('hidden');
+        document.getElementById('g-q1-input').classList.remove('hidden');
+        document.getElementById('g-q1-textarea').classList.add('hidden');
+      } else {
+        document.getElementById('g-q0-title').textContent = 'Ijtimoiy tarmoq havolasi';
+        document.getElementById('g-q0-textarea').classList.add('hidden');
+        document.getElementById('g-q0-url').classList.remove('hidden');
+
+        document.getElementById('g-q1-title').textContent = 'Kontentingiz haqida qisqacha';
+        document.getElementById('g-budget-chips').classList.add('hidden');
+        document.getElementById('g-q1-input').classList.add('hidden');
+        document.getElementById('g-q1-textarea').classList.remove('hidden');
+      }
+
+      document.getElementById('google-action-label').textContent =
+        googleQuestionIdx === 1 ? 'Tayyor' : 'Keyingi';
+    }
+
+    async function handleGoogleQuestionNext() {
+      showError('');
+
+      if (googleQuestionIdx === 0) {
+        if (googleRole === 'advertiser') {
+          if (!document.getElementById('g-q0-textarea').value.trim()) {
+            showError('Biznesingiz haqida qisqacha yozing.');
+            return;
+          }
+        } else {
+          if (!document.getElementById('g-q0-url').value.trim()) {
+            showError('Ijtimoiy tarmoq havolasini kiriting.');
+            return;
+          }
+        }
+        googleQuestionIdx = 1;
+        renderGoogleQuestion();
+        return;
+      }
+
+      let rolePayload = {};
+      if (googleRole === 'advertiser') {
+        const aboutBusiness = document.getElementById('g-q0-textarea').value.trim();
+        const budget = document.getElementById('g-q1-input').value.trim();
+        if (!budget) {
+          showError('Oylik reklama byudjetingizni kiriting.');
+          return;
+        }
+        rolePayload = { aboutBusiness, budget };
+      } else {
+        const socialLink = document.getElementById('g-q0-url').value.trim();
+        const aboutContent = document.getElementById('g-q1-textarea').value.trim();
+        if (!aboutContent) {
+          showError('Kontentingiz haqida qisqacha yozing.');
+          return;
+        }
+        rolePayload = { socialLink, aboutContent };
+      }
+
+      const btn = document.getElementById('google-action-btn');
+      btn.disabled = true;
+
+      try {
+        if (googleUserObj && !googleUserObj.isPreview) {
+          await db.collection('users').doc(googleUserObj.uid).set({
+            uid: googleUserObj.uid,
+            name: googleUserObj.displayName || 'Foydalanuvchi',
+            email: googleUserObj.email || '',
+            role: googleRole,
+            ...rolePayload,
+            provider: 'google',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+        launchRocketAndRedirect(googleRole);
+      } catch (err) {
+        btn.disabled = false;
+        showError(translateError(err));
+      }
+    }
+
+    function selectBudgetChip(chipEl, inputId, value) {
+      chipEl.parentElement.querySelectorAll('.budget-chip').forEach(c => c.classList.remove('selected'));
+      chipEl.classList.add('selected');
+      document.getElementById(inputId).value = value;
+    }
+
+    // ------------------------------------------------------------------------
+    // 4. BOLD 3D ASCII DIAMOND PRISM ANIMATION + 8s PROGRESS + 2s "Tayyor!"
+    // ------------------------------------------------------------------------
+    function startAsciiPrism() {
+      const pre = document.getElementById('ascii-launch-canvas');
+      if (!pre) return () => {};
+
+      const cols = 62;
+      const rows = 28;
+      const ramp = ' .:-=+*#%@█';
+      let angle = 0;
+      let rafId = null;
+
+      function renderFrame() {
+        angle += 0.055;
+        const lx = Math.cos(angle * 0.7) * 0.65;
+        const ly = -0.55;
+        const lz = 0.85;
+        const lLen = Math.hypot(lx, ly, lz) || 1;
+        const nlx = lx / lLen;
+        const nly = ly / lLen;
+        const nlz = lz / lLen;
+
+        let out = '';
+        const cosA = Math.cos(angle);
+        const sinA = Math.sin(angle);
+
+        for (let y = 0; y < rows; y++) {
+          const ny = (y / (rows - 1)) * 2 - 1;
+          for (let x = 0; x < cols; x++) {
+            const nx = ((x / (cols - 1)) * 2 - 1) * 1.15;
+            const absY = Math.abs(ny);
+
+            // Faceted Diamond Octahedron boundary
+            const maxWidth = (1 - absY * 1.08) * 0.82;
+
+            if (absY <= 0.92 && Math.abs(nx) <= maxWidth) {
+              // Quantize surface normals into crisp geometric facets
+              const facetX = Math.round((nx / (maxWidth || 1)) * 3) / 3;
+              const facetY = ny < 0 ? -0.58 : 0.58;
+              const facetZ = Math.sqrt(Math.max(0.05, 1 - facetX * facetX * 0.7 - facetY * facetY * 0.7));
+
+              // Rotate normal with prism spin
+              const rnx = facetX * cosA + facetZ * sinA;
+              const rnz = -facetX * sinA + facetZ * cosA;
+
+              const diff = Math.max(0, rnx * nlx + facetY * nly + Math.abs(rnz) * nlz);
+              const spec = Math.pow(diff, 5);
+              const edgeGlow = Math.abs(Math.abs(nx) - maxWidth) < 0.055 ? 0.35 : 0;
+
+              const ink = Math.min(1, Math.max(0.12, (1 - diff * 0.72) - spec * 0.45 + edgeGlow));
+              const idx = Math.min(ramp.length - 1, Math.floor(ink * (ramp.length - 1)));
+              out += ramp[idx];
+            } else {
+              // Orbiting high-velocity energy shards & ascending shockwave lines
+              const orbitR = Math.hypot(nx * 0.95, ny * 1.35);
+              const theta = Math.atan2(ny * 1.35, nx * 0.95) + angle * 1.8;
+              const shardWave = Math.sin(theta * 4) * Math.cos(orbitR * 12 - angle * 4);
+
+              if (Math.abs(orbitR - 0.98) < 0.05 && shardWave > 0.25) {
+                out += '█';
+              } else if (Math.abs(orbitR - 1.14) < 0.035 && Math.sin(theta * 6 - angle * 3) > 0.55) {
+                out += '▓';
+              } else if (Math.abs(nx) < 0.75 && ((y + Math.floor(angle * 16)) % 7 === 0) && (x % 9 === 0)) {
+                out += '·';
+              } else {
+                out += ' ';
+              }
+            }
+          }
+          out += '\n';
+        }
+
+        pre.textContent = out;
+        rafId = requestAnimationFrame(renderFrame);
+      }
+
+      renderFrame();
+      return () => {
+        if (rafId) cancelAnimationFrame(rafId);
+      };
+    }
+
+    function launchRocketAndRedirect(role) {
+      if (launchStarted) return;
+      launchStarted = true;
+
+      document.getElementById('auth-header').style.display = 'none';
+      document.getElementById('auth-container').style.display = 'none';
+
+      const screen = document.getElementById('rocket-overlay');
+      const progressBar = document.getElementById('rocket-progress-bar');
+      const statusLabel = document.getElementById('rocket-status-label');
+
+      screen.classList.add('visible');
+      const stopPrism = startAsciiPrism();
+
+      // Randomly cycle status messages every ~2 seconds over 8 seconds
+      const statuses = ['Tayyorlayapmiz...', 'Sozlayapmiz...', 'Tekshiryapmiz...'];
+      let currentIdx = Math.floor(Math.random() * statuses.length);
+      statusLabel.textContent = statuses[currentIdx];
+
+      const statusTimer = setInterval(() => {
+        statusLabel.classList.add('out');
+        setTimeout(() => {
+          let nextIdx = Math.floor(Math.random() * statuses.length);
+          if (nextIdx === currentIdx) {
+            nextIdx = (currentIdx + 1) % statuses.length;
+          }
+          currentIdx = nextIdx;
+          statusLabel.textContent = statuses[currentIdx];
+          statusLabel.classList.remove('out');
+        }, 230);
+      }, 2000);
+
+      // 8-second progress bar fill (0% -> 100%)
+      const durationMs = 8000;
+      const t0 = performance.now();
+
+      function tickProgress(now) {
+        const elapsed = now - t0;
+        const pct = Math.min(100, (elapsed / durationMs) * 100);
+        progressBar.style.width = pct.toFixed(1) + '%';
+
+        if (elapsed < durationMs) {
+          requestAnimationFrame(tickProgress);
+        } else {
+          // At 8s: display "Tayyor!"
+          clearInterval(statusTimer);
+          statusLabel.classList.add('out');
+          setTimeout(() => {
+            statusLabel.textContent = 'Tayyor!';
+            statusLabel.classList.remove('out');
+          }, 180);
+
+          // Redirect 2 seconds after "Tayyor!"
+          setTimeout(() => {
+            stopPrism();
+            if (role === 'publisher') {
+              window.location.href = '/dashboard/publisher/';
+            } else {
+              window.location.href = '/dashboard/advertiser/';
+            }
+          }, 2000);
+        }
+      }
+
+      requestAnimationFrame(tickProgress);
+    }
+
+    function translateError(err) {
+      const code = (err && err.code) || '';
+      if (code.includes('email-already-in-use')) return 'Bu email allaqachon ro‘yxatdan o‘tgan.';
+      if (code.includes('invalid-email')) return 'Email manzili noto‘g‘ri.';
+      if (code.includes('weak-password')) return 'Parol kamida 6 belgidan iborat bo‘lsin.';
+      if (code.includes('user-not-found') || code.includes('wrong-password') || code.includes('invalid-credential')) {
+        return 'Email yoki parol noto‘g‘ri.';
+      }
+      if (code.includes('too-many-requests')) return 'Juda ko‘p urinish. Biroz kuting.';
+      if (code.includes('network-request-failed')) return 'Internet aloqasi yo‘q.';
+      return (err && err.message) || 'Xatolik yuz berdi.';
+    }
+  </script>
+</body>
+</html>

@@ -1,254 +1,973 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pearl ADS | Central Asian AdTech Engine</title>
-  <!-- Tailwind CSS CDN -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pearl ADS | Markaziy Osiyo AdTech Tizimi</title>
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Plus Jakarta Sans -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Google Fonts: Full Latin (Uzbek Oʻ/Gʻ), English & Cyrillic (Russian) Support -->
+  <!-- Unbounded & Oswald for bold editorial display + Golos Text & JetBrains Mono for crisp reading & ASCII -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&family=Oswald:wght@600;700&family=Unbounded:wght@700;800;900&display=swap" rel="stylesheet" />
+
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- DotLottie Player Script -->
+
+  <!-- DotLottie Player -->
   <script type="module" src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"></script>
+
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-          },
           colors: {
-            brand: {
-              50: '#f0fdf4',
-              100: '#dcfce7',
-              500: '#22c55e',
-              600: '#16a34a',
-              700: '#15803d',
-              900: '#14532d',
+            beige: {
+              50: '#FAF8F3',
+              100: '#F5F1E8',
+              200: '#EBE4D5',
+              300: '#DDD3BE',
+            },
+            ink: {
+              900: '#111111',
+              800: '#1E1E1E',
+              600: '#4A4741',
+              400: '#7D786E',
             }
+          },
+          fontFamily: {
+            display: ['"Unbounded"', '"Oswald"', 'sans-serif'],
+            editorial: ['"Oswald"', '"Unbounded"', 'sans-serif'],
+            sans: ['"Golos Text"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
           }
         }
       }
-    }
+    };
   </script>
+
   <style>
-    /* Completely hide scrollbars across all browsers */
-    html, body {
-      scrollbar-width: none; /* Firefox */
-      -ms-overflow-style: none; /* IE and Edge */
+    /* ==========================================================================
+       PEARL ADS — GLOBAL DESIGN TOKENS & WORN-OUT EDITORIAL THEME
+       ========================================================================== */
+    :root {
+      --bg-beige: #F5F1E8;
+      --bg-beige-elevated: #FAF7F0;
+      --bg-beige-dark: #E8E1D3;
+      --ink-black: #111111;
+      --ink-muted: #4A4741;
+      --ink-subtle: #78736A;
+      --border-ink: #111111;
     }
-    html::-webkit-scrollbar, body::-webkit-scrollbar {
-      display: none; /* Chrome, Safari, Opera */
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-beige);
+      color: var(--ink-black);
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none;
     }
 
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #ffffff;
-      color: #0f172a;
+      margin: 0;
+      font-family: 'Golos Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-beige);
+      color: var(--ink-black);
+      overflow-x: hidden;
+      position: relative;
     }
-    .hero-glow {
-      background: radial-gradient(circle at 50% 40%, rgba(241, 245, 249, 0.9) 0%, rgba(255, 255, 255, 1) 75%);
+
+    ::selection {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
     }
-    .tab-content {
+
+    /* Subtle tactile paper noise overlay across the page */
+    .paper-grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 60;
+      opacity: 0.045;
+      background-image: radial-gradient(#111111 0.65px, transparent 0.65px), radial-gradient(#111111 0.5px, #F5F1E8 0.5px);
+      background-size: 26px 26px;
+      background-position: 0 0, 13px 13px;
+    }
+
+    /* Ranfgih-inspired bold worn-out stamp display typography */
+    .font-worn-display {
+      font-family: 'Unbounded', 'Oswald', sans-serif;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      filter: url(#worn-ink-filter);
+      text-shadow: 1px 1px 0px rgba(17, 17, 17, 0.14);
+    }
+
+    .font-worn-heading {
+      font-family: 'Unbounded', 'Oswald', sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+    }
+
+    /* ==========================================================================
+       SCROLL-TRIGGERED TOP HEADER ANIMATION
+       ========================================================================== */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      height: 76px;
+      background-color: transparent;
+      border-bottom: 1.5px solid transparent;
+      transition: background-color 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                  border-color 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                  backdrop-filter 0.38s ease;
+    }
+
+    .site-header.is-scrolled {
+      background-color: rgba(245, 241, 232, 0.94);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1.5px solid var(--ink-black);
+    }
+
+    .header-inner {
+      position: relative;
+      max-width: 1280px;
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+      display: flex;
+      align-items: center;
+    }
+
+    @media (min-width: 640px) {
+      .header-inner {
+        padding: 0 2rem;
+      }
+    }
+
+    /* Logo starts dead-center, smoothly glides to the left on scroll */
+    .brand-mover {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      text-decoration: none;
+      color: var(--ink-black);
+      transition: left 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+      white-space: nowrap;
+    }
+
+    .site-header.is-scrolled .brand-mover {
+      left: 1.25rem;
+      transform: translateX(0);
+    }
+
+    @media (min-width: 640px) {
+      .site-header.is-scrolled .brand-mover {
+        left: 2rem;
+      }
+    }
+
+    /* Header START button hidden at top, animates in from right on scroll */
+    .header-start-btn {
+      margin-left: auto;
+      opacity: 0;
+      transform: translateX(18px) scale(0.95);
+      pointer-events: none;
+      transition: opacity 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+                  background-color 0.2s ease;
+    }
+
+    .site-header.is-scrolled .header-start-btn {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      pointer-events: auto;
+    }
+
+    /* ==========================================================================
+       FIRST VIEWPORT HERO (100dvh STRICTLY CLEAN)
+       ========================================================================== */
+    .hero-viewport {
+      min-height: 100dvh;
+      height: 100dvh;
+      width: 100%;
+      padding-top: 76px;
+      padding-bottom: max(1.75rem, env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Pure HTML/CSS/JS Bold ASCII Art Box */
+    .ascii-stage {
+      user-select: none;
+      cursor: crosshair;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 0.92;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      color: var(--ink-black);
+      letter-spacing: -0.04em;
+      transition: transform 0.25s ease;
+    }
+
+    .ascii-stage pre {
+      margin: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: clamp(7.2px, 1.9vw, 13.5px);
+      line-height: 0.94;
+      letter-spacing: 0.02em;
+      color: var(--ink-black);
+      text-align: center;
+    }
+
+    @media (max-height: 680px) {
+      .ascii-stage pre {
+        font-size: clamp(6px, 1.45vh, 10px);
+        line-height: 0.9;
+      }
+    }
+
+    /* Primary Black Button with Beige Font */
+    .btn-ink {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
+      border: 2px solid var(--ink-black);
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+                  background-color 0.2s ease,
+                  color 0.2s ease,
+                  box-shadow 0.2s ease;
+    }
+
+    .btn-ink:hover {
+      background-color: var(--bg-beige);
+      color: var(--ink-black);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 var(--ink-black);
+    }
+
+    .btn-ink:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 0 var(--ink-black);
+    }
+
+    /* ==========================================================================
+       AUDIENCE TABS & EDITORIAL CARDS
+       ========================================================================== */
+    .tab-panel {
       display: none;
     }
-    .tab-content.active {
+
+    .tab-panel.active {
       display: block;
+      animation: editorialReveal 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes editorialReveal {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Editorial Brutalist-Classic Card */
+    .editorial-card {
+      background-color: var(--bg-beige-elevated);
+      border: 2px solid var(--ink-black);
+      border-radius: 1.25rem;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .editorial-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 6px 6px 0px var(--ink-black);
+    }
+
+    /* Custom Range Slider in Black & Beige */
+    input[type="range"].beige-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 10px;
+      background: var(--bg-beige-dark);
+      border: 1.5px solid var(--ink-black);
+      border-radius: 9999px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"].beige-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 9999px;
+      background: var(--ink-black);
+      border: 2px solid var(--bg-beige);
+      box-shadow: 0 0 0 1.5px var(--ink-black);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    input[type="range"].beige-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.12);
+    }
+
+    input[type="range"].beige-slider::-moz-range-thumb {
+      width: 26px;
+      height: 26px;
+      border-radius: 9999px;
+      background: var(--ink-black);
+      border: 2px solid var(--bg-beige);
+      box-shadow: 0 0 0 1.5px var(--ink-black);
+      cursor: pointer;
     }
   </style>
 </head>
-<body class="bg-white text-slate-900 antialiased selection:bg-brand-500 selection:text-white">
+<body class="antialiased selection:bg-[#111111] selection:text-[#F5F1E8]">
 
-  <!-- FULL WHITE LOTTIE LOADER OVERLAY -->
-  <div id="lottie-loader" class="fixed inset-0 z-[9999] bg-white flex items-center justify-center transition-opacity duration-500">
-    <dotlottie-player src="loader.json" background="transparent" speed="1" style="width: 220px; height: 220px;" loop autoplay></dotlottie-player>
+  <!-- SVG Distress / Worn-out Print Texture Filter (Supports Latin, Uzbek & Cyrillic) -->
+  <svg width="0" height="0" class="hidden" aria-hidden="true">
+    <defs>
+      <filter id="worn-ink-filter" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.35" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Subtle Paper Grain Overlay -->
+  <div class="paper-grain" aria-hidden="true"></div>
+
+  <!-- LOTTIE LOADER OVERLAY (Matched to Whitish Beige Theme) -->
+  <div id="lottie-loader" class="fixed inset-0 z-[9999] bg-[#F5F1E8] flex items-center justify-center transition-opacity duration-500">
+    <dotlottie-player src="loader.json" background="transparent" speed="1" style="width: 200px; height: 200px;" loop autoplay></dotlottie-player>
   </div>
 
-  <!-- ================= TOP NAVIGATION BAR ================= -->
-  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-center sm:justify-between">
-      
-      <!-- Brand Logo (Centered on Mobile, Left-aligned on Desktop) -->
-      <div class="flex items-center gap-3">
-        <img src="logo.webp" alt="Pearl ADS Logo" class="h-9 w-9 object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100x100/16a34a/ffffff?text=P';" />
-        <span class="text-2xl font-extrabold tracking-tight text-slate-900">
-          Pearl <span class="text-emerald-600">ADS</span>
+  <!-- ========================================================================
+       1. TOP NAVBAR (Blends at top; border + left logo + right START on scroll)
+       ======================================================================== -->
+  <header id="main-header" class="site-header">
+    <div class="header-inner">
+      <!-- Logo Image & Brand Text (Centered initially, slides left on scroll) -->
+      <a href="#" class="brand-mover" aria-label="Pearl ADS Bosh sahifa">
+        <img
+          src="logo.webp"
+          alt="Pearl ADS"
+          class="h-8 w-8 sm:h-9 sm:w-9 object-contain grayscale contrast-125"
+          onerror="this.onerror=null; this.src='https://placehold.co/96x96/111111/F5F1E8?text=P';"
+        />
+        <span class="font-worn-heading text-xl sm:text-2xl tracking-tight text-[#111111]">
+          Pearl ADS
         </span>
-      </div>
+      </a>
 
-      <!-- Right side: Navigation Links (Hidden on Mobile, Visible on Desktop) -->
-      <div class="hidden sm:flex items-center gap-6">
-        <a href="#how-it-works" class="text-sm font-semibold text-slate-700 hover:text-emerald-600 transition-colors">
-          How does it work?
-        </a>
-        <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
-          Accelerator Stage
-        </span>
-      </div>
-
+      <!-- Right-side START button (Hidden at top, animates in on scroll) -->
+      <a
+        href="/authentication/"
+        class="header-start-btn btn-ink px-5 py-2 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider inline-flex items-center gap-2"
+      >
+        <span>START</span>
+        <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+      </a>
     </div>
   </header>
 
-  <!-- ================= HERO SECTION WITH 5 DEPTH-LAYERED FLAT CARDS ================= -->
-  <section class="relative min-h-[85vh] flex items-center justify-center overflow-hidden py-24 hero-glow">
-    
-    <!-- Floating Cards (No tilt, varying sizes/depths, distinct X/Z positions) -->
-    <div class="absolute inset-0 w-full pointer-events-none hidden lg:block overflow-visible">
-      
-      <!-- Card 1: Local ROAS (Blurred for depth) -->
-      <div class="absolute top-16 left-[5%] bg-white px-5 py-4 rounded-2xl border border-slate-100 shadow-2xl blur-[1px]">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-            <i data-lucide="trending-up" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <p class="text-xs text-slate-400 font-medium leading-none">Local ROAS</p>
-            <p class="text-base font-extrabold text-slate-900 mt-1">+140%</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 2: Central Asia CPA -->
-      <div class="absolute top-72 left-[8%] bg-white px-6 py-5 rounded-2xl border border-slate-200 shadow-xl">
-        <div class="flex items-center gap-4">
-          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-            <i data-lucide="target" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Performance Engine</p>
-            <p class="text-base font-extrabold text-slate-900 mt-0.5">Central Asia CPA</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 3: Publisher Yield -->
-      <div class="absolute top-20 right-[5%] bg-white px-5 py-4 rounded-2xl border border-slate-100 shadow-lg">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-            <i data-lucide="coins" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <p class="text-xs text-slate-400 font-medium leading-none">Publisher Yield</p>
-            <p class="text-base font-extrabold text-slate-900 mt-1">High CPM</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 4: UGC Monetization (Moved slightly to the left and a bit lower) -->
-      <div class="absolute top-[60%] right-[16%] bg-white px-5 py-4 rounded-2xl border border-slate-100 shadow-md blur-[1px]">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
-            <i data-lucide="sparkles" class="w-4 h-4"></i>
-          </div>
-          <span class="text-xs font-bold text-slate-800">UGC Monetization</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Central Hero Content -->
-    <div class="relative z-10 max-w-3xl mx-auto text-center px-4 sm:px-6">
-
-      <!-- Big Title: "ADS" is pure solid emerald green -->
-      <h1 class="text-5xl sm:text-6xl md:text-7xl font-extrabold text-slate-900 tracking-tight leading-[1.1] mb-6">
-        Pearl <span class="text-emerald-500">ADS</span>
-      </h1>
-
-      <!-- Description Text -->
-      <p class="text-lg sm:text-xl text-slate-600 font-normal max-w-xl mx-auto leading-relaxed mb-10">
-        Building the tailored AdTech, UGC, and performance network for Uzbekistan and Central Asia. Helping local businesses scale while giving publishers fair monetization.
-      </p>
-
-      <!-- AUDIENCE SWITCHER TOGGLE (Advertisers vs Publishers) -->
-      <div class="inline-flex p-1.5 rounded-full bg-slate-100 border border-slate-200 shadow-inner max-w-md w-full sm:w-auto">
-        <button id="btn-advertisers" onclick="switchAudience('advertisers')" class="flex-1 sm:flex-none px-6 py-3 rounded-full text-sm font-bold transition-all duration-200 bg-slate-900 text-white shadow-md">
-          <i data-lucide="briefcase" class="w-4 h-4 inline-block mr-2"></i> For Advertisers
-        </button>
-        <button id="btn-publishers" onclick="switchAudience('publishers')" class="flex-1 sm:flex-none px-6 py-3 rounded-full text-sm font-bold transition-all duration-200 text-slate-600 hover:text-slate-900">
-          <i data-lucide="globe" class="w-4 h-4 inline-block mr-2"></i> For Publishers
-        </button>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ================= DYNAMIC SECTION: ADVERTISERS VIEW ================= -->
-  <div id="view-advertisers" class="tab-content active">
-    
-    <!-- How does it work for Advertisers -->
-    <section id="how-it-works" class="py-20 bg-slate-50/50 border-t border-slate-100">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <!-- ========================================================================
+       2. FIRST VIEWPORT HERO (ONLY ASCII Illustration, Text & Bottom START Button)
+       ======================================================================== -->
+  <main>
+    <section class="hero-viewport px-4 sm:px-6">
+      <!-- Center Block: Bold Pure HTML/CSS/JS ASCII Illustration + Hero Text -->
+      <div class="flex-1 flex flex-col items-center justify-center w-full max-w-4xl mx-auto text-center my-auto py-2">
         
-        <div class="text-center max-w-3xl mx-auto mb-16">
-          <h2 class="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-3">For Central Asian Brands</h2>
-          <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">How Pearl ADS Scales Local Businesses</p>
-          <p class="text-slate-600 mt-4 text-base">Global platforms treat Uzbekistan as a low-priority market. Pearl ADS offers localized targeting, performance CPA models, and real Uzbek audience insights.</p>
+        <!-- Pure JS/HTML/CSS Interactive Bold ASCII Pearl Emblem -->
+        <div id="ascii-container" class="ascii-stage mb-4 sm:mb-6" title="Pearl ADS ASCII">
+          <pre id="ascii-canvas" aria-label="Pearl ADS ASCII Illustration"></pre>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-12 items-center">
+        <!-- Bold Worn-out Editorial Display Title (Supports English, Uzbek & Russian) -->
+        <h1 class="font-worn-display text-4xl sm:text-6xl md:text-7xl uppercase text-[#111111] leading-[0.98] mb-3 sm:mb-4">
+          PEARL ADS
+        </h1>
+
+        <!-- Concise Multilingual-Ready Tagline -->
+        <p class="text-sm sm:text-base md:text-lg font-medium text-[#2A2824] max-w-xl mx-auto leading-snug px-2">
+          Markaziy Osiyo uchun AdTech tizimi. Bizneslarga aniq natija, ijodkorlarga adolatli daromad.
+        </p>
+      </div>
+
+      <!-- Bottom of First Viewport: Black START Button with Beige Font -->
+      <div class="w-full flex flex-col items-center justify-center pt-2">
+        <a
+          href="/authentication/"
+          class="btn-ink px-10 sm:px-14 py-3.5 sm:py-4 rounded-full font-worn-heading text-sm sm:text-base uppercase tracking-[0.14em] inline-flex items-center gap-3 shadow-sm"
+        >
+          <span>START</span>
+          <i data-lucide="arrow-right" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        </a>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         3. BELOW-THE-FOLD CONTENT (Visible only after scrolling down)
+         ====================================================================== -->
+    <section id="explore-section" class="border-t-2 border-[#111111] bg-[#F5F1E8] pt-16 sm:pt-24 pb-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- AUDIENCE SELECTOR TOOL ("Advertisers" vs "Publishers") -->
+        <div class="flex flex-col items-center justify-center mb-14 sm:mb-20">
+          <span class="font-mono text-xs uppercase tracking-[0.2em] text-[#4A4741] mb-4">
+            Yo‘nalishni tanlang / Выберите роль
+          </span>
+
+          <div class="inline-flex p-1.5 rounded-full border-2 border-[#111111] bg-[#FAF7F0] w-full max-w-md">
+            <button
+              id="btn-advertisers"
+              type="button"
+              onclick="switchAudience('advertisers')"
+              class="flex-1 py-3 px-4 sm:px-6 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider transition-all duration-200 bg-[#111111] text-[#F5F1E8]"
+            >
+              Advertisers
+            </button>
+            <button
+              id="btn-publishers"
+              type="button"
+              onclick="switchAudience('publishers')"
+              class="flex-1 py-3 px-4 sm:px-6 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider transition-all duration-200 text-[#111111] hover:bg-[#EBE4D5]"
+            >
+              Publishers
+            </button>
+          </div>
+        </div>
+
+        <!-- ==================================================================
+             VIEW A: ADVERTISERS (3 Points + 3 Paid Tier Cards + Full Info Link)
+             ================================================================== -->
+        <div id="view-advertisers" class="tab-panel active">
           
-          <div class="space-y-8">
-            <div class="flex gap-5">
-              <div class="w-12 h-12 rounded-2xl bg-slate-900 text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-sm">
-                01
-              </div>
+          <!-- Section Header -->
+          <div class="max-w-2xl mb-10 sm:mb-14">
+            <p class="font-mono text-xs uppercase tracking-[0.2em] text-[#4A4741] mb-2">01 / Reklama beruvchilar uchun</p>
+            <h2 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111] leading-tight">
+              Biz nima qilamiz
+            </h2>
+          </div>
+
+          <!-- 3 Points ("1.", "2.", "3."): 3 per row on PC, 1 per row (3 rows) on Mobile -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-20 sm:mb-28">
+            
+            <!-- Point 1 -->
+            <div class="editorial-card p-6 sm:p-8 flex flex-col justify-between">
               <div>
-                <h3 class="text-xl font-bold text-slate-900 mb-2">Hyper-Local Audience Segmentation</h3>
-                <p class="text-slate-600 leading-relaxed text-sm">Target users across Tashkent, Samarkand, Fergana Valley, and Central Asian hubs with high precision language and behavior profiling.</p>
+                <div class="font-worn-display text-4xl sm:text-5xl text-[#111111] mb-4">1.</div>
+                <h3 class="font-worn-heading text-lg sm:text-xl text-[#111111] mb-3">
+                  Aniq hududiy targetlash
+                </h3>
+                <p class="text-sm sm:text-base text-[#3A3732] leading-relaxed">
+                  Toshkent, Samarqand, Farg‘ona vodiysi va butun Markaziy Osiyo bo‘ylab til, hudud va qiziqishlar asosida faqat maqsadli auditoriyaga reklama ko‘rsatamiz.
+                </p>
+              </div>
+              <div class="mt-6 pt-4 border-t border-[#111111]/20 font-mono text-xs uppercase tracking-wider text-[#4A4741]">
+                UZ / RU / EN TARGETING
               </div>
             </div>
 
-            <div class="flex gap-5">
-              <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-md">
-                02
-              </div>
+            <!-- Point 2 -->
+            <div class="editorial-card p-6 sm:p-8 flex flex-col justify-between">
               <div>
-                <h3 class="text-xl font-bold text-slate-900 mb-2">Performance CPA & Hybrid Ad Models</h3>
-                <p class="text-slate-600 leading-relaxed text-sm">Pay for real business outcomes—leads, orders, and verified conversions—rather than empty impressions from generic international networks.</p>
+                <div class="font-worn-display text-4xl sm:text-5xl text-[#111111] mb-4">2.</div>
+                <h3 class="font-worn-heading text-lg sm:text-xl text-[#111111] mb-3">
+                  Faqat real natija uchun to‘lov
+                </h3>
+                <p class="text-sm sm:text-base text-[#3A3732] leading-relaxed">
+                  Soxta ko‘rishlar va botlardan himoyalangan tizim. Siz murojaat, buyurtma yoki tasdiqlangan harakat (CPA/CPC) uchun byudjet sarflaysiz.
+                </p>
+              </div>
+              <div class="mt-6 pt-4 border-t border-[#111111]/20 font-mono text-xs uppercase tracking-wider text-[#4A4741]">
+                ANTI-FRAUD & CPA ENGINE
               </div>
             </div>
 
-            <div class="flex gap-5">
-              <div class="w-12 h-12 rounded-2xl bg-slate-900 text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-sm">
-                03
-              </div>
+            <!-- Point 3 -->
+            <div class="editorial-card p-6 sm:p-8 flex flex-col justify-between">
               <div>
-                <h3 class="text-xl font-bold text-slate-900 mb-2">Integrated Uzbek Creator & UGC Network</h3>
-                <p class="text-slate-600 leading-relaxed text-sm">Leverage authentic local content creators and user-generated ads that build trust and drive purchase intent among Central Asian consumers.</p>
+                <div class="font-worn-display text-4xl sm:text-5xl text-[#111111] mb-4">3.</div>
+                <h3 class="font-worn-heading text-lg sm:text-xl text-[#111111] mb-3">
+                  Mahalliy kreatorlar va UGC tarmog‘i
+                </h3>
+                <p class="text-sm sm:text-base text-[#3A3732] leading-relaxed">
+                  O‘zbek va rus tillaridagi tabiiy kontent orqali brendingizga ishonch uyg‘otamiz. Mahalliy blogerlar va media maydonlarni bitta kabinetda boshqaring.
+                </p>
               </div>
+              <div class="mt-6 pt-4 border-t border-[#111111]/20 font-mono text-xs uppercase tracking-wider text-[#4A4741]">
+                NATIVE UGC & CREATORS
+              </div>
+            </div>
+
+          </div>
+
+          <!-- PRICING MODEL SECTION (Synced with Pricing Page Paid Tiers) -->
+          <div class="border-t-2 border-[#111111] pt-16 sm:pt-20">
+            <div class="max-w-2xl mb-10 sm:mb-14">
+              <p class="font-mono text-xs uppercase tracking-[0.2em] text-[#4A4741] mb-2">02 / Tarif rejalari</p>
+              <h2 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111] leading-tight">
+                Pricing Model
+              </h2>
+            </div>
+
+            <!-- 3 Paid Tier Plan Cards: 3 per row on PC, 1 per row on Mobile -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+              
+              <!-- TIER 1: BASIC (70,000 UZS / oyiga) -->
+              <div class="editorial-card p-7 sm:p-8 flex flex-col justify-between bg-[#FAF7F0]">
+                <div>
+                  <!-- Title of the tier plan -->
+                  <div class="flex items-center justify-between gap-2">
+                    <h3 class="font-worn-display text-xl sm:text-2xl uppercase text-[#111111]">
+                      Basic
+                    </h3>
+                    <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-full border border-[#111111] text-[#111111]">
+                      START
+                    </span>
+                  </div>
+
+                  <!-- Separating line -->
+                  <hr class="border-t-2 border-[#111111] my-5" />
+
+                  <!-- Small description -->
+                  <p class="text-sm text-[#3A3732] leading-relaxed mb-6">
+                    Kichik bizneslar va o‘z xizmatlarini onlayn qabul qilishni tez boshlamoqchi bo‘lgan tadbirkorlar uchun tayyor bazaviy yechim.
+                  </p>
+
+                  <!-- Bullet points -->
+                  <ul class="space-y-3.5 text-sm font-medium text-[#111111] mb-8">
+                    <li class="flex items-start gap-2.5">
+                      <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                      <span>Bazaviy web-app (Mini App) yoki Telegram bot yaratish</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                      <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                      <span>Ishonchli tezkor hosting va doimiy texnik qo‘llab-quvvatlash</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                      <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                      <span>Buyurtma va murojaatlarni qabul qiluvchi kichik avtomatizatsiya</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Price at the bottom -->
+                <div class="pt-5 border-t border-[#111111]/25 flex items-baseline justify-between gap-2">
+                  <div>
+                    <span class="font-worn-display text-xl sm:text-2xl text-[#111111]">70,000</span>
+                    <span class="font-mono text-xs font-bold text-[#4A4741]"> UZS / oyiga</span>
+                  </div>
+                  <a href="/authentication/?plan=basic" class="font-mono text-xs font-bold uppercase underline underline-offset-4 hover:opacity-70 shrink-0">
+                    Tanlash →
+                  </a>
+                </div>
+              </div>
+
+              <!-- TIER 2: BLAZE (120,000 UZS / oyiga — Featured contrast card) -->
+              <div class="editorial-card p-7 sm:p-8 flex flex-col justify-between bg-[#EBE4D5]">
+                <div>
+                  <!-- Title of the tier plan -->
+                  <div class="flex items-center justify-between gap-2">
+                    <h3 class="font-worn-display text-xl sm:text-2xl uppercase text-[#111111]">
+                      Blaze
+                    </h3>
+                    <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-full bg-[#111111] text-[#F5F1E8]">
+                      ENG OMMABOP
+                    </span>
+                  </div>
+
+                  <!-- Separating line -->
+                  <hr class="border-t-2 border-[#111111] my-5" />
+
+                  <!-- Small description -->
+                  <p class="text-sm text-[#2A2824] leading-relaxed mb-6">
+                    To‘liq katalogli professional Telegram Mini App va reklama tarmog‘imizda bepul kreditlar bilan savdoni oshirish paketi.
+                  </p>
+
+                  <!-- Bullet points -->
+                  <ul class="space-y-3.5 text-sm font-medium text-[#111111] mb-8">
+                    <li class="flex items-start gap-2.5">
+                      <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                      <span>Basic tarifidagi barcha imkoniyatlar (hosting va boshqaruv)</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                      <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                      <span>Maxsus dizayndagi Telegram Mini App, katalog va Admin Panel</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                      <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                      <span>Biznesingizni reklama qilish uchun bepul Ad Credits bonusi</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Price at the bottom -->
+                <div class="pt-5 border-t border-[#111111]/25 flex items-baseline justify-between gap-2">
+                  <div>
+                    <span class="font-worn-display text-xl sm:text-2xl text-[#111111]">120,000</span>
+                    <span class="font-mono text-xs font-bold text-[#4A4741]"> UZS / oyiga</span>
+                  </div>
+                  <a href="/authentication/?plan=blaze" class="font-mono text-xs font-bold uppercase underline underline-offset-4 hover:opacity-70 shrink-0">
+                    Tanlash →
+                  </a>
+                </div>
+              </div>
+
+              <!-- TIER 3: PRO (300,000 – 500,000 UZS / oyiga) -->
+              <div class="editorial-card p-7 sm:p-8 flex flex-col justify-between bg-[#FAF7F0]">
+                <div>
+                  <!-- Title of the tier plan -->
+                  <div class="flex items-center justify-between gap-2">
+                    <h3 class="font-worn-display text-xl sm:text-2xl uppercase text-[#111111]">
+                      Pro
+                    </h3>
+                    <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-full border border-[#111111] text-[#111111]">
+                      FULL + AI
+                    </span>
+                  </div>
+
+                  <!-- Separating line -->
+                  <hr class="border-t-2 border-[#111111] my-5" />
+
+                  <!-- Small description -->
+                  <p class="text-sm text-[#3A3732] leading-relaxed mb-6">
+                    Keng ko‘lamli bizneslar uchun: professional Mini App, alohida veb-sayt, shaxsiy domen, katta reklama kreditlari va AI avtomatizatsiya.
+                  </p>
+
+                  <!-- Bullet points -->
+                  <ul class="space-y-3.5 text-sm font-medium text-[#111111] mb-8">
+                    <li class="flex items-start gap-2.5">
+                      <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                      <span>Basic va Blaze tariflaridagi barcha imkoniyatlar</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                      <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                      <span>Professional Mini App + to‘liq Veb-sayt, Domen va Hosting</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                      <span class="w-2 h-2 rounded-full bg-[#111111] mt-1.5 shrink-0"></span>
+                      <span>Kengaytirilgan bepul Ad Credits + AI Avtomatizatsiya (Beta)</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Price at the bottom -->
+                <div class="pt-5 border-t border-[#111111]/25 flex items-baseline justify-between gap-2">
+                  <div>
+                    <span class="font-worn-display text-lg sm:text-xl text-[#111111]">300k – 500k</span>
+                    <span class="font-mono text-xs font-bold text-[#4A4741]"> UZS / oyiga</span>
+                  </div>
+                  <a href="/authentication/?plan=pro" class="font-mono text-xs font-bold uppercase underline underline-offset-4 hover:opacity-70 shrink-0">
+                    Tanlash →
+                  </a>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Link to Full Info Page About Tier Plans (Shown on all devices after plan cards) -->
+            <div class="mt-10 sm:mt-12 flex justify-center">
+              <a
+                href="/pricing/"
+                class="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full border-2 border-[#111111] bg-[#FAF7F0] text-[#111111] font-worn-heading text-xs sm:text-sm uppercase tracking-wider hover:bg-[#111111] hover:text-[#F5F1E8] transition-colors duration-200"
+              >
+                <span>Barcha tarif rejalari haqida to‘liq ma’lumot</span>
+                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+              </a>
             </div>
           </div>
 
-          <div class="bg-white rounded-3xl border border-slate-200/80 p-8 shadow-xl">
-            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-6">Advertiser Advantage Overview</h4>
+        </div>
+
+        <!-- ==================================================================
+             VIEW B: PUBLISHERS (3 Points + Interactive Earnings Calculator)
+             ================================================================== -->
+        <div id="view-publishers" class="tab-panel">
+          
+          <!-- Section Header -->
+          <div class="max-w-2xl mb-10 sm:mb-14">
+            <p class="font-mono text-xs uppercase tracking-[0.2em] text-[#4A4741] mb-2">01 / Nashriyotchilar va ijodkorlar uchun</p>
+            <h2 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111] leading-tight">
+              Biz nima qilamiz
+            </h2>
+          </div>
+
+          <!-- 3 Points ("1.", "2.", "3."): 3 per row on PC, 1 per row (3 rows) on Mobile -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-20 sm:mb-28">
             
-            <div class="space-y-4">
-              <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                <div>
-                  <p class="text-sm font-bold text-slate-900">Local Payment Gateway Support</p>
-                  <p class="text-xs text-slate-500">Pay directly via local payment systems</p>
-                </div>
-                <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">Uzbekistan Native</span>
+            <!-- Point 1 -->
+            <div class="editorial-card p-6 sm:p-8 flex flex-col justify-between">
+              <div>
+                <div class="font-worn-display text-4xl sm:text-5xl text-[#111111] mb-4">1.</div>
+                <h3 class="font-worn-heading text-lg sm:text-xl text-[#111111] mb-3">
+                  Mahalliy brendlar byudjetiga ulanish
+                </h3>
+                <p class="text-sm sm:text-base text-[#3A3732] leading-relaxed">
+                  Global tarmoqlar Markaziy Osiyo trafikini arzon baholaydi. Biz esa o‘z auditoriyasiga munosib haq to‘laydigan mahalliy kompaniyalarni bevosita ulaymiz.
+                </p>
               </div>
-
-              <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                <div>
-                  <p class="text-sm font-bold text-slate-900">Regional Click Fraud Protection</p>
-                  <p class="text-xs text-slate-500">Filters bot traffic tailored for CIS networks</p>
-                </div>
-                <span class="text-xs font-bold bg-blue-100 text-blue-800 px-3 py-1 rounded-full">Secure</span>
+              <div class="mt-6 pt-4 border-t border-[#111111]/20 font-mono text-xs uppercase tracking-wider text-[#4A4741]">
+                DIRECT LOCAL DEMAND
               </div>
+            </div>
 
-              <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                <div>
-                  <p class="text-sm font-bold text-slate-900">High ROAS Guarantee Focus</p>
-                  <p class="text-xs text-slate-500">Engineered for retail, fintech & e-commerce</p>
+            <!-- Point 2 -->
+            <div class="editorial-card p-6 sm:p-8 flex flex-col justify-between">
+              <div>
+                <div class="font-worn-display text-4xl sm:text-5xl text-[#111111] mb-4">2.</div>
+                <h3 class="font-worn-heading text-lg sm:text-xl text-[#111111] mb-3">
+                  CPM, CPC, CPA va UGC monetizatsiya
+                </h3>
+                <p class="text-sm sm:text-base text-[#3A3732] leading-relaxed">
+                  Veb-sayt, Telegram kanal, mobil ilova yoki qisqa videolar (UGC) — har bir 1,000 ko‘rish, klik va harakat uchun shaffof stavkalar asosida daromad oling.
+                </p>
+              </div>
+              <div class="mt-6 pt-4 border-t border-[#111111]/20 font-mono text-xs uppercase tracking-wider text-[#4A4741]">
+                MULTI-FORMAT PAYOUTS
+              </div>
+            </div>
+
+            <!-- Point 3 -->
+            <div class="editorial-card p-6 sm:p-8 flex flex-col justify-between">
+              <div>
+                <div class="font-worn-display text-4xl sm:text-5xl text-[#111111] mb-4">3.</div>
+                <h3 class="font-worn-heading text-lg sm:text-xl text-[#111111] mb-3">
+                  Tezkor mahalliy kartalarga to‘lov
+                </h3>
+                <p class="text-sm sm:text-base text-[#3A3732] leading-relaxed">
+                  Murakkab SWIFT o‘tkazmalari va yuqori komissiyalarsiz. Ishlab topilgan mablag‘larni Uzcard, Humo yoki hisob raqamingizga tez yechib oling.
+                </p>
+              </div>
+              <div class="mt-6 pt-4 border-t border-[#111111]/20 font-mono text-xs uppercase tracking-wider text-[#4A4741]">
+                INSTANT LOCAL PAYOUT
+              </div>
+            </div>
+
+          </div>
+
+          <!-- PUBLISHER EARNINGS CALCULATOR WITH SLIDERS -->
+          <div class="border-t-2 border-[#111111] pt-16 sm:pt-20">
+            <div class="max-w-2xl mb-10 sm:mb-14">
+              <p class="font-mono text-xs uppercase tracking-[0.2em] text-[#4A4741] mb-2">02 / Daromad kalkulyatori</p>
+              <h2 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111] leading-tight">
+                Qancha daromad olasiz?
+              </h2>
+            </div>
+
+            <div class="editorial-card p-6 sm:p-10 bg-[#FAF7F0]">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 items-start">
+                
+                <!-- Left Column: Sliders (Views, CTR/Engagement, Conversion) -->
+                <div class="lg:col-span-7 space-y-8">
+                  
+                  <!-- Slider 1: Monthly Views -->
+                  <div>
+                    <div class="flex flex-wrap items-baseline justify-between gap-2 mb-3">
+                      <label for="slider-views" class="font-worn-heading text-sm sm:text-base uppercase text-[#111111]">
+                        Oylik ko‘rishlar soni (Views)
+                      </label>
+                      <span id="val-views" class="font-worn-display text-xl sm:text-2xl text-[#111111]">
+                        250,000
+                      </span>
+                    </div>
+                    <input
+                      id="slider-views"
+                      type="range"
+                      min="10000"
+                      max="5000000"
+                      step="10000"
+                      value="250000"
+                      class="beige-slider"
+                      oninput="calculatePublisherEarnings()"
+                    />
+                    <div class="flex justify-between font-mono text-[11px] text-[#4A4741] mt-2">
+                      <span>10K</span>
+                      <span>1M</span>
+                      <span>2.5M</span>
+                      <span>5M+</span>
+                    </div>
+                  </div>
+
+                  <!-- Slider 2: Audience Engagement / CTR (%) -->
+                  <div>
+                    <div class="flex flex-wrap items-baseline justify-between gap-2 mb-3">
+                      <label for="slider-ctr" class="font-worn-heading text-sm sm:text-base uppercase text-[#111111]">
+                        Auditoriya faolligi (CTR %)
+                      </label>
+                      <span id="val-ctr" class="font-worn-display text-xl sm:text-2xl text-[#111111]">
+                        2.5%
+                      </span>
+                    </div>
+                    <input
+                      id="slider-ctr"
+                      type="range"
+                      min="0.5"
+                      max="8.0"
+                      step="0.1"
+                      value="2.5"
+                      class="beige-slider"
+                      oninput="calculatePublisherEarnings()"
+                    />
+                    <div class="flex justify-between font-mono text-[11px] text-[#4A4741] mt-2">
+                      <span>0.5% (Past)</span>
+                      <span>2.5% (O‘rtacha)</span>
+                      <span>5.0% (Yuqori)</span>
+                      <span>8.0% (Faol)</span>
+                    </div>
+                  </div>
+
+                  <!-- Slider 3: Conversion Share (%) -->
+                  <div>
+                    <div class="flex flex-wrap items-baseline justify-between gap-2 mb-3">
+                      <label for="slider-cpa" class="font-worn-heading text-sm sm:text-base uppercase text-[#111111]">
+                        Konversiya darajasi (CR %)
+                      </label>
+                      <span id="val-cpa" class="font-worn-display text-xl sm:text-2xl text-[#111111]">
+                        3.0%
+                      </span>
+                    </div>
+                    <input
+                      id="slider-cpa"
+                      type="range"
+                      min="0.5"
+                      max="10.0"
+                      step="0.5"
+                      value="3.0"
+                      class="beige-slider"
+                      oninput="calculatePublisherEarnings()"
+                    />
+                    <div class="flex justify-between font-mono text-[11px] text-[#4A4741] mt-2">
+                      <span>0.5%</span>
+                      <span>3.0%</span>
+                      <span>6.5%</span>
+                      <span>10.0%</span>
+                    </div>
+                  </div>
+
+                  <!-- Metric Rates Reference Strip: CPM ($1.60), CPC ($0.05), CPA ($0.70), UGC 1K View ($0.70) -->
+                  <div class="pt-4 border-t-2 border-[#111111]">
+                    <p class="font-mono text-xs uppercase tracking-wider text-[#4A4741] mb-4">
+                      O‘rtacha stavkalar (Markaziy Osiyo bozori):
+                    </p>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div class="p-3.5 rounded-xl border-2 border-[#111111] bg-[#F5F1E8]">
+                        <div class="font-mono text-[11px] uppercase text-[#4A4741]">CPM Rate</div>
+                        <div class="font-worn-heading text-base sm:text-lg text-[#111111] mt-1">$1.60</div>
+                        <div class="font-mono text-[10px] text-[#4A4741]">1,000 ko‘rish</div>
+                      </div>
+
+                      <div class="p-3.5 rounded-xl border-2 border-[#111111] bg-[#F5F1E8]">
+                        <div class="font-mono text-[11px] uppercase text-[#4A4741]">CPC Rate</div>
+                        <div class="font-worn-heading text-base sm:text-lg text-[#111111] mt-1">$0.05</div>
+                        <div class="font-mono text-[10px] text-[#4A4741]">1 ta klik</div>
+                      </div>
+
+                      <div class="p-3.5 rounded-xl border-2 border-[#111111] bg-[#F5F1E8]">
+                        <div class="font-mono text-[11px] uppercase text-[#4A4741]">CPA Rate</div>
+                        <div class="font-worn-heading text-base sm:text-lg text-[#111111] mt-1">$0.70</div>
+                        <div class="font-mono text-[10px] text-[#4A4741]">1 ta harakat</div>
+                      </div>
+
+                      <div class="p-3.5 rounded-xl border-2 border-[#111111] bg-[#EBE4D5]">
+                        <div class="font-mono text-[11px] uppercase text-[#111111] font-bold">UGC 1K View</div>
+                        <div class="font-worn-heading text-base sm:text-lg text-[#111111] mt-1">$0.70</div>
+                        <div class="font-mono text-[10px] text-[#111111]">1,000 UGC ko‘rish</div>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
-                <span class="text-xs font-bold bg-purple-100 text-purple-800 px-3 py-1 rounded-full">High Return</span>
+
+                <!-- Right Column: Live Payout Breakdown Box -->
+                <div class="lg:col-span-5 rounded-2xl border-2 border-[#111111] bg-[#111111] text-[#F5F1E8] p-6 sm:p-8 flex flex-col justify-between">
+                  <div>
+                    <div class="flex items-center justify-between border-b border-[#F5F1E8]/20 pb-4 mb-6">
+                      <span class="font-mono text-xs uppercase tracking-widest text-[#DDD3BE]">
+                        Taxminiy oylik daromad
+                      </span>
+                      <span class="font-mono text-xs px-2.5 py-0.5 rounded-full border border-[#F5F1E8]/40">
+                        LIVE ESTIMATE
+                      </span>
+                    </div>
+
+                    <!-- Primary Estimated Total -->
+                    <div class="mb-6">
+                      <div id="total-usd" class="font-worn-display text-4xl sm:text-5xl text-[#F5F1E8] tracking-tight">
+                        $844
+                      </div>
+                      <div id="total-uzs" class="font-mono text-sm text-[#DDD3BE] mt-2">
+                        ≈ 10,803,200 UZS / oyiga
+                      </div>
+                    </div>
+
+                    <!-- Individual Model Earnings Breakdown -->
+                    <div class="space-y-3 border-t border-[#F5F1E8]/20 pt-5 text-sm">
+                      <div class="flex items-center justify-between">
+                        <span class="text-[#DDD3BE] font-mono text-xs">CPM (Display / Banner):</span>
+                        <span id="earn-cpm" class="font-mono font-bold text-[#F5F1E8]">$400</span>
+                      </div>
+                      <div class="flex items-center justify-between">
+                        <span class="text-[#DDD3BE] font-mono text-xs">CPC (Kliklar bo‘yicha):</span>
+                        <span id="earn-cpc" class="font-mono font-bold text-[#F5F1E8]">$313</span>
+                      </div>
+                      <div class="flex items-center justify-between">
+                        <span class="text-[#DDD3BE] font-mono text-xs">CPA (Konversiyalar):</span>
+                        <span id="earn-cpa" class="font-mono font-bold text-[#F5F1E8]">$131</span>
+                      </div>
+                      <div class="flex items-center justify-between pt-2 border-t border-[#F5F1E8]/15">
+                        <span class="text-[#F5F1E8] font-mono text-xs font-bold">UGC 1,000 View Bonusi:</span>
+                        <span id="earn-ugc" class="font-mono font-bold text-[#F5F1E8]">$175</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mt-8 pt-5 border-t border-[#F5F1E8]/20">
+                    <a
+                      href="/authentication/"
+                      class="w-full py-3.5 px-6 rounded-full bg-[#F5F1E8] text-[#111111] font-worn-heading text-xs sm:text-sm uppercase tracking-wider inline-flex items-center justify-center gap-2 hover:bg-[#EBE4D5] transition-colors"
+                    >
+                      <span>Monetizatsiyani boshlash</span>
+                      <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </a>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -257,165 +976,58 @@
 
       </div>
     </section>
+  </main>
 
-  </div>
-
-  <!-- ================= DYNAMIC SECTION: PUBLISHERS VIEW ================= -->
-  <div id="view-publishers" class="tab-content">
+  <!-- ========================================================================
+       4. FOOTER (Below both Advertisers & Publishers views)
+       ======================================================================== -->
+  <footer class="bg-[#111111] text-[#F5F1E8] border-t-2 border-[#111111]">
     
-    <!-- How does it work for Publishers -->
-    <section class="py-20 bg-slate-50/50 border-t border-slate-100">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div class="text-center max-w-3xl mx-auto mb-16">
-          <h2 class="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-3">Fair Yield For Content Creators & Media</h2>
-          <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Earn What Your Uzbek Audience Is Really Worth</p>
-          <p class="text-slate-600 mt-4 text-base">Global ad giants undervalue Central Asian traffic. Global UGC platforms barely compensate regional creators (with rare exceptions like Creata.gg). Pearl ADS changes the rules.</p>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-12 items-center">
-          
-          <div class="bg-white rounded-3xl border border-slate-200/80 p-8 shadow-xl">
-            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-6">Payout Comparison (Central Asian Traffic)</h4>
-            
-            <div class="space-y-4">
-              <!-- Competitor 1 -->
-              <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between opacity-70">
-                <div>
-                  <p class="text-sm font-bold text-slate-700">Google AdSense / Yandex Advertising Network</p>
-                  <p class="text-xs text-slate-500">Low tier CPM for Central Asian traffic</p>
-                </div>
-                <span class="text-xs font-bold text-red-600">Below Average</span>
-              </div>
-
-              <!-- Competitor 2 -->
-              <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between opacity-70">
-                <div>
-                  <p class="text-sm font-bold text-slate-700">Global UGC Platforms</p>
-                  <p class="text-xs text-slate-500">Monetization not supported in UZ (except Creata.gg)</p>
-                </div>
-                <span class="text-xs font-bold text-amber-600">Restricted</span>
-              </div>
-
-              <!-- Pearl ADS -->
-              <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between">
-                <div>
-                  <p class="text-sm font-bold text-emerald-950">Pearl ADS Publisher Network</p>
-                  <p class="text-xs text-emerald-700 font-medium">Direct local brand budgets & fair CPM/CPA</p>
-                </div>
-                <span class="text-xs font-bold bg-emerald-600 text-white px-3 py-1 rounded-full">Top Yield</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="space-y-8">
-            <div class="flex gap-5">
-              <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-md">
-                01
-              </div>
-              <div>
-                <h3 class="text-xl font-bold text-slate-900 mb-2">Direct Local Brand Budgets</h3>
-                <p class="text-slate-600 leading-relaxed text-sm">Instead of receiving pennies from global ad networks, connect directly with fast-growing domestic brands willing to pay top value for local eyeballs.</p>
-              </div>
-            </div>
-
-            <div class="flex gap-5">
-              <div class="w-12 h-12 rounded-2xl bg-slate-900 text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-sm">
-                02
-              </div>
-              <div>
-                <h3 class="text-xl font-bold text-slate-900 mb-2">Fair Monetization for Local UGC</h3>
-                <p class="text-slate-600 leading-relaxed text-sm">Most international monetization platforms ignore creators in Central Asia. Pearl ADS ensures Uzbek content creators earn predictable income for their audience engagement.</p>
-              </div>
-            </div>
-
-            <div class="flex gap-5">
-              <div class="w-12 h-12 rounded-2xl bg-slate-900 text-white font-bold text-lg flex items-center justify-center shrink-0 shadow-sm">
-                03
-              </div>
-              <div>
-                <h3 class="text-xl font-bold text-slate-900 mb-2">Instant Local Payments</h3>
-                <p class="text-slate-600 leading-relaxed text-sm">No complex wire transfers or high international fees. Receive earnings reliably directly into local banking infrastructure.</p>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-  </div>
-
-  <!-- ================= ACCELERATOR VISION & MISSION ================= -->
-  <section class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="bg-gradient-to-br from-slate-50 to-emerald-50/40 rounded-3xl p-8 sm:p-12 border border-slate-200/80">
-        <div class="max-w-3xl">
-          <span class="text-xs font-bold text-emerald-600 uppercase tracking-widest block mb-2">Early Stage Accelerator Project</span>
-          <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4">Unlocking the Untapped Potential of Central Asian AdTech</h3>
-          <p class="text-slate-600 leading-relaxed mb-6 text-sm sm:text-base">
-            Central Asia is experiencing a digital boom with millions of active internet users, yet regional ad infrastructure remains fragmented. Pearl ADS is being built to bridge the gap between local enterprise demand, performance CPA marketing, and creator monetization across Uzbekistan and neighbor markets.
-          </p>
-          <div class="flex flex-wrap items-center gap-6 text-xs sm:text-sm font-semibold text-slate-700">
-            <span class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Idea & Accelerator Stage</span>
-            <span class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Focused on Uzbekistan & Regional Market</span>
-            <span class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> Ecosystem for Brands & Creators</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= UNIFIED DARK NAVY FOOTER & STATISTICS ================= -->
-  <footer class="bg-slate-900 text-white border-t border-slate-800">
-    
-    <!-- Statistics Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-b border-slate-800/80">
+    <!-- Key Regional Metrics Strip -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 border-b border-[#F5F1E8]/15">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-        
         <div>
-          <p class="text-3xl sm:text-4xl font-extrabold text-emerald-400 mb-2">35M+</p>
-          <p class="text-xs sm:text-sm text-slate-400 font-medium">Target Central Asian Audience</p>
+          <p class="font-worn-display text-2xl sm:text-4xl text-[#F5F1E8] mb-1.5">35M+</p>
+          <p class="font-mono text-xs text-[#DDD3BE]">Markaziy Osiyo auditoriyasi</p>
         </div>
-
         <div>
-          <p class="text-3xl sm:text-4xl font-extrabold text-white mb-2">Higher Yield</p>
-          <p class="text-xs sm:text-sm text-slate-400 font-medium">vs. AdSense & YAN in UZ</p>
+          <p class="font-worn-display text-2xl sm:text-4xl text-[#F5F1E8] mb-1.5">CPA & UGC</p>
+          <p class="font-mono text-xs text-[#DDD3BE]">Natijaga asoslangan tizim</p>
         </div>
-
         <div>
-          <p class="text-3xl sm:text-4xl font-extrabold text-emerald-400 mb-2">CPA & UGC</p>
-          <p class="text-xs sm:text-sm text-slate-400 font-medium">Performance Driven Model</p>
+          <p class="font-worn-display text-2xl sm:text-4xl text-[#F5F1E8] mb-1.5">UZ / RU / EN</p>
+          <p class="font-mono text-xs text-[#DDD3BE]">To‘liq ko‘p tilli ekotizim</p>
         </div>
-
         <div>
-          <p class="text-3xl sm:text-4xl font-extrabold text-white mb-2">Early Stage</p>
-          <p class="text-xs sm:text-sm text-slate-400 font-medium">Accelerator Candidate</p>
+          <p class="font-worn-display text-2xl sm:text-4xl text-[#F5F1E8] mb-1.5">2026</p>
+          <p class="font-mono text-xs text-[#DDD3BE]">Akselerator bosqichi</p>
         </div>
-
       </div>
     </div>
 
-    <!-- Main Footer Links & Copyright -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Bottom Brand & Copyright Bar -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div class="flex flex-col md:flex-row justify-between items-center gap-6">
         
         <div class="flex items-center gap-3">
-          <!-- Footer Logo converted to PURE WHITE using CSS brightness-0 invert filter -->
-          <img src="logo.webp" alt="Pearl ADS Logo" class="h-8 w-8 object-contain filter brightness-0 invert" onerror="this.onerror=null; this.src='https://placehold.co/100x100/ffffff/ffffff?text=P';" />
-          <span class="text-xl font-extrabold tracking-tight text-white">
-            Pearl <span class="text-emerald-400">ADS</span>
+          <img
+            src="logo.webp"
+            alt="Pearl ADS Logotipi"
+            class="h-8 w-8 object-contain brightness-0 invert"
+            onerror="this.onerror=null; this.src='https://placehold.co/96x96/F5F1E8/111111?text=P';"
+          />
+          <span class="font-worn-heading text-xl tracking-tight text-[#F5F1E8]">
+            Pearl ADS
           </span>
         </div>
 
-        <p class="text-xs text-slate-400 text-center md:text-left max-w-md">
-          Next-generation advertising ecosystem built specifically for Central Asia, Uzbekistan local businesses, and regional content publishers.
+        <p class="text-xs text-[#DDD3BE] text-center md:text-left max-w-md leading-relaxed">
+          Markaziy Osiyo va O‘zbekiston mahalliy bizneslari hamda kontent yaratuvchilari uchun qurilgan AdTech ekotizimi.
         </p>
 
-        <div class="text-xs text-slate-400 font-medium text-right">
-          <p>In the name of God, The Most Merciful</p>
-          <p class="mt-1 text-slate-500">© 2026 Pearl ADS. Early Stage Startup.</p>
+        <div class="text-xs font-mono text-[#DDD3BE] text-center md:text-right">
+          <p>Mehribon va Rahmli Alloh nomi bilan</p>
+          <p class="mt-1 text-[#7D786E]">© 2026 Pearl ADS. Barcha huquqlar himoyalangan.</p>
         </div>
 
       </div>
@@ -423,46 +1035,189 @@
 
   </footer>
 
-  <!-- Script for Dynamic Tab Switching & Loader -->
+  <!-- ========================================================================
+       SCRIPTS: ASCII Art Generator, Scroll Navbar, Tabs & Earnings Calculator
+       ======================================================================== -->
   <script>
     // Initialize Lucide icons
     lucide.createIcons();
 
-    // Ensure the Lottie loader stays visible for at least 1.7 seconds
-    window.addEventListener('load', function() {
+    // 1. Lottie Loader Fadeout
+    window.addEventListener('load', function () {
       const loader = document.getElementById('lottie-loader');
       if (loader) {
         setTimeout(() => {
           loader.style.opacity = '0';
-          loader.style.transition = 'opacity 0.5s ease-in-out';
           setTimeout(() => {
             loader.style.display = 'none';
-          }, 500); // Matches the 0.5s transition fade out
-        }, 1700); // 1700ms = 1.7 seconds minimum display time
+          }, 450);
+        }, 1200);
       }
     });
 
-    // Switch between Advertisers and Publishers views
-    function switchAudience(type) {
-      const btnAdvertisers = document.getElementById('btn-advertisers');
-      const btnPublishers = document.getElementById('btn-publishers');
-      const viewAdvertisers = document.getElementById('view-advertisers');
-      const viewPublishers = document.getElementById('view-publishers');
-
-      if (type === 'advertisers') {
-        btnAdvertisers.className = 'flex-1 sm:flex-none px-6 py-3 rounded-full text-sm font-bold transition-all duration-200 bg-slate-900 text-white shadow-md';
-        btnPublishers.className = 'flex-1 sm:flex-none px-6 py-3 rounded-full text-sm font-bold transition-all duration-200 text-slate-600 hover:text-slate-900';
-        
-        viewAdvertisers.classList.add('active');
-        viewPublishers.classList.remove('active');
+    // 2. Scroll-Triggered Header Animation
+    const mainHeader = document.getElementById('main-header');
+    function handleHeaderScroll() {
+      if (window.scrollY > 36) {
+        mainHeader.classList.add('is-scrolled');
       } else {
-        btnPublishers.className = 'flex-1 sm:flex-none px-6 py-3 rounded-full text-sm font-bold transition-all duration-200 bg-slate-900 text-white shadow-md';
-        btnAdvertisers.className = 'flex-1 sm:flex-none px-6 py-3 rounded-full text-sm font-bold transition-all duration-200 text-slate-600 hover:text-slate-900';
-        
-        viewPublishers.classList.add('active');
-        viewAdvertisers.classList.remove('active');
+        mainHeader.classList.remove('is-scrolled');
       }
     }
+    window.addEventListener('scroll', handleHeaderScroll, { passive: true });
+    handleHeaderScroll();
+
+    // 3. Bold Pure HTML/CSS/JS 3D-Shaded Interactive ASCII Pearl Illustration
+    (function initAsciiPearl() {
+      const pre = document.getElementById('ascii-canvas');
+      const container = document.getElementById('ascii-container');
+      if (!pre || !container) return;
+
+      const cols = 66;
+      const rows = 30;
+      const ramp = ' .:-=+*#%@█';
+      let angle = 0;
+      let mouseX = -0.45;
+      let mouseY = -0.45;
+
+      container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        mouseY = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+      });
+
+      container.addEventListener('touchmove', (e) => {
+        if (!e.touches[0]) return;
+        const rect = container.getBoundingClientRect();
+        mouseX = ((e.touches[0].clientX - rect.left) / rect.width) * 2 - 1;
+        mouseY = ((e.touches[0].clientY - rect.top) / rect.height) * 2 - 1;
+      }, { passive: true });
+
+      function renderAsciiFrame() {
+        angle += 0.032;
+        const lx = mouseX + Math.sin(angle) * 0.25;
+        const ly = mouseY + Math.cos(angle * 0.8) * 0.2;
+        const lz = 0.85;
+        const lLen = Math.hypot(lx, ly, lz) || 1;
+        const nlx = lx / lLen;
+        const nly = ly / lLen;
+        const nlz = lz / lLen;
+
+        let output = '';
+
+        for (let y = 0; y < rows; y++) {
+          const ny = (y / (rows - 1)) * 2 - 1; // -1 to 1
+          for (let x = 0; x < cols; x++) {
+            const nx = ((x / (cols - 1)) * 2 - 1) * 1.18; // aspect compensation
+
+            // Outer orbital shell ring + central solid 3D pearl sphere
+            const distSq = nx * nx + ny * ny;
+
+            if (distSq <= 0.56) {
+              // Central Pearl Sphere
+              const r = Math.sqrt(0.56);
+              const sx = nx / r;
+              const sy = ny / r;
+              const sz = Math.sqrt(Math.max(0, 1 - sx * sx - sy * sy));
+
+              // Diffuse + Specular pearl luster
+              const diff = Math.max(0, sx * nlx + sy * nly + sz * nlz);
+              const spec = Math.pow(diff, 7);
+              // Invert shading so shadow side is bold black ink and highlight gleams beige
+              const inkDensity = Math.min(1, Math.max(0.08, (1 - diff * 0.78) - spec * 0.55));
+              const charIdx = Math.min(ramp.length - 1, Math.floor(inkDensity * (ramp.length - 1)));
+              output += ramp[charIdx];
+            } else {
+              // Tilted kinetic orbit ring around the pearl
+              const tilt = 0.42;
+              const rx = nx * Math.cos(tilt) - ny * Math.sin(tilt);
+              const ry = (nx * Math.sin(tilt) + ny * Math.cos(tilt)) * 2.35;
+              const ringDist = Math.abs(Math.hypot(rx, ry) - 0.88);
+
+              if (ringDist < 0.065) {
+                const wave = Math.sin(nx * 6 + angle * 2.2);
+                output += wave > 0 ? '█' : '▓';
+              } else if (ringDist < 0.11 && (x + y) % 2 === 0) {
+                output += '·';
+              } else {
+                output += ' ';
+              }
+            }
+          }
+          output += '\n';
+        }
+
+        pre.textContent = output;
+        requestAnimationFrame(renderAsciiFrame);
+      }
+
+      renderAsciiFrame();
+    })();
+
+    // 4. Switch Audience ("Advertisers" vs "Publishers")
+    function switchAudience(type) {
+      const btnAdv = document.getElementById('btn-advertisers');
+      const btnPub = document.getElementById('btn-publishers');
+      const viewAdv = document.getElementById('view-advertisers');
+      const viewPub = document.getElementById('view-publishers');
+
+      const activeClasses = 'flex-1 py-3 px-4 sm:px-6 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider transition-all duration-200 bg-[#111111] text-[#F5F1E8]';
+      const inactiveClasses = 'flex-1 py-3 px-4 sm:px-6 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider transition-all duration-200 text-[#111111] hover:bg-[#EBE4D5]';
+
+      if (type === 'advertisers') {
+        btnAdv.className = activeClasses;
+        btnPub.className = inactiveClasses;
+        viewAdv.classList.add('active');
+        viewPub.classList.remove('active');
+      } else {
+        btnPub.className = activeClasses;
+        btnAdv.className = inactiveClasses;
+        viewPub.classList.add('active');
+        viewAdv.classList.remove('active');
+        calculatePublisherEarnings();
+      }
+    }
+
+    // 5. Publisher Earnings Calculator (Views, CPM $1.60, CPC $0.05, CPA $0.70, UGC $0.70/1K)
+    function calculatePublisherEarnings() {
+      const views = Number(document.getElementById('slider-views').value);
+      const ctr = Number(document.getElementById('slider-ctr').value);
+      const cr = Number(document.getElementById('slider-cpa').value);
+
+      // Update slider display values
+      document.getElementById('val-views').textContent = views.toLocaleString('en-US');
+      document.getElementById('val-ctr').textContent = ctr.toFixed(1) + '%';
+      document.getElementById('val-cpa').textContent = cr.toFixed(1) + '%';
+
+      // Updated Rates
+      const cpmRate = 1.60;      // $1.60 per 1,000 impressions
+      const cpcRate = 0.05;      // $0.05 per click
+      const cpaRate = 0.70;      // $0.70 per conversion
+      const ugc1kRate = 0.70;    // $0.70 per 1,000 UGC views
+      const usdToUzs = 12800;
+
+      // Calculations
+      const cpmEarnings = (views / 1000) * cpmRate;
+      const clicks = views * (ctr / 100);
+      const cpcEarnings = clicks * cpcRate;
+      const conversions = clicks * (cr / 100);
+      const cpaEarnings = conversions * cpaRate;
+      const ugcEarnings = (views / 1000) * ugc1kRate;
+
+      const combinedTotalUsd = Math.round(cpmEarnings + cpcEarnings + cpaEarnings);
+      const combinedTotalUzs = Math.round(combinedTotalUsd * usdToUzs);
+
+      document.getElementById('earn-cpm').textContent = '$' + Math.round(cpmEarnings).toLocaleString('en-US');
+      document.getElementById('earn-cpc').textContent = '$' + Math.round(cpcEarnings).toLocaleString('en-US');
+      document.getElementById('earn-cpa').textContent = '$' + Math.round(cpaEarnings).toLocaleString('en-US');
+      document.getElementById('earn-ugc').textContent = '$' + Math.round(ugcEarnings).toLocaleString('en-US');
+
+      document.getElementById('total-usd').textContent = '$' + combinedTotalUsd.toLocaleString('en-US');
+      document.getElementById('total-uzs').textContent = '≈ ' + combinedTotalUzs.toLocaleString('en-US') + ' UZS / oyiga';
+    }
+
+    // Run initial calculation on load
+    calculatePublisherEarnings();
   </script>
 </body>
 </html>
