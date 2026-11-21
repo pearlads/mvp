@@ -765,6 +765,36 @@
       }
     }
 
+    async function handleAuthenticatedGoogleUser(user) {
+      const docSnap = await db.collection('users').doc(user.uid).get();
+
+      if (docSnap.exists && docSnap.data().role) {
+        launchRocketAndRedirect(docSnap.data().role);
+        return;
+      }
+
+      googleUserObj = user;
+      googleRole = null;
+      googleQuestionIdx = 0;
+      document.getElementById('google-role-step').classList.remove('hidden');
+      document.getElementById('google-questions-step').classList.add('hidden');
+      document.getElementById('google-footer-action').classList.add('hidden');
+      goStage('stage-google');
+    }
+
+    // Handle redirect result if signInWithRedirect was used
+    auth.getRedirectResult().then((result) => {
+      if (result && result.user) {
+        handleAuthenticatedGoogleUser(result.user).catch((err) => {
+          showError(translateError(err));
+        });
+      }
+    }).catch((err) => {
+      if (err && err.code && err.code !== 'auth/no-auth-event') {
+        showError(translateError(err));
+      }
+    });
+
     // ------------------------------------------------------------------------
     // 1. INITIAL METHOD SELECTION
     // ------------------------------------------------------------------------
@@ -778,44 +808,29 @@
       const btn = document.getElementById('btn-google-method');
       btn.style.pointerEvents = 'none';
       const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
 
       try {
         const res = await auth.signInWithPopup(provider);
-        const user = res.user;
-        const docSnap = await db.collection('users').doc(user.uid).get();
-
-        if (docSnap.exists && docSnap.data().role) {
-          launchRocketAndRedirect(docSnap.data().role);
-          return;
-        }
-
-        googleUserObj = user;
-        googleRole = null;
-        googleQuestionIdx = 0;
-        document.getElementById('google-role-step').classList.remove('hidden');
-        document.getElementById('google-questions-step').classList.add('hidden');
-        document.getElementById('google-footer-action').classList.add('hidden');
-        goStage('stage-google');
+        await handleAuthenticatedGoogleUser(res.user);
       } catch (err) {
-        btn.style.pointerEvents = 'auto';
-        if (err && err.code === 'auth/popup-closed-by-user') return;
-        if (err && (err.code === 'auth/unauthorized-domain' || err.code === 'auth/operation-not-supported-in-this-environment')) {
-          googleUserObj = {
-            uid: 'preview_' + Date.now(),
-            displayName: 'Google User',
-            email: 'user@gmail.com',
-            isPreview: true
-          };
-          googleRole = null;
-          googleQuestionIdx = 0;
-          document.getElementById('google-role-step').classList.remove('hidden');
-          document.getElementById('google-questions-step').classList.add('hidden');
-          document.getElementById('google-footer-action').classList.add('hidden');
-          goStage('stage-google');
+        if (err && err.code === 'auth/popup-closed-by-user') {
+          btn.style.pointerEvents = 'auto';
           return;
         }
-        showError(translateError(err));
-      } finally {
+        if (
+          err &&
+          (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment')
+        ) {
+          try {
+            await auth.signInWithRedirect(provider);
+            return;
+          } catch (redirectErr) {
+            showError(translateError(redirectErr));
+          }
+        } else {
+          showError(translateError(err));
+        }
         btn.style.pointerEvents = 'auto';
       }
     }
@@ -1158,17 +1173,23 @@
       btn.disabled = true;
 
       try {
-        if (googleUserObj && !googleUserObj.isPreview) {
-          await db.collection('users').doc(googleUserObj.uid).set({
-            uid: googleUserObj.uid,
-            name: googleUserObj.displayName || 'Foydalanuvchi',
-            email: googleUserObj.email || '',
-            role: googleRole,
-            ...rolePayload,
-            provider: 'google',
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
+        const activeUser = googleUserObj || auth.currentUser;
+        if (!activeUser || !activeUser.uid) {
+          showError('Google foydalanuvchi topilmadi. Qaytadan kiring.');
+          btn.disabled = false;
+          return;
         }
+
+        await db.collection('users').doc(activeUser.uid).set({
+          uid: activeUser.uid,
+          name: activeUser.displayName || 'Foydalanuvchi',
+          email: activeUser.email || '',
+          role: googleRole,
+          ...rolePayload,
+          provider: 'google',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
         launchRocketAndRedirect(googleRole);
       } catch (err) {
         btn.disabled = false;
@@ -1339,6 +1360,15 @@
       if (code.includes('weak-password')) return 'Parol kamida 6 belgidan iborat bo‘lsin.';
       if (code.includes('user-not-found') || code.includes('wrong-password') || code.includes('invalid-credential')) {
         return 'Email yoki parol noto‘g‘ri.';
+      }
+      if (code.includes('unauthorized-domain')) {
+        return 'Bu domen Firebase Authorized Domains ro‘yxatida yo‘q. Firebase Console → Authentication → Settings da qo‘shing.';
+      }
+      if (code.includes('popup-blocked')) {
+        return 'Brauzer oynani blokladi. Sahifani yangilab qayta urinib ko‘ring.';
+      }
+      if (code.includes('account-exists-with-different-credential')) {
+        return 'Bu email boshqa kirish usuli bilan allaqachon ulangan.';
       }
       if (code.includes('too-many-requests')) return 'Juda ko‘p urinish. Biroz kuting.';
       if (code.includes('network-request-failed')) return 'Internet aloqasi yo‘q.';
