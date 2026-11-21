@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maxfiylik siyosati | Pearl ADS</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Exact Match with Main Landing Page (Uzbek, Russian & English Support) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&family=Oswald:wght@600;700&family=Unbounded:wght@700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            beige: {
+              50: '#FAF8F3',
+              100: '#F5F1E8',
+              200: '#EBE4D5',
+              300: '#DDD3BE',
+            },
+            ink: {
+              900: '#111111',
+              800: '#1E1E1E',
+              600: '#4A4741',
+              400: '#7D786E',
+            }
+          },
+          fontFamily: {
+            display: ['"Unbounded"', '"Oswald"', 'sans-serif'],
+            editorial: ['"Oswald"', '"Unbounded"', 'sans-serif'],
+            sans: ['"Golos Text"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* ==========================================================================
+       PEARL ADS — GLOBAL DESIGN TOKENS & WORN-OUT EDITORIAL THEME
+       ========================================================================== */
+    :root {
+      --bg-beige: #F5F1E8;
+      --bg-beige-elevated: #FAF7F0;
+      --bg-beige-dark: #E8E1D3;
+      --ink-black: #111111;
+      --ink-muted: #4A4741;
+      --ink-subtle: #78736A;
+      --border-ink: #111111;
+    }
+
+    * {
+      box-sizing: border-box;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    *::-webkit-scrollbar,
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-beige);
+      color: var(--ink-black);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Golos Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-beige);
+      color: var(--ink-black);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    ::selection {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
+    }
+
+    /* Subtle tactile paper noise overlay across the page */
+    .paper-grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 60;
+      opacity: 0.045;
+      background-image: radial-gradient(#111111 0.65px, transparent 0.65px), radial-gradient(#111111 0.5px, #F5F1E8 0.5px);
+      background-size: 26px 26px;
+      background-position: 0 0, 13px 13px;
+    }
+
+    /* Ranfgih-inspired bold worn-out stamp display typography */
+    .font-worn-display {
+      font-family: 'Unbounded', 'Oswald', sans-serif;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      filter: url(#worn-ink-filter);
+      text-shadow: 1px 1px 0px rgba(17, 17, 17, 0.14);
+    }
+
+    .font-worn-heading {
+      font-family: 'Unbounded', 'Oswald', sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+    }
+
+    /* ==========================================================================
+       SCROLL-TRIGGERED TOP HEADER ANIMATION (Exact Match with Main Page)
+       ========================================================================== */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      height: 76px;
+      background-color: transparent;
+      border-bottom: 1.5px solid transparent;
+      transition: background-color 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                  border-color 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                  backdrop-filter 0.38s ease;
+    }
+
+    .site-header.is-scrolled {
+      background-color: rgba(245, 241, 232, 0.94);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1.5px solid var(--ink-black);
+    }
+
+    .header-inner {
+      position: relative;
+      max-width: 1280px;
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+      display: flex;
+      align-items: center;
+    }
+
+    @media (min-width: 640px) {
+      .header-inner {
+        padding: 0 2rem;
+      }
+    }
+
+    /* Logo starts dead-center, smoothly glides to the left on scroll */
+    .brand-mover {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      text-decoration: none;
+      color: var(--ink-black);
+      transition: left 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+      white-space: nowrap;
+    }
+
+    .site-header.is-scrolled .brand-mover {
+      left: 1.25rem;
+      transform: translateX(0);
+    }
+
+    @media (min-width: 640px) {
+      .site-header.is-scrolled .brand-mover {
+        left: 2rem;
+      }
+    }
+
+    /* Right-side actions group (Legal Links + START button) hidden at top, animates in on scroll */
+    .header-right-actions {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.85rem;
+      opacity: 0;
+      transform: translateX(18px) scale(0.95);
+      pointer-events: none;
+      transition: opacity 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @media (min-width: 768px) {
+      .header-right-actions {
+        gap: 1.35rem;
+      }
+    }
+
+    .site-header.is-scrolled .header-right-actions {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      pointer-events: auto;
+    }
+
+    /* Clean Editorial Legal Links in Navbar */
+    .header-legal-link {
+      position: relative;
+      font-family: 'Golos Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--ink-muted);
+      text-decoration: none;
+      padding: 0.25rem 0;
+      transition: color 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .header-legal-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 1.5px;
+      background-color: var(--ink-black);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .header-legal-link:hover,
+    .header-legal-link.is-active {
+      color: var(--ink-black);
+    }
+
+    .header-legal-link:hover::after,
+    .header-legal-link.is-active::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    .header-start-btn {
+      transition: background-color 0.2s ease,
+                  color 0.2s ease,
+                  transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.2s ease;
+    }
+
+    /* Primary Black Button with Beige Font */
+    .btn-ink {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
+      border: 2px solid var(--ink-black);
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+                  background-color 0.2s ease,
+                  color 0.2s ease,
+                  box-shadow 0.2s ease;
+    }
+
+    .btn-ink:hover {
+      background-color: var(--bg-beige);
+      color: var(--ink-black);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 var(--ink-black);
+    }
+
+    .btn-ink:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 0 var(--ink-black);
+    }
+
+    /* Editorial Card & Justified Legal Prose */
+    .editorial-card {
+      background-color: var(--bg-beige-elevated);
+      border: 2px solid var(--ink-black);
+      border-radius: 1.25rem;
+    }
+
+    .legal-justified {
+      text-align: justify;
+      text-justify: inter-word;
+      hyphens: auto;
+      -webkit-hyphens: auto;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-[#111111] selection:text-[#F5F1E8]">
+
+  <!-- SVG Distress / Worn-out Print Texture Filter -->
+  <svg width="0" height="0" class="hidden" aria-hidden="true">
+    <defs>
+      <filter id="worn-ink-filter" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.35" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Subtle Paper Grain Overlay -->
+  <div class="paper-grain" aria-hidden="true"></div>
+
+  <!-- ========================================================================
+       1. TOP NAVBAR (Same Scroll-Triggered Header as Main Landing Page)
+       ======================================================================== -->
+  <header id="main-header" class="site-header">
+    <div class="header-inner">
+      <!-- Logo Image & Brand Text (Centered initially, slides left on scroll) -->
+      <a href="/index.html" class="brand-mover" aria-label="Pearl ADS Bosh sahifa">
+        <img
+          src="/logo.webp"
+          alt="Pearl ADS"
+          class="h-8 w-8 sm:h-9 sm:w-9 object-contain grayscale contrast-125"
+          onerror="this.onerror=null; this.src='https://placehold.co/96x96/111111/F5F1E8?text=P';"
+        />
+        <span class="font-worn-heading text-xl sm:text-2xl tracking-tight text-[#111111]">
+          Pearl ADS
+        </span>
+      </a>
+
+      <!-- Right-side Legal Links + START button (Hidden at top, animates in on scroll) -->
+      <div class="header-right-actions">
+        <nav aria-label="Huquqiy havolalar" class="hidden sm:inline-flex items-center gap-4 md:gap-5">
+          <a href="/privacy/" class="header-legal-link is-active" aria-current="page">
+            Maxfiylik siyosati
+          </a>
+          <span class="w-1 h-1 rounded-full bg-[#111111]/35" aria-hidden="true"></span>
+          <a href="/terms/" class="header-legal-link">
+            Foydalanish shartlari
+          </a>
+        </nav>
+
+        <a
+          href="/authentication/"
+          class="header-start-btn btn-ink px-5 py-2 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider inline-flex items-center gap-2"
+        >
+          <span>START</span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       2. CENTERED PRIVACY POLICY CONTENT (Centered Titles + Justified Body)
+       ======================================================================== -->
+  <main class="pt-28 sm:pt-36 pb-20 sm:pb-28">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- Centered Page Title & Metadata -->
+      <header class="text-center mb-12 sm:mb-16">
+        <div class="mb-6 flex justify-center">
+          <a
+            href="/index.html"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 border-[#111111] bg-[#FAF7F0] font-mono text-xs font-bold uppercase tracking-wider text-[#111111] hover:bg-[#111111] hover:text-[#F5F1E8] transition-colors"
+          >
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Bosh sahifaga qaytish</span>
+          </a>
+        </div>
+
+        <p class="font-mono text-xs uppercase tracking-[0.2em] text-[#4A4741] mb-3 text-center">
+          HUQUQIY HUJJAT • OXIRGI YANGILANISH: 2026-YIL
+        </p>
+
+        <h1 class="font-worn-display text-3xl sm:text-5xl uppercase text-[#111111] leading-[1.05] text-center mb-5">
+          Maxfiylik siyosati
+        </h1>
+
+        <p class="text-sm sm:text-base text-[#2A2824] leading-relaxed legal-justified">
+          Ushbu Maxfiylik siyosati Pearl ADS platformasi (bundan buyon matnda — «Platforma», «Biz» yoki «Pearl ADS») tomonidan Markaziy Osiyo va O‘zbekiston hududida faoliyat yurituvchi reklama beruvchilar (Advertisers), nashriyotchilar hamda kontent yaratuvchilarning (Publishers) shaxsiy va texnik ma’lumotlarini qanday yig‘ish, saqlash, qayta ishlash va himoya qilish tartibini belgilaydi. Platformadan ro‘yxatdan o‘tish yoki undan foydalanish orqali siz ushbu siyosat shartlariga rozilik bildirasiz.
+        </p>
+      </header>
+
+      <!-- Policy Sections Container -->
+      <div class="space-y-8 sm:space-y-10">
+
+        <!-- SECTION 1 -->
+        <section class="editorial-card p-6 sm:p-9">
+          <h2 class="font-worn-heading text-lg sm:text-2xl uppercase text-[#111111] text-center mb-5">
+            1. Yig‘iladigan ma’lumotlar turlari
+          </h2>
+          <div class="space-y-4 text-sm sm:text-base text-[#2A2824] leading-relaxed legal-justified">
+            <p>
+              Platforma xizmatlaridan to‘liq va xavfsiz foydalanishingizni ta’minlash maqsadida biz siz taqdim etgan hamda tizimdan foydalanish jarayonida avtomatik tarzda shakllanadigan ma’lumotlarni yig‘amiz. Ro‘yxatdan o‘tish bosqichida sizning to‘liq ismingiz, elektron pochta manzilingiz, yashash shahringiz yoki manzilingiz, shuningdek Google hisobingiz orqali kirganingizda asosiy profil identifikatorlaringiz qayd etiladi.
+            </p>
+            <p>
+              Tanlangan rolingizga qarab qo‘shimcha kasbiy ma’lumotlar ham so‘raladi: reklama beruvchilardan biznes faoliyati tavsifi va rejalashtirilgan oylik reklama byudjeti haqidagi ma’lumotlar, nashriyotchi va blogerlardan esa ijtimoiy tarmoq havolalari, auditoriya ko‘rsatkichlari hamda kontent yo‘nalishi haqidagi ma’lumotlar olinadi. Bundan tashqari, firibgarlikning oldini olish (anti-fraud) va reklama samaradorligini aniq hisoblash uchun IP-manzil, qurilma turi, brauzer parametrlari, ko‘rishlar (CPM), kliklar (CPC) va konversiyalar (CPA) statistikasi qayta ishlanadi.
+            </p>
+          </div>
+        </section>
+
+        <!-- SECTION 2 -->
+        <section class="editorial-card p-6 sm:p-9">
+          <h2 class="font-worn-heading text-lg sm:text-2xl uppercase text-[#111111] text-center mb-5">
+            2. Ma’lumotlardan foydalanish maqsadlari
+          </h2>
+          <div class="space-y-4 text-sm sm:text-base text-[#2A2824] leading-relaxed legal-justified">
+            <p>
+              Yig‘ilgan barcha ma’lumotlar faqat Platformaning asosiy vazifalarini bajarish va foydalanuvchi tajribasini yaxshilash uchun qo‘llaniladi. Xususan, sizning shaxsiy kabinetingizni yaratish, reklama kampaniyalarini hudud, til (o‘zbek, rus, ingliz) va auditoriya qiziqishlari bo‘yicha aniq targetlash, shuningdek biznesingiz uchun buyurtma qilingan Telegram bot, Mini App yoki veb-sayt infratuzilmasini sozlash va texnik boshqarish maqsadida foydalaniladi.
+            </p>
+            <p>
+              Nashriyotchilar uchun ushbu ma’lumotlar daromadlarni shaffof hisoblash, reklama kreditlarini taqsimlash hamda Uzcard, Humo yoki bank hisob raqamlariga to‘lovlarni amalga oshirish jarayonida zarur bo‘ladi. Shuningdek, biz texnik nosozliklarni bartaraf etish, sun’iy trafik va botlarni aniqlash hamda tizim xavfsizligi yoki tarif shartlaridagi muhim o‘zgarishlar haqida xabardor qilish uchun aloqa ma’lumotlaringizdan foydalanishimiz mumkin.
+            </p>
+          </div>
+        </section>
+
+        <!-- SECTION 3 -->
+        <section class="editorial-card p-6 sm:p-9">
+          <h2 class="font-worn-heading text-lg sm:text-2xl uppercase text-[#111111] text-center mb-5">
+            3. Ma’lumotlarni saqlash va texnik xavfsizlik
+          </h2>
+          <div class="space-y-4 text-sm sm:text-base text-[#2A2824] leading-relaxed legal-justified">
+            <p>
+              Pearl ADS foydalanuvchilarning shaxsiy ma’lumotlarini ruxsatsiz kirish, o‘zgartirish, oshkor qilish yoki yo‘q qilishdan himoyalash uchun zamonaviy shifrlash protokollari (HTTPS/TLS) va xavfsiz bulutli infratuzilmadan foydalanadi. Autentifikatsiya jarayonlari himoyalangan sanoat standartlari asosida amalga oshiriladi va parollar ochiq matn ko‘rinishida saqlanmaydi.
+            </p>
+            <p>
+              Ma’lumotlarga kirish huquqi faqat tizimning uzluksiz ishlashi, texnik qo‘llab-quvvatlash va moliyaviy hisob-kitoblarni yuritish uchun bevosita mas’ul bo‘lgan vakolatli mutaxassislar bilan cheklangan. Sizning ma’lumotlaringiz hisobingiz faol bo‘lgan davr mobaynida hamda qonunchilikda belgilangan buxgalteriya va soliq hisobotlari muddatlari davomida saqlanadi.
+            </p>
+          </div>
+        </section>
+
+        <!-- SECTION 4 -->
+        <section class="editorial-card p-6 sm:p-9">
+          <h2 class="font-worn-heading text-lg sm:text-2xl uppercase text-[#111111] text-center mb-5">
+            4. Uchinchi shaxslar va hamkor xizmatlar
+          </h2>
+          <div class="space-y-4 text-sm sm:text-base text-[#2A2824] leading-relaxed legal-justified">
+            <p>
+              Biz foydalanuvchilarning shaxsiy ma’lumotlarini hech qachon uchinchi shaxslarga sotmaymiz va tijorat maqsadlarida ijaraga bermaymiz. Ma’lumotlar faqat Platforma faoliyati uchun zarur bo‘lgan ishonchli texnik hamkorlar (masalan, bulutli ma’lumotlar bazasi, autentifikatsiya provayderlari hamda mahalliy to‘lov tizimlari) bilan maxfiylik majburiyatlariga rioya qilingan holda almashilishi mumkin.
+            </p>
+            <p>
+              O‘zbekiston Respublikasining «Shaxsga doir ma’lumotlar to‘g‘risida»gi Qonuni va boshqa amaldagi me’yoriy-huquqiy hujjatlarda nazarda tutilgan hollarda, vakolatli davlat organlarining qonuniy so‘roviga binoan ma’lumotlar taqdim etilishi mumkin. Reklama beruvchilarga esa nashriyotchilarning shaxsiy kontaktlari emas, balki faqat umumlashtirilgan kampaniya samaradorligi ko‘rsatkichlari taqdim etiladi.
+            </p>
+          </div>
+        </section>
+
+        <!-- SECTION 5 -->
+        <section class="editorial-card p-6 sm:p-9">
+          <h2 class="font-worn-heading text-lg sm:text-2xl uppercase text-[#111111] text-center mb-5">
+            5. Cookie-fayllar va analitika
+          </h2>
+          <div class="space-y-4 text-sm sm:text-base text-[#2A2824] leading-relaxed legal-justified">
+            <p>
+              Platforma veb-sayti va Mini App ilovalarida foydalanuvchi sessiyasini faol ushlab turish, til sozlamalarini eslab qolish, interfeys tezligini oshirish hamda reklama ko‘rsatish chastotasini nazorat qilish uchun cookie-fayllar va lokal xotira (Local Storage) texnologiyalari qo‘llaniladi. Ushbu texnologiyalar har safar tizimga qayta login kiritmasdan qulay ishlashingizga yordam beradi.
+            </p>
+            <p>
+              Siz istalgan vaqtda brauzer sozlamalari orqali cookie-fayllarni cheklashingiz yoki o‘chirib tashlashingiz mumkin. Biroq cookie-fayllarning to‘liq o‘chirib qo‘yilishi shaxsiy kabinetga kirish, tariflarni boshqarish yoki reklama statistikasini real vaqt rejimida kuzatish funksiyalarining cheklanishiga olib kelishi mumkin.
+            </p>
+          </div>
+        </section>
+
+        <!-- SECTION 6 -->
+        <section class="editorial-card p-6 sm:p-9">
+          <h2 class="font-worn-heading text-lg sm:text-2xl uppercase text-[#111111] text-center mb-5">
+            6. Foydalanuvchi huquqlari va murojaat tartibi
+          </h2>
+          <div class="space-y-4 text-sm sm:text-base text-[#2A2824] leading-relaxed legal-justified">
+            <p>
+              Har bir foydalanuvchi o‘zining Platformada saqlanayotgan shaxsiy ma’lumotlari bilan tanishish, eskirgan yoki noto‘g‘ri ma’lumotlarni tahrirlash, reklama xabarnomalaridan voz kechish hamda o‘z hisobini va unga bog‘langan shaxsiy ma’lumotlarni o‘chirishni talab qilish huquqiga ega. Hisobni o‘chirish bo‘yicha so‘rov kelib tushganda, yakunlanmagan moliyaviy hisob-kitoblar yopilgandan so‘ng ma’lumotlar tizimdan o‘chiriladi yoki shaxssizlantiriladi.
+            </p>
+            <p>
+              Pearl ADS ushbu Maxfiylik siyosatiga vaqti-vaqti bilan yangi xizmatlar yoki qonunchilik talablaridan kelib chiqib o‘zgartirishlar kiritishi mumkin. Yangilangan tahrir ushbu sahifada e’lon qilingan paytdan boshlab kuchga kiradi. Maxfiylik siyosati yoki shaxsiy ma’lumotlaringizni qayta ishlash yuzasidan savol va takliflaringiz bo‘lsa, shaxsiy kabinetdagi qo‘llab-quvvatlash bo‘limi orqali bizga murojaat qilishingiz mumkin.
+            </p>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ========================================================================
+       3. FOOTER (Exact Match with Main Landing Page + Mobile-Only Legal Links)
+       ======================================================================== -->
+  <footer class="bg-[#111111] text-[#F5F1E8] border-t-2 border-[#111111]">
+    
+    <!-- Key Regional Metrics Strip -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 border-b border-[#F5F1E8]/15">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+        <div>
+          <p class="font-worn-display text-2xl sm:text-4xl text-[#F5F1E8] mb-1.5">35M+</p>
+          <p class="font-mono text-xs text-[#DDD3BE]">Markaziy Osiyo auditoriyasi</p>
+        </div>
+        <div>
+          <p class="font-worn-display text-2xl sm:text-4xl text-[#F5F1E8] mb-1.5">CPA & UGC</p>
+          <p class="font-mono text-xs text-[#DDD3BE]">Natijaga asoslangan tizim</p>
+        </div>
+        <div>
+          <p class="font-worn-display text-2xl sm:text-4xl text-[#F5F1E8] mb-1.5">UZ / RU / EN</p>
+          <p class="font-mono text-xs text-[#DDD3BE]">To‘liq ko‘p tilli ekotizim</p>
+        </div>
+        <div>
+          <p class="font-worn-display text-2xl sm:text-4xl text-[#F5F1E8] mb-1.5">2026</p>
+          <p class="font-mono text-xs text-[#DDD3BE]">Akselerator bosqichi</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Brand & Copyright Bar -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+        
+        <div class="flex items-center gap-3">
+          <img
+            src="/logo.webp"
+            alt="Pearl ADS Logotipi"
+            class="h-8 w-8 object-contain brightness-0 invert"
+            onerror="this.onerror=null; this.src='https://placehold.co/96x96/F5F1E8/111111?text=P';"
+          />
+          <span class="font-worn-heading text-xl tracking-tight text-[#F5F1E8]">
+            Pearl ADS
+          </span>
+        </div>
+
+        <p class="text-xs text-[#DDD3BE] text-center md:text-left max-w-md leading-relaxed">
+          Markaziy Osiyo va O‘zbekiston mahalliy bizneslari hamda kontent yaratuvchilari uchun qurilgan AdTech ekotizimi.
+        </p>
+
+        <!-- Mobile-only Legal Links -->
+        <nav aria-label="Huquqiy havolalar" class="flex sm:hidden items-center justify-center gap-4 text-xs font-medium text-[#F5F1E8]">
+          <a href="/privacy/" class="underline underline-offset-4 decoration-[#F5F1E8] transition-colors" aria-current="page">
+            Maxfiylik siyosati
+          </a>
+          <span class="w-1 h-1 rounded-full bg-[#F5F1E8]/40" aria-hidden="true"></span>
+          <a href="/terms/" class="underline underline-offset-4 decoration-[#F5F1E8]/40 hover:decoration-[#F5F1E8] transition-colors">
+            Foydalanish shartlari
+          </a>
+        </nav>
+
+        <div class="text-xs font-mono text-[#DDD3BE] text-center md:text-right">
+          <p>Mehribon va Rahmli Alloh nomi bilan</p>
+          <p class="mt-1 text-[#7D786E]">© 2026 Pearl ADS. Barcha huquqlar himoyalangan.</p>
+        </div>
+
+      </div>
+    </div>
+
+  </footer>
+
+  <!-- ========================================================================
+       SCRIPTS: Icons & Scroll-Triggered Navbar Animation
+       ======================================================================== -->
+  <script>
+    lucide.createIcons();
+
+    const mainHeader = document.getElementById('main-header');
+    function handleHeaderScroll() {
+      if (window.scrollY > 36) {
+        mainHeader.classList.add('is-scrolled');
+      } else {
+        mainHeader.classList.remove('is-scrolled');
+      }
+    }
+    window.addEventListener('scroll', handleHeaderScroll, { passive: true });
+    handleHeaderScroll();
+  </script>
+</body>
+</html>

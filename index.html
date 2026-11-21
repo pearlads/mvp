@@ -187,21 +187,72 @@
       }
     }
 
-    /* Header START button hidden at top, animates in from right on scroll */
-    .header-start-btn {
+    /* Right-side actions group (Legal Links + START button) hidden at top, animates in on scroll */
+    .header-right-actions {
       margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.85rem;
       opacity: 0;
       transform: translateX(18px) scale(0.95);
       pointer-events: none;
       transition: opacity 0.38s cubic-bezier(0.22, 1, 0.36, 1),
-                  transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
-                  background-color 0.2s ease;
+                  transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .site-header.is-scrolled .header-start-btn {
+    @media (min-width: 768px) {
+      .header-right-actions {
+        gap: 1.35rem;
+      }
+    }
+
+    .site-header.is-scrolled .header-right-actions {
       opacity: 1;
       transform: translateX(0) scale(1);
       pointer-events: auto;
+    }
+
+    /* Clean Editorial Legal Links in Navbar */
+    .header-legal-link {
+      position: relative;
+      font-family: 'Golos Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--ink-muted);
+      text-decoration: none;
+      padding: 0.25rem 0;
+      transition: color 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .header-legal-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 1.5px;
+      background-color: var(--ink-black);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .header-legal-link:hover {
+      color: var(--ink-black);
+    }
+
+    .header-legal-link:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    .header-start-btn {
+      transition: background-color 0.2s ease,
+                  color 0.2s ease,
+                  transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.2s ease;
     }
 
     /* ==========================================================================
@@ -375,7 +426,7 @@
   </div>
 
   <!-- ========================================================================
-       1. TOP NAVBAR (Blends at top; border + left logo + right START on scroll)
+       1. TOP NAVBAR (Blends at top; border + left logo + right links & START on scroll)
        ======================================================================== -->
   <header id="main-header" class="site-header">
     <div class="header-inner">
@@ -392,14 +443,26 @@
         </span>
       </a>
 
-      <!-- Right-side START button (Hidden at top, animates in on scroll) -->
-      <a
-        href="/authentication/"
-        class="header-start-btn btn-ink px-5 py-2 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider inline-flex items-center gap-2"
-      >
-        <span>START</span>
-        <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-      </a>
+      <!-- Right-side Legal Links + START button (Hidden at top, animates in on scroll) -->
+      <div class="header-right-actions">
+        <nav aria-label="Huquqiy havolalar" class="hidden sm:inline-flex items-center gap-4 md:gap-5">
+          <a href="/privacy/" class="header-legal-link">
+            Maxfiylik siyosati
+          </a>
+          <span class="w-1 h-1 rounded-full bg-[#111111]/35" aria-hidden="true"></span>
+          <a href="/terms/" class="header-legal-link">
+            Foydalanish shartlari
+          </a>
+        </nav>
+
+        <a
+          href="/authentication/"
+          class="header-start-btn btn-ink px-5 py-2 rounded-full font-worn-heading text-xs sm:text-sm uppercase tracking-wider inline-flex items-center gap-2"
+        >
+          <span>START</span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+        </a>
+      </div>
     </div>
   </header>
 
@@ -1024,6 +1087,17 @@
         <p class="text-xs text-[#DDD3BE] text-center md:text-left max-w-md leading-relaxed">
           Markaziy Osiyo va O‘zbekiston mahalliy bizneslari hamda kontent yaratuvchilari uchun qurilgan AdTech ekotizimi.
         </p>
+
+        <!-- Mobile-only Legal Links -->
+        <nav aria-label="Huquqiy havolalar" class="flex sm:hidden items-center justify-center gap-4 text-xs font-medium text-[#F5F1E8]">
+          <a href="/privacy/" class="underline underline-offset-4 decoration-[#F5F1E8]/40 hover:decoration-[#F5F1E8] transition-colors">
+            Maxfiylik siyosati
+          </a>
+          <span class="w-1 h-1 rounded-full bg-[#F5F1E8]/40" aria-hidden="true"></span>
+          <a href="/terms/" class="underline underline-offset-4 decoration-[#F5F1E8]/40 hover:decoration-[#F5F1E8] transition-colors">
+            Foydalanish shartlari
+          </a>
+        </nav>
 
         <div class="text-xs font-mono text-[#DDD3BE] text-center md:text-right">
           <p>Mehribon va Rahmli Alloh nomi bilan</p>
