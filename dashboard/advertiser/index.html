@@ -1,231 +1,1481 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reklama beruvchi | Pearl ADS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pearl ADS | Reklama Beruvchi Kabineti</title>
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="global.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Google Fonts: Full Uzbek Latin & Cyrillic Support -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&family=Oswald:wght@600;700&family=Unbounded:wght@700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
           colors: {
-            brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a', 700: '#15803d' }
+            beige: {
+              50: '#FAF8F3',
+              100: '#F5F1E8',
+              200: '#EBE4D5',
+              300: '#DDD3BE',
+            },
+            ink: {
+              900: '#111111',
+              800: '#1E1E1E',
+              600: '#4A4741',
+              400: '#7D786E',
+            }
+          },
+          fontFamily: {
+            display: ['"Unbounded"', '"Oswald"', 'sans-serif'],
+            editorial: ['"Oswald"', '"Unbounded"', 'sans-serif'],
+            sans: ['"Golos Text"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
           }
         }
       }
-    }
+    };
   </script>
+
   <style>
-    body { background: #f8fafc; }
-    .card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 1rem;
+    :root {
+      --bg-beige: #F5F1E8;
+      --bg-beige-elevated: #FAF7F0;
+      --bg-beige-dark: #E8E1D3;
+      --ink-black: #111111;
+      --ink-muted: #4A4741;
+      --ink-subtle: #78736A;
+      --border-ink: #111111;
     }
-    .stat-value { font-size: 1.5rem; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; }
-    .nav-link {
-      display: flex; align-items: center; gap: 0.65rem;
-      padding: 0.65rem 0.9rem; border-radius: 0.75rem;
-      font-size: 0.875rem; font-weight: 600; color: #64748b;
-      transition: background 0.12s, color 0.12s;
+
+    * {
+      box-sizing: border-box;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
     }
-    .nav-link:hover { background: #f1f5f9; color: #0f172a; }
-    .nav-link.active { background: #f0fdf4; color: #15803d; }
-    .btn-main {
-      background: #16a34a; color: #fff; font-weight: 700;
-      border-radius: 0.75rem; padding: 0.65rem 1.1rem;
-      font-size: 0.875rem; transition: background 0.15s;
+
+    *::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
     }
-    .btn-main:hover { background: #15803d; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Golos Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-beige);
+      color: var(--ink-black);
+      overflow-x: hidden;
+      min-height: 100dvh;
+    }
+
+    ::selection {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
+    }
+
+    /* Subtle tactile paper noise overlay */
+    .paper-grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 60;
+      opacity: 0.04;
+      background-image: radial-gradient(#111111 0.65px, transparent 0.65px), radial-gradient(#111111 0.5px, #F5F1E8 0.5px);
+      background-size: 26px 26px;
+      background-position: 0 0, 13px 13px;
+    }
+
+    .font-worn-display {
+      font-family: 'Unbounded', 'Oswald', sans-serif;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      filter: url(#worn-ink-filter);
+      text-shadow: 1px 1px 0px rgba(17, 17, 17, 0.14);
+    }
+
+    .font-worn-heading {
+      font-family: 'Unbounded', 'Oswald', sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+    }
+
+    /* Editorial Card */
+    .editorial-card {
+      background-color: var(--bg-beige-elevated);
+      border: 2px solid var(--ink-black);
+      border-radius: 1.25rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .editorial-card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 5px 5px 0px var(--ink-black);
+    }
+
+    /* Primary Ink Button */
+    .btn-ink {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
+      border: 2px solid var(--ink-black);
+      transition: transform 0.18s ease, background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .btn-ink:hover {
+      background-color: var(--bg-beige);
+      color: var(--ink-black);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 0 var(--ink-black);
+    }
+
+    .btn-ink:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 0 var(--ink-black);
+    }
+
+    /* Secondary Outline Button */
     .btn-outline {
-      border: 1.5px solid #e2e8f0; background: #fff; color: #334155;
-      font-weight: 600; border-radius: 0.75rem; padding: 0.6rem 1rem;
-      font-size: 0.875rem;
+      background-color: var(--bg-beige-elevated);
+      color: var(--ink-black);
+      border: 2px solid var(--ink-black);
+      transition: background-color 0.18s ease, color 0.18s ease;
     }
-    .btn-outline:hover { border-color: #cbd5e1; background: #f8fafc; }
+
+    .btn-outline:hover {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
+    }
+
+    /* Form Controls */
+    .editorial-input {
+      width: 100%;
+      background-color: var(--bg-beige);
+      border: 2px solid var(--ink-black);
+      border-radius: 0.75rem;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--ink-black);
+      outline: none;
+      transition: background-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .editorial-input:focus {
+      background-color: #FFFFFF;
+      box-shadow: 3px 3px 0px var(--ink-black);
+    }
+
+    /* Custom Styled Dropdown Menu */
+    .custom-select-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .custom-select-trigger {
+      width: 100%;
+      background-color: var(--bg-beige);
+      border: 2px solid var(--ink-black);
+      border-radius: 0.75rem;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--ink-black);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      cursor: pointer;
+      text-align: left;
+      transition: background-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .custom-select-trigger:hover,
+    .custom-select-wrapper.is-open .custom-select-trigger {
+      background-color: #FFFFFF;
+      box-shadow: 3px 3px 0px var(--ink-black);
+    }
+
+    .custom-select-wrapper.is-open .select-chevron {
+      transform: rotate(180deg);
+    }
+
+    .select-chevron {
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+      flex-shrink: 0;
+    }
+
+    .custom-select-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      z-index: 70;
+      background-color: var(--bg-beige-elevated);
+      border: 2px solid var(--ink-black);
+      border-radius: 0.85rem;
+      box-shadow: 5px 5px 0px var(--ink-black);
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 0.35rem;
+      display: none;
+    }
+
+    .custom-select-wrapper.is-open .custom-select-menu {
+      display: block;
+      animation: dropdownPop 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes dropdownPop {
+      from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .custom-select-option {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border-radius: 0.55rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--ink-black);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      text-align: left;
+      transition: background-color 0.12s ease, color 0.12s ease;
+    }
+
+    .custom-select-option:hover {
+      background-color: var(--bg-beige-dark);
+    }
+
+    .custom-select-option.is-selected {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
+    }
+
+    /* Borderless 1:1 Square Animated ASCII Container */
+    .ascii-square-stage {
+      width: 176px;
+      height: 176px;
+      aspect-ratio: 1 / 1;
+      margin: 0 auto;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      overflow: hidden;
+    }
+
+    .ascii-square-stage pre {
+      margin: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 7.4px;
+      line-height: 0.96;
+      letter-spacing: 0.04em;
+      color: var(--ink-black);
+      text-align: center;
+      white-space: pre;
+    }
+
+    /* Section Fade */
+    .dashboard-section {
+      display: none;
+    }
+    .dashboard-section.active {
+      display: block;
+      animation: fadeSlide 0.25s ease-out;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
-<body class="antialiased">
+<body class="antialiased selection:bg-[#111111] selection:text-[#F5F1E8]">
 
-  <!-- Top bar -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <a href="index.html" class="flex items-center gap-2">
-          <img src="logo.webp" alt="" class="h-7 w-7 object-contain" onerror="this.src='https://placehold.co/56x56/16a34a/ffffff?text=P'" />
-          <span class="font-extrabold text-slate-900 text-lg">Pearl <span class="text-brand-accent">ADS</span></span>
-        </a>
-        <span class="hidden sm:inline-flex text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">Reklama beruvchi</span>
-      </div>
-      <div class="flex items-center gap-3">
-        <span id="user-name" class="text-sm font-semibold text-slate-600 hidden sm:block">...</span>
-        <button onclick="logout()" class="btn-outline text-xs py-1.5 px-3">Chiqish</button>
-      </div>
-    </div>
+  <!-- SVG Worn-out Texture Filter -->
+  <svg width="0" height="0" class="hidden" aria-hidden="true">
+    <defs>
+      <filter id="worn-ink-filter" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="paper-grain" aria-hidden="true"></div>
+
+  <!-- ======================================================================
+       MOBILE TOP NAVBAR (Hidden on Desktop lg+)
+       ====================================================================== -->
+  <header class="lg:hidden sticky top-0 z-30 h-16 bg-[#F5F1E8]/95 backdrop-blur-md border-b-2 border-[#111111] px-4 flex items-center justify-between">
+    <!-- Left: Logo + Logo Text -->
+    <a href="#homepage" onclick="navigateTo('homepage')" class="inline-flex items-center gap-2.5 text-[#111111]">
+      <img
+        src="/logo.webp"
+        alt="Pearl ADS"
+        class="h-8 w-8 object-contain grayscale contrast-125"
+        onerror="this.onerror=null; this.src='https://placehold.co/96x96/111111/F5F1E8?text=P';"
+      />
+      <span class="font-worn-heading text-lg tracking-tight">Pearl ADS</span>
+    </a>
+
+    <!-- Right: Hamburger Icon -->
+    <button
+      type="button"
+      onclick="openMobileSidebar()"
+      aria-label="Menyuni ochish"
+      class="p-2 rounded-xl border-2 border-[#111111] bg-[#FAF7F0] text-[#111111] active:scale-95 transition-transform"
+    >
+      <i data-lucide="menu" class="w-5 h-5"></i>
+    </button>
   </header>
 
-  <div class="max-w-6xl mx-auto px-4 py-6 sm:py-8">
-    <div class="flex flex-col lg:flex-row gap-6">
+  <!-- ======================================================================
+       MOBILE RIGHT SIDEBAR & DARK OVERLAY
+       ====================================================================== -->
+  <div
+    id="mobile-overlay"
+    onclick="closeMobileSidebar()"
+    class="fixed inset-0 z-40 bg-[#111111]/60 backdrop-blur-[2px] hidden opacity-0 transition-opacity duration-200 lg:hidden"
+  ></div>
 
-      <!-- Side nav -->
-      <aside class="lg:w-52 shrink-0">
-        <nav class="card p-2 space-y-0.5 sticky top-20">
-          <a href="#overview" class="nav-link active" onclick="setNav(this)">
-            <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Umumiy
-          </a>
-          <a href="#campaigns" class="nav-link" onclick="setNav(this)">
-            <i data-lucide="megaphone" class="w-4 h-4"></i> Kampaniyalar
-          </a>
-          <a href="#spend" class="nav-link" onclick="setNav(this)">
-            <i data-lucide="wallet" class="w-4 h-4"></i> Byudjet
-          </a>
-          <a href="#audience" class="nav-link" onclick="setNav(this)">
-            <i data-lucide="users" class="w-4 h-4"></i> Auditoriya
-          </a>
-        </nav>
-      </aside>
+  <aside
+    id="mobile-sidebar"
+    class="fixed top-0 right-0 bottom-0 z-50 w-72 bg-[#FAF7F0] border-l-2 border-[#111111] p-5 flex flex-col justify-between translate-x-full transition-transform duration-250 ease-out lg:hidden"
+  >
+    <div>
+      <!-- Borderless 1:1 Animated ASCII Illustration -->
+      <div class="ascii-square-stage mb-4">
+        <pre id="ascii-mobile"></pre>
+      </div>
 
-      <!-- Main -->
-      <div class="flex-1 min-w-0 space-y-6">
+      <!-- Navigation Links -->
+      <nav class="space-y-1.5" id="mobile-nav-list"></nav>
+    </div>
 
-        <!-- Welcome -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Salom, <span id="greet-name">...</span></h1>
-            <p class="text-sm text-slate-500 mt-0.5">Kampaniyalaringiz holati</p>
-          </div>
-          <button class="btn-main inline-flex items-center gap-2 self-start sm:self-auto" onclick="alert('MVP: kampaniya yaratish tez orada')">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            Yangi kampaniya
-          </button>
+    <!-- Bottom Close Button (Instead of version info on mobile) -->
+    <button
+      type="button"
+      onclick="closeMobileSidebar()"
+      class="w-full py-3 px-4 rounded-full border-2 border-[#111111] bg-[#111111] text-[#F5F1E8] font-worn-heading text-xs uppercase tracking-wider inline-flex items-center justify-center gap-2"
+    >
+      <i data-lucide="x" class="w-4 h-4"></i>
+      <span>Yopish</span>
+    </button>
+  </aside>
+
+  <!-- ======================================================================
+       MAIN LAYOUT WRAPPER (PC Left Sidebar + Content Area)
+       ====================================================================== -->
+  <div class="flex min-h-screen">
+
+    <!-- PC LEFT SIDEBAR (Visible lg+) -->
+    <aside class="hidden lg:flex lg:flex-col lg:justify-between lg:w-72 lg:fixed lg:inset-y-0 lg:left-0 bg-[#FAF7F0] border-r-2 border-[#111111] p-5 z-20">
+      <div>
+        <!-- Top: Borderless 1:1 Animated ASCII Illustration -->
+        <div class="ascii-square-stage mb-5" title="Pearl ADS">
+          <pre id="ascii-desktop"></pre>
         </div>
 
-        <!-- Stats -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <div class="card p-4">
-            <p class="text-xs font-semibold text-slate-500 mb-1">Sarflangan</p>
-            <p class="stat-value">0 so‘m</p>
-            <p class="text-[11px] text-slate-400 mt-1">Shu oy</p>
-          </div>
-          <div class="card p-4">
-            <p class="text-xs font-semibold text-slate-500 mb-1">Ko‘rishlar</p>
-            <p class="stat-value">0</p>
-            <p class="text-[11px] text-slate-400 mt-1">Faol kampaniyalar</p>
-          </div>
-          <div class="card p-4">
-            <p class="text-xs font-semibold text-slate-500 mb-1">Kliklar</p>
-            <p class="stat-value">0</p>
-            <p class="text-[11px] text-slate-400 mt-1">CTR —</p>
-          </div>
-          <div class="card p-4">
-            <p class="text-xs font-semibold text-slate-500 mb-1">Konversiyalar</p>
-            <p class="stat-value">0</p>
-            <p class="text-[11px] text-slate-400 mt-1">CPA —</p>
-          </div>
-        </div>
+        <!-- Section Names -->
+        <nav class="space-y-1.5" id="desktop-nav-list"></nav>
+      </div>
 
-        <!-- Campaigns empty state -->
-        <div class="card p-6 sm:p-8" id="campaigns">
-          <div class="flex items-center justify-between mb-5">
-            <h2 class="text-base font-bold text-slate-900">Kampaniyalar</h2>
-            <span class="text-xs font-semibold text-slate-400">0 ta</span>
-          </div>
+      <!-- Bottom: Small almost visible text about website version (manually editable) -->
+      <div class="pt-3 text-center">
+        <p class="font-mono text-[10px] tracking-widest text-[#111111]/25 select-none">
+          v1.0.0-alpha • build 2026
+        </p>
+      </div>
+    </aside>
 
-          <div class="text-center py-10">
-            <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center mx-auto mb-3">
-              <i data-lucide="megaphone" class="w-5 h-5 text-slate-400"></i>
+    <!-- MAIN CONTENT WORKSPACE -->
+    <main class="flex-1 lg:pl-72 w-full">
+      <div class="max-w-5xl mx-auto px-4 sm:px-8 py-6 sm:py-10">
+
+        <!-- ================================================================
+             1. BOSH SAHIFA (HOMEPAGE)
+             ================================================================ -->
+        <section id="section-homepage" class="dashboard-section active">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <div>
+              <p class="hidden sm:block font-mono text-xs uppercase tracking-[0.18em] text-[#4A4741] mb-1">Reklama beruvchi kabineti</p>
+              <h1 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111]">Bosh sahifa</h1>
             </div>
-            <p class="text-sm font-semibold text-slate-700">Hali kampaniya yo‘q</p>
-            <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto">Birinchi kampaniyangizni yarating. Mahalliy auditoriyaga aniq yeting.</p>
-            <button class="btn-main mt-5 inline-flex items-center gap-2" onclick="alert('MVP: tez orada')">
+            <button onclick="navigateTo('campaigns'); openCampaignModal();" class="btn-ink px-5 py-2.5 rounded-full font-worn-heading text-xs uppercase tracking-wider inline-flex items-center gap-2">
               <i data-lucide="plus" class="w-4 h-4"></i>
-              Kampaniya yaratish
+              <span>Yangi reklama oqimi</span>
             </button>
           </div>
-        </div>
 
-        <!-- Quick tips -->
-        <div class="card p-5" id="audience">
-          <h2 class="text-base font-bold text-slate-900 mb-3">Tez boshlash</h2>
-          <ul class="space-y-2.5 text-sm text-slate-600">
-            <li class="flex gap-2.5">
-              <span class="w-5 h-5 rounded-md bg-emerald-50 text-emerald-700 text-xs font-bold flex items-center justify-center shrink-0">1</span>
-              Byudjet va maqsadni belgilang (CPA yoki CPM)
-            </li>
-            <li class="flex gap-2.5">
-              <span class="w-5 h-5 rounded-md bg-emerald-50 text-emerald-700 text-xs font-bold flex items-center justify-center shrink-0">2</span>
-              Hudud va til bo‘yicha targetlashni sozlang
-            </li>
-            <li class="flex gap-2.5">
-              <span class="w-5 h-5 rounded-md bg-emerald-50 text-emerald-700 text-xs font-bold flex items-center justify-center shrink-0">3</span>
-              Kreativ yuklang yoki UGC kreatorlarini ulang
-            </li>
-          </ul>
-        </div>
+          <!-- Qisqacha statistika kartalari -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-8">
+            <div class="editorial-card p-5">
+              <div class="flex items-center justify-between text-[#4A4741] mb-2">
+                <span class="font-mono text-[11px] uppercase">Balans</span>
+                <i data-lucide="wallet" class="w-4 h-4 text-[#111111]"></i>
+              </div>
+              <div id="home-balance" class="font-worn-display text-xl sm:text-2xl text-[#111111]">0 UZS</div>
+              <button onclick="navigateTo('billing')" class="mt-2 font-mono text-[11px] underline underline-offset-4 text-[#4A4741] hover:text-[#111111]">To‘ldirish →</button>
+            </div>
+
+            <div class="editorial-card p-5">
+              <div class="flex items-center justify-between text-[#4A4741] mb-2">
+                <span class="font-mono text-[11px] uppercase">Faol oqimlar</span>
+                <i data-lucide="megaphone" class="w-4 h-4 text-[#111111]"></i>
+              </div>
+              <div id="home-active-count" class="font-worn-display text-xl sm:text-2xl text-[#111111]">0</div>
+              <p class="mt-2 font-mono text-[11px] text-[#4A4741]">Hozir ishlamoqda</p>
+            </div>
+
+            <div class="editorial-card p-5">
+              <div class="flex items-center justify-between text-[#4A4741] mb-2">
+                <span class="font-mono text-[11px] uppercase">Jami ko‘rishlar</span>
+                <i data-lucide="eye" class="w-4 h-4 text-[#111111]"></i>
+              </div>
+              <div id="home-impressions" class="font-worn-display text-xl sm:text-2xl text-[#111111]">0</div>
+              <p class="mt-2 font-mono text-[11px] text-[#4A4741]">Tasdiqlangan qamrov</p>
+            </div>
+
+            <div class="editorial-card p-5">
+              <div class="flex items-center justify-between text-[#4A4741] mb-2">
+                <span class="font-mono text-[11px] uppercase">Jami byudjet</span>
+                <i data-lucide="banknote" class="w-4 h-4 text-[#111111]"></i>
+              </div>
+              <div id="home-total-budget" class="font-worn-display text-xl sm:text-2xl text-[#111111]">0 UZS</div>
+              <p class="mt-2 font-mono text-[11px] text-[#4A4741]">Ajratilgan mablag‘</p>
+            </div>
+          </div>
+
+          <!-- Umumiy ma'lumot va oxirgi oqimlar -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-7 editorial-card p-6 sm:p-7 flex flex-col justify-between">
+              <div>
+                <!-- <span class="font-mono text-[11px] uppercase px-2.5 py-1 rounded-full border border-[#111111] inline-block mb-4">Tezkor boshlash</span> -->
+                <h2 class="font-worn-heading text-lg sm:text-xl text-[#111111] mb-2">Navbatdagi reklama oqimini ishga tushiring</h2>
+                <p class="text-sm text-[#4A4741] leading-relaxed mb-6">
+                  Brendingiz haqida ma’lumotlarni to‘ldiring — tizimimiz reklamalaringizni Markaziy Osiyodagi eng mos nashriyotchilar va UGC kreatorlariga ulab beradi.
+                </p>
+              </div>
+              <div class="flex flex-wrap gap-3">
+                <button onclick="navigateTo('my-business')" class="btn-outline px-4 py-2.5 rounded-full font-worn-heading text-xs uppercase tracking-wider">
+                  Biznes ma’lumotlari
+                </button>
+                <button onclick="navigateTo('campaigns')" class="btn-ink px-4 py-2.5 rounded-full font-worn-heading text-xs uppercase tracking-wider">
+                  Oqimlarni boshqarish
+                </button>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 editorial-card p-6 sm:p-7 bg-[#EBE4D5] flex flex-col justify-between">
+              <div>
+                <span class="font-mono text-[11px] uppercase text-[#4A4741]">So‘nggi reklama oqimlari</span>
+                <div id="home-recent-list" class="mt-4 space-y-3">
+                  <p class="text-sm text-[#4A4741]">Hozircha reklama oqimlari yaratilmagan.</p>
+                </div>
+              </div>
+              <button onclick="navigateTo('statistics')" class="mt-6 pt-3 border-t border-[#111111]/20 font-mono text-xs font-bold uppercase text-left hover:underline">
+                Batafsil statistikani ko‘rish →
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             2. REKLAMA OQIMLARI (CAMPAIGNS — Firebase bilan bog'langan)
+             ================================================================ -->
+        <section id="section-campaigns" class="dashboard-section">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <div>
+              <p class="hidden sm:block font-mono text-xs uppercase tracking-[0.18em] text-[#4A4741] mb-1">Reklama boshqaruvi</p>
+              <h1 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111]">Reklama oqimlari</h1>
+            </div>
+            <button onclick="openCampaignModal()" class="btn-ink px-5 py-3 rounded-full font-worn-heading text-xs uppercase tracking-wider inline-flex items-center gap-2">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span>Oqim yaratish</span>
+            </button>
+          </div>
+
+          <!-- Filtr tugmalari -->
+          <div class="flex flex-wrap items-center gap-2 mb-6">
+            <button onclick="filterCampaigns('all')" data-filter="all" class="camp-filter-btn px-4 py-1.5 rounded-full border-2 border-[#111111] bg-[#111111] text-[#F5F1E8] font-mono text-xs font-bold uppercase">Barchasi</button>
+            <button onclick="filterCampaigns('active')" data-filter="active" class="camp-filter-btn px-4 py-1.5 rounded-full border-2 border-[#111111] bg-[#FAF7F0] text-[#111111] font-mono text-xs font-bold uppercase">Faol</button>
+            <button onclick="filterCampaigns('paused')" data-filter="paused" class="camp-filter-btn px-4 py-1.5 rounded-full border-2 border-[#111111] bg-[#FAF7F0] text-[#111111] font-mono text-xs font-bold uppercase">To‘xtatilgan</button>
+          </div>
+
+          <!-- Reklama oqimlari ro'yxati -->
+          <div id="campaigns-container" class="space-y-4">
+            <div class="editorial-card p-10 text-center">
+              <p class="font-mono text-xs uppercase text-[#4A4741]">Reklama oqimlari yuklanmoqda...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             3. STATISTIKA (STATISTICS)
+             ================================================================ -->
+        <section id="section-statistics" class="dashboard-section">
+          <div class="mb-8">
+            <p class="hidden sm:block font-mono text-xs uppercase tracking-[0.18em] text-[#4A4741] mb-1">Samaradorlik tahlili</p>
+            <h1 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111]">Statistika</h1>
+          </div>
+
+          <div id="statistics-content"></div>
+        </section>
+
+        <!-- ================================================================
+             4. MENING BIZNESIM (MY BUSINESS)
+             ================================================================ -->
+        <section id="section-my-business" class="dashboard-section">
+          <div class="mb-8">
+            <p class="hidden sm:block font-mono text-xs uppercase tracking-[0.18em] text-[#4A4741] mb-1">Nashriyotchilarni tanlash profili</p>
+            <h1 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111]">Mening biznesim</h1>
+          </div>
+
+          <form id="business-form" onsubmit="saveBusinessProfile(event)" class="editorial-card p-6 sm:p-8 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label class="block font-mono text-xs uppercase font-bold mb-2">Brend / Kompaniya nomi</label>
+                <input type="text" id="biz-name" placeholder="Masalan: Pearl Coffee Roasters" class="editorial-input" required />
+              </div>
+
+              <div>
+                <label class="block font-mono text-xs uppercase font-bold mb-2">Soha / Yo‘nalish (Niche)</label>
+                <!-- Custom Styled Dropdown -->
+                <div class="custom-select-wrapper" data-select-id="biz-niche">
+                  <input type="hidden" id="biz-niche" value="E-commerce va chakana savdo" />
+                  <button type="button" class="custom-select-trigger">
+                    <span class="custom-select-label">E-commerce va chakana savdo</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 select-chevron"></i>
+                  </button>
+                  <div class="custom-select-menu">
+                    <button type="button" class="custom-select-option is-selected" data-value="E-commerce va chakana savdo"><span>E-commerce va chakana savdo</span><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
+                    <button type="button" class="custom-select-option" data-value="Ovqatlanish va restoranlar"><span>Ovqatlanish va restoranlar</span></button>
+                    <button type="button" class="custom-select-option" data-value="IT, ilovalar va SaaS"><span>IT, ilovalar va SaaS</span></button>
+                    <button type="button" class="custom-select-option" data-value="Ta’lim va o‘quv kurslari"><span>Ta’lim va o‘quv kurslari</span></button>
+                    <button type="button" class="custom-select-option" data-value="Moliya va Fintech"><span>Moliya va Fintech</span></button>
+                    <button type="button" class="custom-select-option" data-value="Ko‘chmas mulk va avto"><span>Ko‘chmas mulk va avto</span></button>
+                    <button type="button" class="custom-select-option" data-value="Go‘zallik va turmush tarzi"><span>Go‘zallik va turmush tarzi</span></button>
+                    <button type="button" class="custom-select-option" data-value="Boshqa yo‘nalish"><span>Boshqa yo‘nalish</span></button>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label class="block font-mono text-xs uppercase font-bold mb-2">Veb-sayt yoki Telegram kanal</label>
+                <input type="text" id="biz-website" placeholder="https:// yoki @brend_uz" class="editorial-input" />
+              </div>
+
+              <div>
+                <label class="block font-mono text-xs uppercase font-bold mb-2">Maqsadli hudud va til</label>
+                <input type="text" id="biz-region" placeholder="Masalan: Toshkent, O‘zbek / Rus" class="editorial-input" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-mono text-xs uppercase font-bold mb-2">Brend va maqsadli auditoriya haqida</label>
+              <textarea id="biz-description" rows="4" placeholder="Mahsulotlaringiz, ideal mijozlaringiz va qanday nashriyotchilar (Telegram kanallar, UGC kreatorlar, veb-saytlar) sizga mos kelishini yozing..." class="editorial-input"></textarea>
+            </div>
+
+            <div class="flex items-center justify-between gap-4 pt-2">
+              <span id="biz-save-status" class="font-mono text-xs text-[#4A4741]"></span>
+              <button type="submit" class="btn-ink px-6 py-3 rounded-full font-worn-heading text-xs uppercase tracking-wider">
+                Saqlash
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- ================================================================
+             5. HISOB-KITOB (BILLING)
+             ================================================================ -->
+        <section id="section-billing" class="dashboard-section">
+          <div class="mb-8">
+            <p class="hidden sm:block font-mono text-xs uppercase tracking-[0.18em] text-[#4A4741] mb-1">Mablag‘ va to‘lovlar</p>
+            <h1 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111]">Hisob-kitob</h1>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+            <!-- Joriy balans kartasi -->
+            <div class="lg:col-span-5 editorial-card p-6 sm:p-8 bg-[#111111] text-[#F5F1E8] flex flex-col justify-between">
+              <div>
+                <span class="font-mono text-xs uppercase tracking-widest text-[#DDD3BE]">Mavjud reklama balansi</span>
+                <div id="billing-balance" class="font-worn-display text-3xl sm:text-4xl text-[#F5F1E8] mt-3">0 UZS</div>
+                <p class="font-mono text-xs text-[#DDD3BE] mt-2">Faol CPA, CPC va UGC reklama oqimlari uchun</p>
+              </div>
+              <div class="mt-8 pt-4 border-t border-[#F5F1E8]/20 font-mono text-xs text-[#DDD3BE]">
+                Hisob ID: <span id="billing-uid" class="text-[#F5F1E8] font-bold">ADV-2026</span>
+              </div>
+            </div>
+
+            <!-- Telegram admin orqali balansni to'ldirish yo'riqnomasi -->
+            <div class="lg:col-span-7 editorial-card p-6 sm:p-8 flex flex-col justify-between">
+              <div>
+                <!-- <span class="font-mono text-xs uppercase px-2.5 py-1 rounded-full border border-[#111111] inline-block mb-3">To‘ldirish yo‘riqnomasi</span> -->
+                <h2 class="font-worn-heading text-lg sm:text-xl text-[#111111] mb-3">Balansni qanday to‘ldirish mumkin?</h2>
+                <ol class="space-y-2.5 text-sm text-[#3A3732] list-decimal list-inside mb-6">
+                  <li>Quyidagi <strong>Telegram Admin</strong> tugmasini bosib to‘g‘ridan-to‘g‘ri chatni oching.</li>
+                  <li><strong>Hisob ID</strong> raqamingizni va to‘ldirmoqchi bo‘lgan summani (UZS yoki USD) yuboring.</li>
+                  <li>Uzcard, Humo yoki hisob-raqam orqali o‘tkazmani amalga oshirib, chekni yuboring.</li>
+                  <li>Reklama balansingiz 5–15 daqiqa ichida to‘ldiriladi.</li>
+                </ol>
+              </div>
+
+              <div>
+                <a
+                  href="https://t.me/pearlads_admin"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn-ink px-6 py-3.5 rounded-full font-worn-heading text-xs uppercase tracking-wider inline-flex items-center gap-2.5"
+                >
+                  <i data-lucide="send" class="w-4 h-4"></i>
+                  <span>Telegram Admin bilan bog‘lanish</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tranzaksiyalar tarixi -->
+          <div class="editorial-card p-6 sm:p-8">
+            <h3 class="font-worn-heading text-base sm:text-lg uppercase text-[#111111] mb-4">Tranzaksiyalar tarixi</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b-2 border-[#111111] font-mono text-xs uppercase text-[#4A4741]">
+                    <th class="py-3 pr-4">Sana</th>
+                    <th class="py-3 pr-4">Tavsif</th>
+                    <th class="py-3 pr-4">Usul</th>
+                    <th class="py-3 text-right">Summa</th>
+                  </tr>
+                </thead>
+                <tbody id="transactions-tbody" class="divide-y divide-[#111111]/15 text-sm">
+                  <tr>
+                    <td colspan="4" class="py-8 text-center font-mono text-xs text-[#4A4741]">Hozircha tranzaksiyalar yo‘q. Boshlash uchun Telegram Admin orqali balansni to‘ldiring.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             6. SOZLAMALAR (SETTINGS)
+             ================================================================ -->
+        <section id="section-settings" class="dashboard-section">
+          <div class="mb-8">
+            <p class="hidden sm:block font-mono text-xs uppercase tracking-[0.18em] text-[#4A4741] mb-1">Hisob va profil</p>
+            <h1 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111]">Sozlamalar</h1>
+          </div>
+
+          <form id="settings-form" onsubmit="saveUserSettings(event)" class="editorial-card p-6 sm:p-8 space-y-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label class="block font-mono text-xs uppercase font-bold mb-2">Ism</label>
+                <input type="text" id="set-firstname" placeholder="Ismingiz" class="editorial-input" />
+              </div>
+
+              <div>
+                <label class="block font-mono text-xs uppercase font-bold mb-2">Familiya</label>
+                <input type="text" id="set-surname" placeholder="Familiyangiz" class="editorial-input" />
+              </div>
+
+              <div>
+                <label class="block font-mono text-xs uppercase font-bold mb-2">Telefon raqami</label>
+                <input type="tel" id="set-phone" placeholder="+998 90 123 45 67" class="editorial-input" />
+              </div>
+
+              <div>
+                <label class="block font-mono text-xs uppercase font-bold mb-2">Ijtimoiy tarmoq havolasi</label>
+                <input type="text" id="set-social" placeholder="https://t.me/username yoki Instagram havolasi" class="editorial-input" />
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="block font-mono text-xs uppercase font-bold mb-2">Manzil</label>
+                <input type="text" id="set-address" placeholder="Shahar, tuman, ko‘cha" class="editorial-input" />
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
+              <span id="settings-save-status" class="font-mono text-xs text-[#4A4741]"></span>
+              <button type="submit" class="btn-ink px-6 py-3 rounded-full font-worn-heading text-xs uppercase tracking-wider">
+                O‘zgarishlarni saqlash
+              </button>
+            </div>
+          </form>
+
+          <!-- Chiqish (Log out) -->
+          <div class="editorial-card p-6 sm:p-7 bg-[#EBE4D5] flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 class="font-worn-heading text-base uppercase text-[#111111]">Sessiya</h3>
+              <p class="text-xs text-[#4A4741] mt-1">Ushbu qurilmada Pearl ADS reklama beruvchi hisobidan chiqish.</p>
+            </div>
+            <button
+              type="button"
+              onclick="handleLogout()"
+              class="px-6 py-3 rounded-full border-2 border-[#111111] bg-[#111111] text-[#F5F1E8] hover:bg-[#FAF7F0] hover:text-[#111111] transition-colors font-worn-heading text-xs uppercase tracking-wider inline-flex items-center gap-2"
+            >
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+              <span>Chiqish</span>
+            </button>
+          </div>
+        </section>
 
       </div>
+    </main>
+  </div>
+
+  <!-- ======================================================================
+       REKLAMA OQIMI YARATISH MODALI
+       ====================================================================== -->
+  <div id="campaign-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-[#111111]/65 backdrop-blur-xs">
+    <div class="w-full max-w-lg bg-[#FAF7F0] border-2 border-[#111111] rounded-2xl p-6 sm:p-7 shadow-[8px_8px_0px_#111111] max-h-[92dvh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b-2 border-[#111111] pb-4 mb-5">
+        <h2 class="font-worn-heading text-lg uppercase text-[#111111]">Reklama oqimi yaratish</h2>
+        <button type="button" onclick="closeCampaignModal()" class="p-1.5 rounded-lg border border-[#111111] hover:bg-[#111111] hover:text-[#F5F1E8] transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="campaign-form" onsubmit="submitCampaign(event)" class="space-y-4">
+        <div>
+          <label class="block font-mono text-xs uppercase font-bold mb-1.5">Oqim nomi *</label>
+          <input type="text" id="camp-title" placeholder="Masalan: Toshkent yozgi aksiyasi" class="editorial-input" required />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-mono text-xs uppercase font-bold mb-1.5">To‘lov modeli</label>
+            <!-- Custom Dropdown: Ad Model -->
+            <div class="custom-select-wrapper" data-select-id="camp-model">
+              <input type="hidden" id="camp-model" value="CPA" />
+              <button type="button" class="custom-select-trigger">
+                <span class="custom-select-label">CPA (Harakat uchun)</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 select-chevron"></i>
+              </button>
+              <div class="custom-select-menu">
+                <button type="button" class="custom-select-option is-selected" data-value="CPA"><span>CPA (Harakat uchun)</span><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="custom-select-option" data-value="CPC"><span>CPC (Klik uchun)</span></button>
+                <button type="button" class="custom-select-option" data-value="CPM"><span>CPM (1,000 ko‘rish)</span></button>
+                <button type="button" class="custom-select-option" data-value="UGC"><span>UGC (Kreator videosi)</span></button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-mono text-xs uppercase font-bold mb-1.5">Umumiy byudjet (UZS) *</label>
+            <input type="number" id="camp-budget" min="10000" step="5000" placeholder="500000" class="editorial-input" required />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-mono text-xs uppercase font-bold mb-1.5">Maqsadli hudud</label>
+            <!-- Custom Dropdown: Region -->
+            <div class="custom-select-wrapper" data-select-id="camp-region">
+              <input type="hidden" id="camp-region" value="Butun O‘zbekiston" />
+              <button type="button" class="custom-select-trigger">
+                <span class="custom-select-label">Butun O‘zbekiston</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 select-chevron"></i>
+              </button>
+              <div class="custom-select-menu">
+                <button type="button" class="custom-select-option is-selected" data-value="Butun O‘zbekiston"><span>Butun O‘zbekiston</span><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="custom-select-option" data-value="Toshkent"><span>Toshkent</span></button>
+                <button type="button" class="custom-select-option" data-value="Samarqand"><span>Samarqand</span></button>
+                <button type="button" class="custom-select-option" data-value="Farg‘ona vodiysi"><span>Farg‘ona vodiysi</span></button>
+                <button type="button" class="custom-select-option" data-value="Markaziy Osiyo"><span>Markaziy Osiyo</span></button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-mono text-xs uppercase font-bold mb-1.5">Auditoriya tili</label>
+            <!-- Custom Dropdown: Language -->
+            <div class="custom-select-wrapper" data-select-id="camp-lang">
+              <input type="hidden" id="camp-lang" value="O‘zbek / Rus" />
+              <button type="button" class="custom-select-trigger">
+                <span class="custom-select-label">O‘zbek / Rus</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 select-chevron"></i>
+              </button>
+              <div class="custom-select-menu">
+                <button type="button" class="custom-select-option is-selected" data-value="O‘zbek / Rus"><span>O‘zbek / Rus</span><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
+                <button type="button" class="custom-select-option" data-value="O‘zbek tili"><span>O‘zbek tili</span></button>
+                <button type="button" class="custom-select-option" data-value="Rus tili"><span>Rus tili</span></button>
+                <button type="button" class="custom-select-option" data-value="Ingliz tili"><span>Ingliz tili</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-mono text-xs uppercase font-bold mb-1.5">Manzil havolasi (URL / Telegram) *</label>
+          <input type="url" id="camp-url" placeholder="https://t.me/kanalingiz yoki https://sayt.uz" class="editorial-input" required />
+        </div>
+
+        <div>
+          <label class="block font-mono text-xs uppercase font-bold mb-1.5">Reklama matni / Nashriyotchilar uchun topshiriq</label>
+          <textarea id="camp-brief" rows="3" placeholder="Qisqa sarlavha, taklif tafsilotlari yoki harakatga chaqiruv..." class="editorial-input"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-[#111111]/20">
+          <button type="button" onclick="closeCampaignModal()" class="btn-outline px-5 py-2.5 rounded-full font-worn-heading text-xs uppercase">Bekor qilish</button>
+          <button type="submit" id="camp-submit-btn" class="btn-ink px-6 py-2.5 rounded-full font-worn-heading text-xs uppercase">Ishga tushirish</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <script>
+  <!-- ======================================================================
+       SCRIPTS: Firebase, Custom Dropdowns, 1:1 Animated ASCII & Navigation
+       ====================================================================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      doc,
+      updateDoc,
+      deleteDoc,
+      setDoc,
+      getDoc,
+      query,
+      orderBy,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
     const firebaseConfig = {
-      apiKey: "AIzaSyCu3EYefkYrRDskqIWqeyMxaWGlEIe7RXg",
-      authDomain: "pearlads-f7018.firebaseapp.com",
-      projectId: "pearlads-f7018",
-      storageBucket: "pearlads-f7018.firebasestorage.app",
-      messagingSenderId: "67374785504",
-      appId: "1:67374785504:web:b063d4750b6224fd7ec185"
+      apiKey: "AIzaSyPearlAdsPlaceholderKey",
+      authDomain: "pearl-ads.firebaseapp.com",
+      projectId: "pearl-ads",
+      storageBucket: "pearl-ads.appspot.com",
+      messagingSenderId: "100000000000",
+      appId: "1:100000000000:web:pearlads2026"
     };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
 
-    function setNav(el) {
-      document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-      el.classList.add('active');
+    let db = null;
+    let auth = null;
+    let currentUserId = "adv_demo_user";
+    let useLocalFallback = false;
+
+    try {
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      auth = getAuth(app);
+
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          currentUserId = user.uid;
+          document.getElementById("billing-uid").textContent = "ADV-" + user.uid.slice(0, 6).toUpperCase();
+        }
+        loadAllDashboardData();
+      });
+    } catch (err) {
+      useLocalFallback = true;
+      loadAllDashboardData();
     }
 
-    function logout() {
-      auth.signOut().then(() => { window.location.href = '/index.html'; });
+    let campaignsList = [];
+    let currentFilter = "all";
+
+    function getLocalData(key, fallback) {
+      try {
+        const raw = localStorage.getItem("pearl_ads_" + key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+    function setLocalData(key, value) {
+      try {
+        localStorage.setItem("pearl_ads_" + key, JSON.stringify(value));
+      } catch {}
     }
 
-    auth.onAuthStateChanged(async (user) => {
-      if (!user) {
-        window.location.href = '/authentication/';
+    async function loadAllDashboardData() {
+      if (!useLocalFallback && db) {
+        try {
+          const q = query(collection(db, "users", currentUserId, "campaigns"), orderBy("createdAt", "desc"));
+          const snap = await getDocs(q);
+          campaignsList = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        } catch (e) {
+          useLocalFallback = true;
+          campaignsList = getLocalData("campaigns", []);
+        }
+      } else {
+        campaignsList = getLocalData("campaigns", []);
+      }
+
+      // Load Business Profile
+      let bizData = getLocalData("business", null);
+      if (!useLocalFallback && db) {
+        try {
+          const docSnap = await getDoc(doc(db, "users", currentUserId, "profile", "business"));
+          if (docSnap.exists()) bizData = docSnap.data();
+        } catch {}
+      }
+      if (bizData) {
+        document.getElementById("biz-name").value = bizData.name || "";
+        if (bizData.niche) window.setCustomSelectValue("biz-niche", bizData.niche);
+        document.getElementById("biz-website").value = bizData.website || "";
+        document.getElementById("biz-region").value = bizData.region || "";
+        document.getElementById("biz-description").value = bizData.description || "";
+      }
+
+      // Load Settings Profile
+      let setData = getLocalData("settings", null);
+      if (!useLocalFallback && db) {
+        try {
+          const docSnap = await getDoc(doc(db, "users", currentUserId, "profile", "settings"));
+          if (docSnap.exists()) setData = docSnap.data();
+        } catch {}
+      }
+      if (setData) {
+        document.getElementById("set-firstname").value = setData.firstName || "";
+        document.getElementById("set-surname").value = setData.surname || "";
+        document.getElementById("set-phone").value = setData.phone || "";
+        document.getElementById("set-social").value = setData.social || "";
+        document.getElementById("set-address").value = setData.address || "";
+      }
+
+      renderDashboardViews();
+    }
+
+    function renderDashboardViews() {
+      renderHomepageStats();
+      renderCampaignsList();
+      renderStatisticsSection();
+    }
+
+    function renderHomepageStats() {
+      const activeCount = campaignsList.filter(c => c.status === "active").length;
+      const totalBudget = campaignsList.reduce((acc, c) => acc + (Number(c.budget) || 0), 0);
+      const totalImpressions = campaignsList.reduce((acc, c) => acc + (Number(c.impressions) || 0), 0);
+
+      document.getElementById("home-active-count").textContent = activeCount;
+      document.getElementById("home-total-budget").textContent = totalBudget.toLocaleString("en-US") + " UZS";
+      document.getElementById("home-impressions").textContent = totalImpressions.toLocaleString("en-US");
+
+      const recentEl = document.getElementById("home-recent-list");
+      if (campaignsList.length === 0) {
+        recentEl.innerHTML = `<p class="text-sm text-[#4A4741]">Hozircha reklama oqimlari yaratilmagan.</p>`;
+      } else {
+        recentEl.innerHTML = campaignsList.slice(0, 3).map(c => `
+          <div class="flex items-center justify-between p-3 rounded-xl border border-[#111111] bg-[#FAF7F0]">
+            <div>
+              <p class="font-worn-heading text-xs text-[#111111]">${escapeHtml(c.title)}</p>
+              <p class="font-mono text-[11px] text-[#4A4741]">${escapeHtml(c.model)} • ${Number(c.budget).toLocaleString()} UZS</p>
+            </div>
+            <span class="font-mono text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${c.status === 'active' ? 'bg-[#111111] text-[#F5F1E8]' : 'border border-[#111111] text-[#111111]'}">
+              ${c.status === 'active' ? 'Faol' : 'To‘xtatilgan'}
+            </span>
+          </div>
+        `).join("");
+      }
+    }
+
+    function renderCampaignsList() {
+      const container = document.getElementById("campaigns-container");
+      const filtered = campaignsList.filter(c => currentFilter === "all" ? true : c.status === currentFilter);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="editorial-card p-10 text-center">
+            <p class="font-worn-heading text-base uppercase text-[#111111] mb-2">Reklama oqimlari topilmadi</p>
+            <p class="text-sm text-[#4A4741] mb-5">Tasdiqlangan auditoriyaga chiqish uchun birinchi reklama oqimingizni ishga tushiring.</p>
+            <button onclick="openCampaignModal()" class="btn-ink px-5 py-2.5 rounded-full font-worn-heading text-xs uppercase tracking-wider">
+              + Oqim yaratish
+            </button>
+          </div>
+        `;
         return;
       }
 
-      try {
-        const snap = await db.collection('users').doc(user.uid).get();
-        if (snap.exists) {
-          const data = snap.data();
-          if (data.role === 'publisher') {
-            window.location.href = '/dashboard/publisher/';
-            return;
-          }
-          const name = data.name || user.displayName || 'Foydalanuvchi';
-          document.getElementById('user-name').textContent = name;
-          document.getElementById('greet-name').textContent = name.split(' ')[0];
-        } else {
-          document.getElementById('user-name').textContent = user.displayName || user.email;
-          document.getElementById('greet-name').textContent = (user.displayName || 'Foydalanuvchi').split(' ')[0];
-        }
-      } catch (e) {
-        document.getElementById('greet-name').textContent = 'Foydalanuvchi';
-      }
-    });
+      container.innerHTML = filtered.map(c => `
+        <div class="editorial-card editorial-card-hover p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="space-y-1.5">
+            <div class="flex flex-wrap items-center gap-2.5">
+              <h3 class="font-worn-heading text-base sm:text-lg text-[#111111]">${escapeHtml(c.title)}</h3>
+              <span class="font-mono text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full ${c.status === 'active' ? 'bg-[#111111] text-[#F5F1E8]' : 'border border-[#111111] text-[#111111]'}">
+                ${c.status === 'active' ? 'Faol' : 'To‘xtatilgan'}
+              </span>
+              <span class="font-mono text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-[#EBE4D5] text-[#111111]">
+                ${escapeHtml(c.model)}
+              </span>
+            </div>
+            <p class="font-mono text-xs text-[#4A4741]">
+              Hudud: <strong class="text-[#111111]">${escapeHtml(c.region)}</strong> • Til: <strong class="text-[#111111]">${escapeHtml(c.lang)}</strong> • Byudjet: <strong class="text-[#111111]">${Number(c.budget).toLocaleString()} UZS</strong>
+            </p>
+            <p class="text-xs text-[#4A4741] truncate max-w-md">${escapeHtml(c.url)}</p>
+          </div>
 
-    lucide.createIcons();
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="toggleCampaignStatus('${c.id}')" class="btn-outline px-3.5 py-2 rounded-full font-mono text-xs font-bold uppercase">
+              ${c.status === 'active' ? 'To‘xtatish' : 'Faollashtirish'}
+            </button>
+            <button onclick="removeCampaign('${c.id}')" aria-label="Oqimni o‘chirish" class="p-2 rounded-full border-2 border-[#111111] hover:bg-[#111111] hover:text-[#F5F1E8] transition-colors">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      `).join("");
+
+      lucide.createIcons();
+    }
+
+    function renderStatisticsSection() {
+      const container = document.getElementById("statistics-content");
+      const hasData = campaignsList.length > 0;
+
+      if (!hasData) {
+        container.innerHTML = `
+          <div class="editorial-card p-12 sm:p-16 text-center max-w-xl mx-auto">
+            <div class="w-12 h-12 rounded-2xl border-2 border-[#111111] bg-[#EBE4D5] flex items-center justify-center mx-auto mb-4">
+              <i data-lucide="bar-chart-3" class="w-6 h-6 text-[#111111]"></i>
+            </div>
+            <h2 class="font-worn-heading text-lg sm:text-xl uppercase text-[#111111] mb-2">Ma’lumotlar mavjud emas</h2>
+            <p class="text-sm text-[#4A4741] mb-6">Hozircha faol reklama tahlillari yo‘q. Ko‘rishlar, kliklar va konversiyalarni kuzatish uchun reklama oqimi yarating.</p>
+            <button onclick="navigateTo('campaigns')" class="btn-ink px-6 py-3 rounded-full font-worn-heading text-xs uppercase tracking-wider inline-flex items-center gap-2">
+              <span>Oqim yaratish</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="editorial-card p-6 sm:p-8">
+          <h2 class="font-worn-heading text-base uppercase text-[#111111] mb-5">Reklama oqimlari kesimida ko‘rsatkichlar</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b-2 border-[#111111] font-mono text-xs uppercase text-[#4A4741]">
+                  <th class="py-3 pr-4">Oqim nomi</th>
+                  <th class="py-3 pr-4">Model</th>
+                  <th class="py-3 pr-4">Ko‘rishlar</th>
+                  <th class="py-3 pr-4">Kliklar</th>
+                  <th class="py-3 text-right">Byudjet</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#111111]/15 text-sm">
+                ${campaignsList.map(c => `
+                  <tr>
+                    <td class="py-3.5 pr-4 font-bold">${escapeHtml(c.title)}</td>
+                    <td class="py-3.5 pr-4 font-mono text-xs">${escapeHtml(c.model)}</td>
+                    <td class="py-3.5 pr-4 font-mono">${Number(c.impressions || 0).toLocaleString()}</td>
+                    <td class="py-3.5 pr-4 font-mono">${Number(c.clicks || 0).toLocaleString()}</td>
+                    <td class="py-3.5 text-right font-mono font-bold">${Number(c.budget).toLocaleString()} UZS</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    window.submitCampaign = async function (e) {
+      e.preventDefault();
+      const btn = document.getElementById("camp-submit-btn");
+      btn.disabled = true;
+      btn.textContent = "Saqlanmoqda...";
+
+      const newCamp = {
+        title: document.getElementById("camp-title").value.trim(),
+        model: document.getElementById("camp-model").value,
+        budget: Number(document.getElementById("camp-budget").value),
+        region: document.getElementById("camp-region").value,
+        lang: document.getElementById("camp-lang").value,
+        url: document.getElementById("camp-url").value.trim(),
+        brief: document.getElementById("camp-brief").value.trim(),
+        status: "active",
+        impressions: 0,
+        clicks: 0,
+        createdAt: Date.now()
+      };
+
+      if (!useLocalFallback && db) {
+        try {
+          const docRef = await addDoc(collection(db, "users", currentUserId, "campaigns"), {
+            ...newCamp,
+            createdAt: serverTimestamp()
+          });
+          newCamp.id = docRef.id;
+        } catch {
+          useLocalFallback = true;
+          newCamp.id = "camp_" + Date.now();
+        }
+      } else {
+        newCamp.id = "camp_" + Date.now();
+      }
+
+      campaignsList.unshift(newCamp);
+      setLocalData("campaigns", campaignsList);
+
+      btn.disabled = false;
+      btn.textContent = "Ishga tushirish";
+      document.getElementById("campaign-form").reset();
+      window.setCustomSelectValue("camp-model", "CPA");
+      window.setCustomSelectValue("camp-region", "Butun O‘zbekiston");
+      window.setCustomSelectValue("camp-lang", "O‘zbek / Rus");
+      window.closeCampaignModal();
+      renderDashboardViews();
+    };
+
+    window.toggleCampaignStatus = async function (id) {
+      const idx = campaignsList.findIndex(c => c.id === id);
+      if (idx === -1) return;
+      const nextStatus = campaignsList[idx].status === "active" ? "paused" : "active";
+      campaignsList[idx].status = nextStatus;
+      setLocalData("campaigns", campaignsList);
+
+      if (!useLocalFallback && db) {
+        try {
+          await updateDoc(doc(db, "users", currentUserId, "campaigns", id), { status: nextStatus });
+        } catch {}
+      }
+      renderDashboardViews();
+    };
+
+    window.removeCampaign = async function (id) {
+      campaignsList = campaignsList.filter(c => c.id !== id);
+      setLocalData("campaigns", campaignsList);
+
+      if (!useLocalFallback && db) {
+        try {
+          await deleteDoc(doc(db, "users", currentUserId, "campaigns", id));
+        } catch {}
+      }
+      renderDashboardViews();
+    };
+
+    window.filterCampaigns = function (status) {
+      currentFilter = status;
+      document.querySelectorAll(".camp-filter-btn").forEach(btn => {
+        if (btn.dataset.filter === status) {
+          btn.className = "camp-filter-btn px-4 py-1.5 rounded-full border-2 border-[#111111] bg-[#111111] text-[#F5F1E8] font-mono text-xs font-bold uppercase";
+        } else {
+          btn.className = "camp-filter-btn px-4 py-1.5 rounded-full border-2 border-[#111111] bg-[#FAF7F0] text-[#111111] font-mono text-xs font-bold uppercase";
+        }
+      });
+      renderCampaignsList();
+    };
+
+    window.saveBusinessProfile = async function (e) {
+      e.preventDefault();
+      const statusEl = document.getElementById("biz-save-status");
+      const payload = {
+        name: document.getElementById("biz-name").value.trim(),
+        niche: document.getElementById("biz-niche").value,
+        website: document.getElementById("biz-website").value.trim(),
+        region: document.getElementById("biz-region").value.trim(),
+        description: document.getElementById("biz-description").value.trim(),
+        updatedAt: Date.now()
+      };
+      setLocalData("business", payload);
+      if (!useLocalFallback && db) {
+        try {
+          await setDoc(doc(db, "users", currentUserId, "profile", "business"), payload, { merge: true });
+        } catch {}
+      }
+      statusEl.textContent = "Saqlandi ✓";
+      setTimeout(() => (statusEl.textContent = ""), 2500);
+    };
+
+    window.saveUserSettings = async function (e) {
+      e.preventDefault();
+      const statusEl = document.getElementById("settings-save-status");
+      const payload = {
+        firstName: document.getElementById("set-firstname").value.trim(),
+        surname: document.getElementById("set-surname").value.trim(),
+        phone: document.getElementById("set-phone").value.trim(),
+        social: document.getElementById("set-social").value.trim(),
+        address: document.getElementById("set-address").value.trim(),
+        updatedAt: Date.now()
+      };
+      setLocalData("settings", payload);
+      if (!useLocalFallback && db) {
+        try {
+          await setDoc(doc(db, "users", currentUserId, "profile", "settings"), payload, { merge: true });
+        } catch {}
+      }
+      statusEl.textContent = "Ma’lumotlar yangilandi ✓";
+      setTimeout(() => (statusEl.textContent = ""), 2500);
+    };
+
+    window.handleLogout = async function () {
+      if (auth) {
+        try { await signOut(auth); } catch {}
+      }
+      window.location.href = "/authentication/";
+    };
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+  </script>
+
+  <script>
+    // ========================================================================
+    // 1. 4 COOL 1:1 SQUARE ANIMATED ASCII GENERATORS (Lightweight ~14 FPS)
+    //    No visible card borders, ultra-low CPU/RAM footprint, pauses when hidden
+    // ========================================================================
+    (function initSquareAsciiArt() {
+      const deskEl = document.getElementById("ascii-desktop");
+      const mobEl = document.getElementById("ascii-mobile");
+      if (!deskEl && !mobEl) return;
+
+      const size = 21; // 21x21 character grid -> 1:1 visual aspect ratio
+      const ramp = " .:-=+*#%@█";
+      const chosenMode = 1 + Math.floor(Math.random() * 3); // Picks 1, 2, or 3
+      let t = 0;
+      let lastFrame = 0;
+      const fpsInterval = 1000 / 14; // Smooth 14 FPS — zero lag, negligible CPU/RAM
+
+      function computeFrame(time) {
+        let out = "";
+        for (let y = 0; y < size; y++) {
+          const ny = (y / (size - 1)) * 2 - 1;
+          for (let x = 0; x < size; x++) {
+            // 0.62 horizontal factor compensates monospace char aspect ratio so rendered box is 1:1
+            const nx = ((x / (size - 1)) * 2 - 1) * 0.92;
+            const r = Math.hypot(nx, ny);
+            const a = Math.atan2(ny, nx);
+            let val = 0;
+
+            if (chosenMode === 1) {
+              // Mode 2: Kinetic Geometric Vortex Star
+              const twist = a + r * 3.2 - time * 1.4;
+              const petals = Math.cos(twist * 4);
+              const mask = r < 0.92 ? (1 - r * 0.55) : 0;
+              val = petals > 0.15 ? petals * mask : 0;
+            } else if (chosenMode === 2) {
+              // Mode 3: Concentric Radar Pulse Rings
+              if (r < 0.95) {
+                const wave = Math.sin(r * 13 - time * 3.0);
+                val = wave > 0.25 ? (0.4 + 0.6 * wave) * (1 - r * 0.35) : 0;
+              }
+            } else {
+              // Mode 4: Brutalist Rotating Cross / Signal Beacon
+              const ca = Math.cos(time * 0.7);
+              const sa = Math.sin(time * 0.7);
+              const rx = nx * ca - ny * sa;
+              const ry = nx * sa + ny * ca;
+              const barX = Math.abs(ry) < 0.16 && Math.abs(rx) < 0.85;
+              const barY = Math.abs(rx) < 0.16 && Math.abs(ry) < 0.85;
+              const core = r < 0.24;
+              if (core) {
+                val = 1.0;
+              } else if (barX || barY) {
+                const pulse = 0.65 + 0.35 * Math.sin(r * 8 - time * 2.5);
+                val = pulse;
+              }
+            }
+
+            const idx = Math.min(ramp.length - 1, Math.max(0, Math.floor(val * (ramp.length - 1))));
+            out += ramp[idx] + " ";
+          }
+          out += "\n";
+        }
+        return out;
+      }
+
+      function loop(now) {
+        requestAnimationFrame(loop);
+        if (document.hidden) return;
+        if (now - lastFrame < fpsInterval) return;
+        lastFrame = now;
+        t += 0.08;
+        const frameStr = computeFrame(t);
+        if (deskEl) deskEl.textContent = frameStr;
+        if (mobEl) mobEl.textContent = frameStr;
+      }
+
+      requestAnimationFrame(loop);
+    })();
+
+    // ========================================================================
+    // 2. CUSTOM STYLED DROPDOWN MENUS (Replaces all native <select> elements)
+    // ========================================================================
+    function initCustomDropdowns() {
+      document.querySelectorAll(".custom-select-wrapper").forEach(wrapper => {
+        const trigger = wrapper.querySelector(".custom-select-trigger");
+        const options = wrapper.querySelectorAll(".custom-select-option");
+        const hiddenInput = wrapper.querySelector("input[type='hidden']");
+        const labelSpan = wrapper.querySelector(".custom-select-label");
+
+        trigger.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const wasOpen = wrapper.classList.contains("is-open");
+          closeAllDropdowns();
+          if (!wasOpen) wrapper.classList.add("is-open");
+        });
+
+        options.forEach(opt => {
+          opt.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const val = opt.dataset.value;
+            const text = opt.querySelector("span").textContent;
+            hiddenInput.value = val;
+            labelSpan.textContent = text;
+
+            options.forEach(o => {
+              o.classList.remove("is-selected");
+              const icon = o.querySelector("svg, i");
+              if (icon) icon.remove();
+            });
+            opt.classList.add("is-selected");
+            opt.insertAdjacentHTML("beforeend", `<i data-lucide="check" class="w-3.5 h-3.5"></i>`);
+            lucide.createIcons();
+            wrapper.classList.remove("is-open");
+          });
+        });
+      });
+
+      document.addEventListener("click", closeAllDropdowns);
+    }
+
+    function closeAllDropdowns() {
+      document.querySelectorAll(".custom-select-wrapper.is-open").forEach(w => w.classList.remove("is-open"));
+    }
+
+    window.setCustomSelectValue = function (inputId, value) {
+      const hiddenInput = document.getElementById(inputId);
+      if (!hiddenInput) return;
+      const wrapper = hiddenInput.closest(".custom-select-wrapper");
+      if (!wrapper) return;
+      const labelSpan = wrapper.querySelector(".custom-select-label");
+      const options = wrapper.querySelectorAll(".custom-select-option");
+
+      hiddenInput.value = value;
+      options.forEach(o => {
+        o.classList.remove("is-selected");
+        const icon = o.querySelector("svg, i");
+        if (icon) icon.remove();
+        if (o.dataset.value === value) {
+          o.classList.add("is-selected");
+          labelSpan.textContent = o.querySelector("span").textContent;
+          o.insertAdjacentHTML("beforeend", `<i data-lucide="check" class="w-3.5 h-3.5"></i>`);
+        }
+      });
+      lucide.createIcons();
+    };
+
+    initCustomDropdowns();
+
+    // ========================================================================
+    // 3. UZBEK SIDEBAR NAVIGATION ITEMS ("Reklama oqimlari" instead of "kompaniyalar")
+    // ========================================================================
+    const NAV_ITEMS = [
+      { id: "homepage", label: "Bosh sahifa", icon: "layout-dashboard" },
+      { id: "campaigns", label: "Reklama oqimlari", icon: "megaphone" },
+      { id: "statistics", label: "Statistika", icon: "bar-chart-2" },
+      { id: "my-business", label: "Mening biznesim", icon: "briefcase" },
+      { id: "billing", label: "Hisob-kitob", icon: "wallet" },
+      { id: "settings", label: "Sozlamalar", icon: "settings" }
+    ];
+
+    let activeSection = "homepage";
+
+    function renderNavMenus() {
+      const desktopList = document.getElementById("desktop-nav-list");
+      const mobileList = document.getElementById("mobile-nav-list");
+
+      const buildHtml = () => NAV_ITEMS.map(item => {
+        const isActive = item.id === activeSection;
+        return `
+          <button
+            type="button"
+            onclick="navigateTo('${item.id}')"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-worn-heading text-xs uppercase tracking-wider transition-all ${
+              isActive
+                ? "bg-[#111111] text-[#F5F1E8] shadow-[3px_3px_0px_#7D786E]"
+                : "text-[#111111] hover:bg-[#EBE4D5]"
+            }"
+          >
+            <i data-lucide="${item.icon}" class="w-4 h-4 shrink-0"></i>
+            <span>${item.label}</span>
+          </button>
+        `;
+      }).join("");
+
+      if (desktopList) desktopList.innerHTML = buildHtml();
+      if (mobileList) mobileList.innerHTML = buildHtml();
+      lucide.createIcons();
+    }
+
+    function navigateTo(sectionId) {
+      activeSection = sectionId;
+      document.querySelectorAll(".dashboard-section").forEach(sec => sec.classList.remove("active"));
+      const target = document.getElementById("section-" + sectionId);
+      if (target) target.classList.add("active");
+      renderNavMenus();
+      closeMobileSidebar();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // ========================================================================
+    // 4. MOBILE RIGHT SIDEBAR & OVERLAY CONTROLS
+    // ========================================================================
+    function openMobileSidebar() {
+      const overlay = document.getElementById("mobile-overlay");
+      const sidebar = document.getElementById("mobile-sidebar");
+      overlay.classList.remove("hidden");
+      requestAnimationFrame(() => {
+        overlay.classList.remove("opacity-0");
+        sidebar.classList.remove("translate-x-full");
+      });
+    }
+
+    function closeMobileSidebar() {
+      const overlay = document.getElementById("mobile-overlay");
+      const sidebar = document.getElementById("mobile-sidebar");
+      overlay.classList.add("opacity-0");
+      sidebar.classList.add("translate-x-full");
+      setTimeout(() => {
+        overlay.classList.add("hidden");
+      }, 220);
+    }
+
+    // ========================================================================
+    // 5. CAMPAIGN MODAL CONTROLS
+    // ========================================================================
+    function openCampaignModal() {
+      const modal = document.getElementById("campaign-modal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeCampaignModal() {
+      closeAllDropdowns();
+      const modal = document.getElementById("campaign-modal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    renderNavMenus();
   </script>
 </body>
 </html>
