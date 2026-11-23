@@ -1,234 +1,1480 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nashriyotchi | Pearl ADS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pearl ADS | Nashriyotchi Kabineti</title>
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="global.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Google Fonts: Full Uzbek Latin & Cyrillic Support -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&family=Oswald:wght@600;700&family=Unbounded:wght@700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
           colors: {
-            brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a', 700: '#15803d' }
+            beige: {
+              50: '#FAF8F3',
+              100: '#F5F1E8',
+              200: '#EBE4D5',
+              300: '#DDD3BE',
+            },
+            ink: {
+              900: '#111111',
+              800: '#1E1E1E',
+              600: '#4A4741',
+              400: '#7D786E',
+            }
+          },
+          fontFamily: {
+            display: ['"Unbounded"', '"Oswald"', 'sans-serif'],
+            editorial: ['"Oswald"', '"Unbounded"', 'sans-serif'],
+            sans: ['"Golos Text"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
           }
         }
       }
-    }
+    };
   </script>
+
   <style>
-    body { background: #f8fafc; }
-    .card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 1rem;
+    :root {
+      --bg-beige: #F5F1E8;
+      --bg-beige-elevated: #FAF7F0;
+      --bg-beige-dark: #E8E1D3;
+      --ink-black: #111111;
+      --ink-muted: #4A4741;
+      --ink-subtle: #78736A;
+      --border-ink: #111111;
     }
-    .stat-value { font-size: 1.5rem; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; }
-    .nav-link {
-      display: flex; align-items: center; gap: 0.65rem;
-      padding: 0.65rem 0.9rem; border-radius: 0.75rem;
-      font-size: 0.875rem; font-weight: 600; color: #64748b;
-      transition: background 0.12s, color 0.12s;
+
+    * {
+      box-sizing: border-box;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
     }
-    .nav-link:hover { background: #f1f5f9; color: #0f172a; }
-    .nav-link.active { background: #f0fdf4; color: #15803d; }
-    .btn-main {
-      background: #16a34a; color: #fff; font-weight: 700;
-      border-radius: 0.75rem; padding: 0.65rem 1.1rem;
-      font-size: 0.875rem; transition: background 0.15s;
+
+    *::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
     }
-    .btn-main:hover { background: #15803d; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Golos Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-beige);
+      color: var(--ink-black);
+      overflow-x: hidden;
+      min-height: 100dvh;
+    }
+
+    ::selection {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
+    }
+
+    /* Subtle tactile paper noise overlay */
+    .paper-grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 60;
+      opacity: 0.04;
+      background-image: radial-gradient(#111111 0.65px, transparent 0.65px), radial-gradient(#111111 0.5px, #F5F1E8 0.5px);
+      background-size: 26px 26px;
+      background-position: 0 0, 13px 13px;
+    }
+
+    .font-worn-display {
+      font-family: 'Unbounded', 'Oswald', sans-serif;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      filter: url(#worn-ink-filter);
+      text-shadow: 1px 1px 0px rgba(17, 17, 17, 0.14);
+    }
+
+    .font-worn-heading {
+      font-family: 'Unbounded', 'Oswald', sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+    }
+
+    /* Editorial Card */
+    .editorial-card {
+      background-color: var(--bg-beige-elevated);
+      border: 2px solid var(--ink-black);
+      border-radius: 1.25rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .editorial-card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 5px 5px 0px var(--ink-black);
+    }
+
+    /* Primary Ink Button */
+    .btn-ink {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
+      border: 2px solid var(--ink-black);
+      transition: transform 0.18s ease, background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .btn-ink:hover {
+      background-color: var(--bg-beige);
+      color: var(--ink-black);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 0 var(--ink-black);
+    }
+
+    .btn-ink:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 0 var(--ink-black);
+    }
+
+    /* Secondary Outline Button */
     .btn-outline {
-      border: 1.5px solid #e2e8f0; background: #fff; color: #334155;
-      font-weight: 600; border-radius: 0.75rem; padding: 0.6rem 1rem;
-      font-size: 0.875rem;
+      background-color: var(--bg-beige-elevated);
+      color: var(--ink-black);
+      border: 2px solid var(--ink-black);
+      transition: background-color 0.18s ease, color 0.18s ease;
     }
-    .btn-outline:hover { border-color: #cbd5e1; background: #f8fafc; }
+
+    .btn-outline:hover {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
+    }
+
+    /* Form Controls */
+    .editorial-input {
+      width: 100%;
+      background-color: var(--bg-beige);
+      border: 2px solid var(--ink-black);
+      border-radius: 0.75rem;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--ink-black);
+      outline: none;
+      transition: background-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .editorial-input:focus {
+      background-color: #FFFFFF;
+      box-shadow: 3px 3px 0px var(--ink-black);
+    }
+
+    /* Custom Styled Dropdown Menu */
+    .custom-select-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .custom-select-trigger {
+      width: 100%;
+      background-color: var(--bg-beige);
+      border: 2px solid var(--ink-black);
+      border-radius: 0.75rem;
+      padding: 0.65rem 0.9rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--ink-black);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      cursor: pointer;
+      text-align: left;
+      transition: background-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .custom-select-trigger:hover,
+    .custom-select-wrapper.is-open .custom-select-trigger {
+      background-color: #FFFFFF;
+      box-shadow: 3px 3px 0px var(--ink-black);
+    }
+
+    .custom-select-wrapper.is-open .select-chevron {
+      transform: rotate(180deg);
+    }
+
+    .select-chevron {
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+      flex-shrink: 0;
+    }
+
+    .custom-select-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      z-index: 70;
+      background-color: var(--bg-beige-elevated);
+      border: 2px solid var(--ink-black);
+      border-radius: 0.85rem;
+      box-shadow: 5px 5px 0px var(--ink-black);
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 0.35rem;
+      display: none;
+    }
+
+    .custom-select-wrapper.is-open .custom-select-menu {
+      display: block;
+      animation: dropdownPop 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes dropdownPop {
+      from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .custom-select-option {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border-radius: 0.55rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--ink-black);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      text-align: left;
+      transition: background-color 0.12s ease, color 0.12s ease;
+    }
+
+    .custom-select-option:hover {
+      background-color: var(--bg-beige-dark);
+    }
+
+    .custom-select-option.is-selected {
+      background-color: var(--ink-black);
+      color: var(--bg-beige);
+    }
+
+    /* Borderless 1:1 Square Animated ASCII Container */
+    .ascii-square-stage {
+      width: 176px;
+      height: 176px;
+      aspect-ratio: 1 / 1;
+      margin: 0 auto;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      overflow: hidden;
+    }
+
+    .ascii-square-stage pre {
+      margin: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 7.4px;
+      line-height: 0.96;
+      letter-spacing: 0.04em;
+      color: var(--ink-black);
+      text-align: center;
+      white-space: pre;
+    }
+
+    /* Section Fade */
+    .dashboard-section {
+      display: none;
+    }
+    .dashboard-section.active {
+      display: block;
+      animation: fadeSlide 0.25s ease-out;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
-<body class="antialiased">
+<body class="antialiased selection:bg-[#111111] selection:text-[#F5F1E8]">
 
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <a href="index.html" class="flex items-center gap-2">
-          <img src="logo.webp" alt="" class="h-7 w-7 object-contain" onerror="this.src='https://placehold.co/56x56/16a34a/ffffff?text=P'" />
-          <span class="font-extrabold text-slate-900 text-lg">Pearl <span class="text-brand-accent">ADS</span></span>
-        </a>
-        <span class="hidden sm:inline-flex text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">Nashriyotchi</span>
-      </div>
-      <div class="flex items-center gap-3">
-        <span id="user-name" class="text-sm font-semibold text-slate-600 hidden sm:block">...</span>
-        <button onclick="logout()" class="btn-outline text-xs py-1.5 px-3">Chiqish</button>
-      </div>
-    </div>
+  <!-- SVG Worn-out Texture Filter -->
+  <svg width="0" height="0" class="hidden" aria-hidden="true">
+    <defs>
+      <filter id="worn-ink-filter" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="paper-grain" aria-hidden="true"></div>
+
+  <!-- ======================================================================
+       MOBILE TOP NAVBAR (Hidden on Desktop lg+)
+       ====================================================================== -->
+  <header class="lg:hidden sticky top-0 z-30 h-16 bg-[#F5F1E8]/95 backdrop-blur-md border-b-2 border-[#111111] px-4 flex items-center justify-between">
+    <!-- Left: Logo + Logo Text -->
+    <a href="#homepage" onclick="navigateTo('homepage')" class="inline-flex items-center gap-2.5 text-[#111111]">
+      <img
+        src="/logo.webp"
+        alt="Pearl ADS"
+        class="h-8 w-8 object-contain grayscale contrast-125"
+        onerror="this.onerror=null; this.src='https://placehold.co/96x96/111111/F5F1E8?text=P';"
+      />
+      <span class="font-worn-heading text-lg tracking-tight">Pearl ADS</span>
+    </a>
+
+    <!-- Right: Hamburger Icon -->
+    <button
+      type="button"
+      onclick="openMobileSidebar()"
+      aria-label="Menyuni ochish"
+      class="p-2 rounded-xl border-2 border-[#111111] bg-[#FAF7F0] text-[#111111] active:scale-95 transition-transform"
+    >
+      <i data-lucide="menu" class="w-5 h-5"></i>
+    </button>
   </header>
 
-  <div class="max-w-6xl mx-auto px-4 py-6 sm:py-8">
-    <div class="flex flex-col lg:flex-row gap-6">
+  <!-- ======================================================================
+       MOBILE RIGHT SIDEBAR & DARK OVERLAY
+       ====================================================================== -->
+  <div
+    id="mobile-overlay"
+    onclick="closeMobileSidebar()"
+    class="fixed inset-0 z-40 bg-[#111111]/60 backdrop-blur-[2px] hidden opacity-0 transition-opacity duration-200 lg:hidden"
+  ></div>
 
-      <aside class="lg:w-52 shrink-0">
-        <nav class="card p-2 space-y-0.5 sticky top-20">
-          <a href="#overview" class="nav-link active" onclick="setNav(this)">
-            <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Umumiy
-          </a>
-          <a href="#sites" class="nav-link" onclick="setNav(this)">
-            <i data-lucide="globe" class="w-4 h-4"></i> Joylar
-          </a>
-          <a href="#earnings" class="nav-link" onclick="setNav(this)">
-            <i data-lucide="coins" class="w-4 h-4"></i> Daromad
-          </a>
-          <a href="#payout" class="nav-link" onclick="setNav(this)">
-            <i data-lucide="credit-card" class="w-4 h-4"></i> To‘lovlar
-          </a>
-        </nav>
-      </aside>
+  <aside
+    id="mobile-sidebar"
+    class="fixed top-0 right-0 bottom-0 z-50 w-72 bg-[#FAF7F0] border-l-2 border-[#111111] p-5 flex flex-col justify-between translate-x-full transition-transform duration-250 ease-out lg:hidden"
+  >
+    <div>
+      <!-- Borderless 1:1 Animated ASCII Illustration -->
+      <div class="ascii-square-stage mb-4">
+        <pre id="ascii-mobile"></pre>
+      </div>
 
-      <div class="flex-1 min-w-0 space-y-6">
+      <!-- Navigation Links -->
+      <nav class="space-y-1.5" id="mobile-nav-list"></nav>
+    </div>
 
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Salom, <span id="greet-name">...</span></h1>
-            <p class="text-sm text-slate-500 mt-0.5">Daromadingiz va joylaringiz</p>
-          </div>
-          <button class="btn-main inline-flex items-center gap-2 self-start sm:self-auto" onclick="alert('MVP: joy qo‘shish tez orada')">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            Joy qo‘shish
-          </button>
+    <!-- Bottom Close Button (Instead of version info on mobile) -->
+    <button
+      type="button"
+      onclick="closeMobileSidebar()"
+      class="w-full py-3 px-4 rounded-full border-2 border-[#111111] bg-[#111111] text-[#F5F1E8] font-worn-heading text-xs uppercase tracking-wider inline-flex items-center justify-center gap-2"
+    >
+      <i data-lucide="x" class="w-4 h-4"></i>
+      <span>Yopish</span>
+    </button>
+  </aside>
+
+  <!-- ======================================================================
+       MAIN LAYOUT WRAPPER (PC Left Sidebar + Content Area)
+       ====================================================================== -->
+  <div class="flex min-h-screen">
+
+    <!-- PC LEFT SIDEBAR (Visible lg+) -->
+    <aside class="hidden lg:flex lg:flex-col lg:justify-between lg:w-72 lg:fixed lg:inset-y-0 lg:left-0 bg-[#FAF7F0] border-r-2 border-[#111111] p-5 z-20">
+      <div>
+        <!-- Top: Borderless 1:1 Animated ASCII Illustration -->
+        <div class="ascii-square-stage mb-5" title="Pearl ADS">
+          <pre id="ascii-desktop"></pre>
         </div>
 
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <div class="card p-4">
-            <p class="text-xs font-semibold text-slate-500 mb-1">Daromad</p>
-            <p class="stat-value">0 so‘m</p>
-            <p class="text-[11px] text-slate-400 mt-1">Shu oy</p>
-          </div>
-          <div class="card p-4">
-            <p class="text-xs font-semibold text-slate-500 mb-1">Ko‘rishlar</p>
-            <p class="stat-value">0</p>
-            <p class="text-[11px] text-slate-400 mt-1">Barcha joylar</p>
-          </div>
-          <div class="card p-4">
-            <p class="text-xs font-semibold text-slate-500 mb-1">eCPM</p>
-            <p class="stat-value">—</p>
-            <p class="text-[11px] text-slate-400 mt-1">O‘rtacha</p>
-          </div>
-          <div class="card p-4">
-            <p class="text-xs font-semibold text-slate-500 mb-1">Fill rate</p>
-            <p class="stat-value">—</p>
-            <p class="text-[11px] text-slate-400 mt-1">So‘rovlar</p>
-          </div>
-        </div>
+        <!-- Section Names -->
+        <nav class="space-y-1.5" id="desktop-nav-list"></nav>
+      </div>
 
-        <div class="card p-6 sm:p-8" id="sites">
-          <div class="flex items-center justify-between mb-5">
-            <h2 class="text-base font-bold text-slate-900">Joylar</h2>
-            <span class="text-xs font-semibold text-slate-400">0 ta</span>
-          </div>
+      <!-- Bottom: Small almost visible text about website version (manually editable) -->
+      <div class="pt-3 text-center">
+        <p class="font-mono text-[10px] tracking-widest text-[#111111]/25 select-none">
+          v1.0.0-alpha • build 2026
+        </p>
+      </div>
+    </aside>
 
-          <div class="text-center py-10">
-            <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center mx-auto mb-3">
-              <i data-lucide="globe" class="w-5 h-5 text-slate-400"></i>
+    <!-- MAIN CONTENT WORKSPACE -->
+    <main class="flex-1 lg:pl-72 w-full">
+      <div class="max-w-5xl mx-auto px-4 sm:px-8 py-6 sm:py-10">
+
+        <!-- ================================================================
+             1. BOSH SAHIFA (HOMEPAGE)
+             ================================================================ -->
+        <section id="section-homepage" class="dashboard-section active">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <div>
+              <p class="hidden sm:block font-mono text-xs uppercase tracking-[0.18em] text-[#4A4741] mb-1">Nashriyotchi kabineti</p>
+              <h1 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111]">Bosh sahifa</h1>
             </div>
-            <p class="text-sm font-semibold text-slate-700">Hali joy qo‘shilmagan</p>
-            <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto">Sayt, Telegram kanal yoki ilova joyini qo‘shing. Mahalliy brendlar byudjeti sizga keladi.</p>
-            <button class="btn-main mt-5 inline-flex items-center gap-2" onclick="alert('MVP: tez orada')">
-              <i data-lucide="plus" class="w-4 h-4"></i>
-              Joy qo‘shish
+            <button onclick="navigateTo('offers')" class="btn-ink px-5 py-2.5 rounded-full font-worn-heading text-xs uppercase tracking-wider inline-flex items-center gap-2">
+              <i data-lucide="compass" class="w-4 h-4"></i>
+              <span>Mavjud reklama oqimlari</span>
             </button>
           </div>
-        </div>
 
-        <div class="card p-5" id="earnings">
-          <h2 class="text-base font-bold text-slate-900 mb-3">Qanday ishlaydi</h2>
-          <ul class="space-y-2.5 text-sm text-slate-600">
-            <li class="flex gap-2.5">
-              <span class="w-5 h-5 rounded-md bg-emerald-50 text-emerald-700 text-xs font-bold flex items-center justify-center shrink-0">1</span>
-              Joy qo‘shing (sayt, kanal, ilova)
-            </li>
-            <li class="flex gap-2.5">
-              <span class="w-5 h-5 rounded-md bg-emerald-50 text-emerald-700 text-xs font-bold flex items-center justify-center shrink-0">2</span>
-              Kod yoki havolani joylashtiring
-            </li>
-            <li class="flex gap-2.5">
-              <span class="w-5 h-5 rounded-md bg-emerald-50 text-emerald-700 text-xs font-bold flex items-center justify-center shrink-0">3</span>
-              Daromadni mahalliy kartaga oling
-            </li>
-          </ul>
-        </div>
-
-        <div class="card p-5" id="payout">
-          <div class="flex items-center justify-between">
-            <div>
-              <h2 class="text-base font-bold text-slate-900">To‘lov holati</h2>
-              <p class="text-xs text-slate-500 mt-0.5">Minimal to‘lov chegarasi va reja tez orada</p>
+          <!-- Qisqacha statistika kartalari -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-8">
+            <div class="editorial-card p-5">
+              <div class="flex items-center justify-between text-[#4A4741] mb-2">
+                <span class="font-mono text-[11px] uppercase">Daromad balansi</span>
+                <i data-lucide="wallet" class="w-4 h-4 text-[#111111]"></i>
+              </div>
+              <div id="home-balance" class="font-worn-display text-xl sm:text-2xl text-[#111111]">0 UZS</div>
+              <button onclick="navigateTo('withdrawal')" class="mt-2 font-mono text-[11px] underline underline-offset-4 text-[#4A4741] hover:text-[#111111]">Pul yechish →</button>
             </div>
-            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">Kutilmoqda</span>
+
+            <div class="editorial-card p-5">
+              <div class="flex items-center justify-between text-[#4A4741] mb-2">
+                <span class="font-mono text-[11px] uppercase">Tanlangan oqimlar</span>
+                <i data-lucide="bookmark-check" class="w-4 h-4 text-[#111111]"></i>
+              </div>
+              <div id="home-selected-count" class="font-worn-display text-xl sm:text-2xl text-[#111111]">0</div>
+              <p class="mt-2 font-mono text-[11px] text-[#4A4741]">Faol hamkorliklar</p>
+            </div>
+
+            <div class="editorial-card p-5">
+              <div class="flex items-center justify-between text-[#4A4741] mb-2">
+                <span class="font-mono text-[11px] uppercase">Jami ko‘rishlar</span>
+                <i data-lucide="eye" class="w-4 h-4 text-[#111111]"></i>
+              </div>
+              <div id="home-impressions" class="font-worn-display text-xl sm:text-2xl text-[#111111]">0</div>
+              <p class="mt-2 font-mono text-[11px] text-[#4A4741]">Tasdiqlangan trafik</p>
+            </div>
+
+            <div class="editorial-card p-5">
+              <div class="flex items-center justify-between text-[#4A4741] mb-2">
+                <span class="font-mono text-[11px] uppercase">Jami kliklar</span>
+                <i data-lucide="mouse-pointer-click" class="w-4 h-4 text-[#111111]"></i>
+              </div>
+              <div id="home-clicks" class="font-worn-display text-xl sm:text-2xl text-[#111111]">0</div>
+              <p class="mt-2 font-mono text-[11px] text-[#4A4741]">O‘tishlar soni</p>
+            </div>
           </div>
-        </div>
+
+          <!-- Umumiy ma'lumot va tanlangan oqimlar -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-7 editorial-card p-6 sm:p-7 flex flex-col justify-between">
+              <div>
+                <h2 class="font-worn-heading text-lg sm:text-xl text-[#111111] mb-2">Auditoriyangizni monetizatsiya qiling</h2>
+                <p class="text-sm text-[#4A4741] leading-relaxed mb-6">
+                  Telegram kanalingiz, Instagram sahifangiz yoki veb-saytingiz haqidagi ma’lumotlarni kiriting va o‘zingizga mos reklama oqimlarini tanlab daromad olishni boshlang.
+                </p>
+              </div>
+              <div class="flex flex-wrap gap-3">
+                <button onclick="navigateTo('settings')" class="btn-outline px-4 py-2.5 rounded-full font-worn-heading text-xs uppercase tracking-wider">
+                  Kanal ma’lumotlari
+                </button>
+                <button onclick="navigateTo('offers')" class="btn-ink px-4 py-2.5 rounded-full font-worn-heading text-xs uppercase tracking-wider">
+                  Oqimlarni tanlash
+                </button>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 editorial-card p-6 sm:p-7 bg-[#EBE4D5] flex flex-col justify-between">
+              <div>
+                <span class="font-mono text-[11px] uppercase text-[#4A4741]">Siz tanlagan oqimlar</span>
+                <div id="home-selected-list" class="mt-4 space-y-3">
+                  <p class="text-sm text-[#4A4741]">Hozircha birorta reklama oqimi tanlanmagan.</p>
+                </div>
+              </div>
+              <button onclick="navigateTo('statistics')" class="mt-6 pt-3 border-t border-[#111111]/20 font-mono text-xs font-bold uppercase text-left hover:underline">
+                Statistikani ko‘rish →
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             2. MAVJUD REKLAMA OQIMLARI (AVAILABLE CAMPAIGNS — Firestore'ga saqlanadi)
+             ================================================================ -->
+        <section id="section-offers" class="dashboard-section">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <div>
+              <p class="hidden sm:block font-mono text-xs uppercase tracking-[0.18em] text-[#4A4741] mb-1">Reklama katalogi</p>
+              <h1 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111]">Mavjud reklama oqimlari</h1>
+            </div>
+
+            <!-- Filtr tugmalari -->
+            <div class="flex flex-wrap items-center gap-2">
+              <button onclick="filterOffers('all')" data-filter="all" class="offer-filter-btn px-4 py-1.5 rounded-full border-2 border-[#111111] bg-[#111111] text-[#F5F1E8] font-mono text-xs font-bold uppercase">Barchasi</button>
+              <button onclick="filterOffers('selected')" data-filter="selected" class="offer-filter-btn px-4 py-1.5 rounded-full border-2 border-[#111111] bg-[#FAF7F0] text-[#111111] font-mono text-xs font-bold uppercase">Tanlanganlar</button>
+              <button onclick="filterOffers('available')" data-filter="available" class="offer-filter-btn px-4 py-1.5 rounded-full border-2 border-[#111111] bg-[#FAF7F0] text-[#111111] font-mono text-xs font-bold uppercase">Yangi</button>
+            </div>
+          </div>
+
+          <!-- Oqimlar ro'yxati -->
+          <div id="offers-container" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="editorial-card p-10 text-center md:col-span-2">
+              <p class="font-mono text-xs uppercase text-[#4A4741]">Mavjud reklama oqimlari yuklanmoqda...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             3. STATISTIKA (STATISTICS)
+             ================================================================ -->
+        <section id="section-statistics" class="dashboard-section">
+          <div class="mb-8">
+            <p class="hidden sm:block font-mono text-xs uppercase tracking-[0.18em] text-[#4A4741] mb-1">Trafik va daromad tahlili</p>
+            <h1 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111]">Statistika</h1>
+          </div>
+
+          <div id="statistics-content"></div>
+        </section>
+
+        <!-- ================================================================
+             4. PUL YECHISH (WITHDRAWAL SECTION)
+             ================================================================ -->
+        <section id="section-withdrawal" class="dashboard-section">
+          <div class="mb-8">
+            <p class="hidden sm:block font-mono text-xs uppercase tracking-[0.18em] text-[#4A4741] mb-1">Daromadlarni yechib olish</p>
+            <h1 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111]">Pul yechish</h1>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+            <!-- Balans kartasi -->
+            <div class="lg:col-span-5 editorial-card p-6 sm:p-8 bg-[#111111] text-[#F5F1E8] flex flex-col justify-between">
+              <div>
+                <span class="font-mono text-xs uppercase tracking-widest text-[#DDD3BE]">Yechish uchun mavjud balans</span>
+                <div id="withdraw-balance" class="font-worn-display text-3xl sm:text-4xl text-[#F5F1E8] mt-3">0 UZS</div>
+                <p class="font-mono text-xs text-[#DDD3BE] mt-2">Minimal yechish summasi: 50,000 UZS</p>
+              </div>
+              <div class="mt-8 pt-4 border-t border-[#F5F1E8]/20 font-mono text-xs text-[#DDD3BE]">
+                Nashriyotchi ID: <span id="publisher-uid" class="text-[#F5F1E8] font-bold">PUB-2026</span>
+              </div>
+            </div>
+
+            <!-- Pul yechish so'rovi formasi -->
+            <form id="withdrawal-form" onsubmit="submitWithdrawal(event)" class="lg:col-span-7 editorial-card p-6 sm:p-8 space-y-5">
+              <h2 class="font-worn-heading text-lg text-[#111111]">To‘lov so‘rovi yuborish</h2>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block font-mono text-xs uppercase font-bold mb-2">To‘lov tizimi</label>
+                  <div class="custom-select-wrapper" data-select-id="wd-method">
+                    <input type="hidden" id="wd-method" value="Uzcard" />
+                    <button type="button" class="custom-select-trigger">
+                      <span class="custom-select-label">Uzcard</span>
+                      <i data-lucide="chevron-down" class="w-4 h-4 select-chevron"></i>
+                    </button>
+                    <div class="custom-select-menu">
+                      <button type="button" class="custom-select-option is-selected" data-value="Uzcard"><span>Uzcard</span><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
+                      <button type="button" class="custom-select-option" data-value="Humo"><span>Humo</span></button>
+                      <button type="button" class="custom-select-option" data-value="Visa / Mastercard"><span>Visa / Mastercard</span></button>
+                      <button type="button" class="custom-select-option" data-value="Bank hisob raqami"><span>Bank hisob raqami</span></button>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block font-mono text-xs uppercase font-bold mb-2">Summa (UZS) *</label>
+                  <input type="number" id="wd-amount" min="50000" step="1000" placeholder="100000" class="editorial-input" required />
+                </div>
+              </div>
+
+              <div>
+                <label class="block font-mono text-xs uppercase font-bold mb-2">Karta raqami va karta egasi F.I.Sh *</label>
+                <input type="text" id="wd-card" placeholder="8600 •••• •••• •••• — Ism Familiya" class="editorial-input" required />
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                <span id="wd-status" class="font-mono text-xs text-[#4A4741]"></span>
+                <button type="submit" class="btn-ink px-6 py-3 rounded-full font-worn-heading text-xs uppercase tracking-wider inline-flex items-center gap-2">
+                  <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                  <span>So‘rov yuborish</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Yechib olish tarixi -->
+          <div class="editorial-card p-6 sm:p-8">
+            <h3 class="font-worn-heading text-base sm:text-lg uppercase text-[#111111] mb-4">To‘lovlar tarixi</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b-2 border-[#111111] font-mono text-xs uppercase text-[#4A4741]">
+                    <th class="py-3 pr-4">Sana</th>
+                    <th class="py-3 pr-4">Usul / Karta</th>
+                    <th class="py-3 pr-4">Holat</th>
+                    <th class="py-3 text-right">Summa</th>
+                  </tr>
+                </thead>
+                <tbody id="withdrawals-tbody" class="divide-y divide-[#111111]/15 text-sm">
+                  <tr>
+                    <td colspan="4" class="py-8 text-center font-mono text-xs text-[#4A4741]">Hozircha pul yechish so‘rovlari yo‘q.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             5. SOZLAMALAR (SETTINGS: Full Name, Number, Separate Social Links & Channel Info)
+             ================================================================ -->
+        <section id="section-settings" class="dashboard-section">
+          <div class="mb-8">
+            <p class="hidden sm:block font-mono text-xs uppercase tracking-[0.18em] text-[#4A4741] mb-1">Shaxsiy profil va kanal</p>
+            <h1 class="font-worn-display text-2xl sm:text-4xl uppercase text-[#111111]">Sozlamalar</h1>
+          </div>
+
+          <form id="settings-form" onsubmit="savePublisherSettings(event)" class="space-y-6 mb-8">
+            <!-- 1. Shaxsiy ma'lumotlar -->
+            <div class="editorial-card p-6 sm:p-8 space-y-5">
+              <h2 class="font-worn-heading text-base uppercase text-[#111111] border-b-2 border-[#111111] pb-3">Shaxsiy ma’lumotlar</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label class="block font-mono text-xs uppercase font-bold mb-2">To‘liq ism (F.I.Sh) *</label>
+                  <input type="text" id="set-fullname" placeholder="Ism Familiya Otasining ismi" class="editorial-input" required />
+                </div>
+
+                <div>
+                  <label class="block font-mono text-xs uppercase font-bold mb-2">Telefon raqami *</label>
+                  <input type="tel" id="set-phone" placeholder="+998 90 123 45 67" class="editorial-input" required />
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Alohida ijtimoiy tarmoq havolalari -->
+            <div class="editorial-card p-6 sm:p-8 space-y-5">
+              <h2 class="font-worn-heading text-base uppercase text-[#111111] border-b-2 border-[#111111] pb-3">Ijtimoiy tarmoq havolalari</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label class="block font-mono text-xs uppercase font-bold mb-2">Telegram kanal / profil</label>
+                  <input type="text" id="set-telegram" placeholder="https://t.me/kanalingiz" class="editorial-input" />
+                </div>
+
+                <div>
+                  <label class="block font-mono text-xs uppercase font-bold mb-2">Instagram sahifa</label>
+                  <input type="text" id="set-instagram" placeholder="https://instagram.com/username" class="editorial-input" />
+                </div>
+
+                <div>
+                  <label class="block font-mono text-xs uppercase font-bold mb-2">YouTube kanal</label>
+                  <input type="text" id="set-youtube" placeholder="https://youtube.com/@kanal" class="editorial-input" />
+                </div>
+
+                <div>
+                  <label class="block font-mono text-xs uppercase font-bold mb-2">Veb-sayt yoki TikTok</label>
+                  <input type="text" id="set-website" placeholder="https://saytingiz.uz" class="editorial-input" />
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Kanal haqida batafsil ma'lumot -->
+            <div class="editorial-card p-6 sm:p-8 space-y-5">
+              <h2 class="font-worn-heading text-base uppercase text-[#111111] border-b-2 border-[#111111] pb-3">Kanal va auditoriya haqida ma’lumot</h2>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div>
+                  <label class="block font-mono text-xs uppercase font-bold mb-2">Asosiy yo‘nalish</label>
+                  <div class="custom-select-wrapper" data-select-id="chan-category">
+                    <input type="hidden" id="chan-category" value="Yangiliklar va media" />
+                    <button type="button" class="custom-select-trigger">
+                      <span class="custom-select-label">Yangiliklar va media</span>
+                      <i data-lucide="chevron-down" class="w-4 h-4 select-chevron"></i>
+                    </button>
+                    <div class="custom-select-menu">
+                      <button type="button" class="custom-select-option is-selected" data-value="Yangiliklar va media"><span>Yangiliklar va media</span><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
+                      <button type="button" class="custom-select-option" data-value="Texnologiya va IT"><span>Texnologiya va IT</span></button>
+                      <button type="button" class="custom-select-option" data-value="Biznes va moliya"><span>Biznes va moliya</span></button>
+                      <button type="button" class="custom-select-option" data-value="Ta’lim va foydali maslahatlar"><span>Ta’lim va foydali maslahatlar</span></button>
+                      <button type="button" class="custom-select-option" data-value="Ko‘ngilochar va Lifestyle"><span>Ko‘ngilochar va Lifestyle</span></button>
+                      <button type="button" class="custom-select-option" data-value="Sport va avto"><span>Sport va avto</span></button>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block font-mono text-xs uppercase font-bold mb-2">Obunachilar soni</label>
+                  <input type="number" id="chan-subscribers" min="0" placeholder="Masalan: 25000" class="editorial-input" />
+                </div>
+
+                <div>
+                  <label class="block font-mono text-xs uppercase font-bold mb-2">Kontent tili</label>
+                  <div class="custom-select-wrapper" data-select-id="chan-lang">
+                    <input type="hidden" id="chan-lang" value="O‘zbek tili" />
+                    <button type="button" class="custom-select-trigger">
+                      <span class="custom-select-label">O‘zbek tili</span>
+                      <i data-lucide="chevron-down" class="w-4 h-4 select-chevron"></i>
+                    </button>
+                    <div class="custom-select-menu">
+                      <button type="button" class="custom-select-option is-selected" data-value="O‘zbek tili"><span>O‘zbek tili</span><i data-lucide="check" class="w-3.5 h-3.5"></i></button>
+                      <button type="button" class="custom-select-option" data-value="Rus tili"><span>Rus tili</span></button>
+                      <button type="button" class="custom-select-option" data-value="O‘zbek / Rus"><span>O‘zbek / Rus</span></button>
+                      <button type="button" class="custom-select-option" data-value="Ingliz tili"><span>Ingliz tili</span></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label class="block font-mono text-xs uppercase font-bold mb-2">Kanal tavsifi va reklama shartlari</label>
+                <textarea id="chan-info" rows="4" placeholder="Auditoriyangiz yoshi, hududi, o‘rtacha post ko‘rishlari va qaysi turdagi reklamalarni joylashtirishingiz haqida yozing..." class="editorial-input"></textarea>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
+                <span id="settings-save-status" class="font-mono text-xs text-[#4A4741]"></span>
+                <button type="submit" class="btn-ink px-6 py-3 rounded-full font-worn-heading text-xs uppercase tracking-wider">
+                  Ma’lumotlarni saqlash
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <!-- Chiqish (Log out) -->
+          <div class="editorial-card p-6 sm:p-7 bg-[#EBE4D5] flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 class="font-worn-heading text-base uppercase text-[#111111]">Sessiya</h3>
+              <p class="text-xs text-[#4A4741] mt-1">Ushbu qurilmada Pearl ADS nashriyotchi hisobidan chiqish.</p>
+            </div>
+            <button
+              type="button"
+              onclick="handleLogout()"
+              class="px-6 py-3 rounded-full border-2 border-[#111111] bg-[#111111] text-[#F5F1E8] hover:bg-[#FAF7F0] hover:text-[#111111] transition-colors font-worn-heading text-xs uppercase tracking-wider inline-flex items-center gap-2"
+            >
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+              <span>Chiqish</span>
+            </button>
+          </div>
+        </section>
 
       </div>
-    </div>
+    </main>
   </div>
 
-  <script>
+  <!-- ======================================================================
+       SCRIPTS: Firebase Firestore, Custom Dropdowns, ASCII & Navigation
+       ====================================================================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      collectionGroup,
+      addDoc,
+      getDocs,
+      doc,
+      deleteDoc,
+      setDoc,
+      getDoc,
+      query,
+      where,
+      orderBy,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
     const firebaseConfig = {
-      apiKey: "AIzaSyCu3EYefkYrRDskqIWqeyMxaWGlEIe7RXg",
-      authDomain: "pearlads-f7018.firebaseapp.com",
-      projectId: "pearlads-f7018",
-      storageBucket: "pearlads-f7018.firebasestorage.app",
-      messagingSenderId: "67374785504",
-      appId: "1:67374785504:web:b063d4750b6224fd7ec185"
+      apiKey: "AIzaSyPearlAdsPlaceholderKey",
+      authDomain: "pearl-ads.firebaseapp.com",
+      projectId: "pearl-ads",
+      storageBucket: "pearl-ads.appspot.com",
+      messagingSenderId: "100000000000",
+      appId: "1:100000000000:web:pearlads2026"
     };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
 
-    function setNav(el) {
-      document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-      el.classList.add('active');
+    let db = null;
+    let auth = null;
+    let currentPublisherId = "pub_demo_user";
+    let useLocalFallback = false;
+
+    try {
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      auth = getAuth(app);
+
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          currentPublisherId = user.uid;
+          document.getElementById("publisher-uid").textContent = "PUB-" + user.uid.slice(0, 6).toUpperCase();
+        }
+        loadAllPublisherData();
+      });
+    } catch (err) {
+      useLocalFallback = true;
+      loadAllPublisherData();
     }
 
-    function logout() {
-      auth.signOut().then(() => { window.location.href = '/authentication/'; });
+    // Default starter offers if Firestore campaigns collection is empty
+    const DEFAULT_AVAILABLE_OFFERS = [
+      {
+        id: "offer_pearl_coffee",
+        title: "Toshkent Specialty Coffee Yetkazib Berish",
+        model: "CPA",
+        payout: "12,000 UZS / buyurtma",
+        budget: 3500000,
+        region: "Toshkent",
+        lang: "O‘zbek / Rus",
+        url: "https://t.me/pearlads_admin",
+        brief: "Yangi mijozlar uchun birinchi buyurtmaga 20% chegirma promokodini kanalingizda ulashing."
+      },
+      {
+        id: "offer_edtech_uz",
+        title: "IT va Ingliz tili Onlayn Akademiyasi",
+        model: "CPC",
+        payout: "950 UZS / klik",
+        budget: 5000000,
+        region: "Butun O‘zbekiston",
+        lang: "O‘zbek tili",
+        url: "https://t.me/pearlads_admin",
+        brief: "Bepul sinov darsiga ro‘yxatdan o‘tish havolasini Telegram yoki Instagram sahifangizda joylashtiring."
+      },
+      {
+        id: "offer_ugc_fintech",
+        title: "Tezkor To‘lovlar Mobil Ilovasi (UGC)",
+        model: "UGC",
+        payout: "15,000 UZS / 1,000 ko‘rish",
+        budget: 8000000,
+        region: "Markaziy Osiyo",
+        lang: "O‘zbek / Rus",
+        url: "https://t.me/pearlads_admin",
+        brief: "Ilova qulayliklari haqida 30 soniyalik qisqa video sharh tayyorlang va auditoriyangiz bilan bo‘lishing."
+      }
+    ];
+
+    let availableOffers = [];
+    let selectedCampaignsMap = {}; // { campaignId: campaignData }
+    let withdrawalHistory = [];
+    let currentOfferFilter = "all";
+
+    function getLocalData(key, fallback) {
+      try {
+        const raw = localStorage.getItem("pearl_pub_" + key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+    function setLocalData(key, value) {
+      try {
+        localStorage.setItem("pearl_pub_" + key, JSON.stringify(value));
+      } catch {}
     }
 
-    auth.onAuthStateChanged(async (user) => {
-      if (!user) {
-        window.location.href = '/index.html';
+    async function loadAllPublisherData() {
+      // 1. Load Available Campaigns from Firestore (or fallback)
+      if (!useLocalFallback && db) {
+        try {
+          const activeQ = query(collectionGroup(db, "campaigns"), where("status", "==", "active"));
+          const snap = await getDocs(activeQ);
+          const fetched = snap.docs.map(d => ({
+            id: d.id,
+            payout: d.data().payout || (d.data().model === "CPA" ? "10,000 UZS / harakat" : d.data().model === "CPC" ? "800 UZS / klik" : "12,000 UZS / 1K ko‘rish"),
+            ...d.data()
+          }));
+          availableOffers = fetched.length > 0 ? fetched : DEFAULT_AVAILABLE_OFFERS;
+        } catch {
+          useLocalFallback = true;
+          availableOffers = DEFAULT_AVAILABLE_OFFERS;
+        }
+      } else {
+        availableOffers = DEFAULT_AVAILABLE_OFFERS;
+      }
+
+      // 2. Load Publisher's Selected Campaigns from Firestore: publishers/{uid}/selectedCampaigns
+      const localSelected = getLocalData("selected_campaigns", {});
+      selectedCampaignsMap = { ...localSelected };
+
+      if (!useLocalFallback && db) {
+        try {
+          const selSnap = await getDocs(collection(db, "publishers", currentPublisherId, "selectedCampaigns"));
+          selSnap.forEach(d => {
+            selectedCampaignsMap[d.id] = { id: d.id, ...d.data() };
+          });
+          setLocalData("selected_campaigns", selectedCampaignsMap);
+        } catch {}
+      }
+
+      // 3. Load Withdrawals
+      withdrawalHistory = getLocalData("withdrawals", []);
+      if (!useLocalFallback && db) {
+        try {
+          const wdQ = query(collection(db, "publishers", currentPublisherId, "withdrawals"), orderBy("createdAt", "desc"));
+          const wdSnap = await getDocs(wdQ);
+          if (!wdSnap.empty) {
+            withdrawalHistory = wdSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+          }
+        } catch {}
+      }
+
+      // 4. Load Publisher Settings
+      let setData = getLocalData("settings", null);
+      if (!useLocalFallback && db) {
+        try {
+          const docSnap = await getDoc(doc(db, "publishers", currentPublisherId, "profile", "settings"));
+          if (docSnap.exists()) setData = docSnap.data();
+        } catch {}
+      }
+      if (setData) {
+        document.getElementById("set-fullname").value = setData.fullName || "";
+        document.getElementById("set-phone").value = setData.phone || "";
+        document.getElementById("set-telegram").value = setData.telegram || "";
+        document.getElementById("set-instagram").value = setData.instagram || "";
+        document.getElementById("set-youtube").value = setData.youtube || "";
+        document.getElementById("set-website").value = setData.website || "";
+        if (setData.channelCategory) window.setCustomSelectValue("chan-category", setData.channelCategory);
+        document.getElementById("chan-subscribers").value = setData.channelSubscribers || "";
+        if (setData.channelLang) window.setCustomSelectValue("chan-lang", setData.channelLang);
+        document.getElementById("chan-info").value = setData.channelInfo || "";
+      }
+
+      renderAllViews();
+    }
+
+    function renderAllViews() {
+      renderHomepage();
+      renderAvailableOffers();
+      renderStatistics();
+      renderWithdrawals();
+    }
+
+    function renderHomepage() {
+      const selectedArr = Object.values(selectedCampaignsMap);
+      const totalImpressions = selectedArr.reduce((sum, item) => sum + (Number(item.impressions) || 0), 0);
+      const totalClicks = selectedArr.reduce((sum, item) => sum + (Number(item.clicks) || 0), 0);
+
+      document.getElementById("home-selected-count").textContent = selectedArr.length;
+      document.getElementById("home-impressions").textContent = totalImpressions.toLocaleString("en-US");
+      document.getElementById("home-clicks").textContent = totalClicks.toLocaleString("en-US");
+
+      const listEl = document.getElementById("home-selected-list");
+      if (selectedArr.length === 0) {
+        listEl.innerHTML = `<p class="text-sm text-[#4A4741]">Hozircha birorta reklama oqimi tanlanmagan.</p>`;
+      } else {
+        listEl.innerHTML = selectedArr.slice(0, 3).map(item => `
+          <div class="flex items-center justify-between p-3 rounded-xl border border-[#111111] bg-[#FAF7F0]">
+            <div class="min-w-0 pr-2">
+              <p class="font-worn-heading text-xs text-[#111111] truncate">${escapeHtml(item.title)}</p>
+              <p class="font-mono text-[11px] text-[#4A4741]">${escapeHtml(item.model)} • ${escapeHtml(item.payout || "")}</p>
+            </div>
+            <span class="font-mono text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-[#111111] text-[#F5F1E8] shrink-0">
+              Tanlangan
+            </span>
+          </div>
+        `).join("");
+      }
+    }
+
+    function renderAvailableOffers() {
+      const container = document.getElementById("offers-container");
+      const filtered = availableOffers.filter(offer => {
+        const isSel = Boolean(selectedCampaignsMap[offer.id]);
+        if (currentOfferFilter === "selected") return isSel;
+        if (currentOfferFilter === "available") return !isSel;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="editorial-card p-10 text-center md:col-span-2">
+            <p class="font-worn-heading text-base uppercase text-[#111111] mb-2">Oqimlar topilmadi</p>
+            <p class="text-sm text-[#4A4741]">Boshqa filtrni tanlab ko‘ring yoki barcha mavjud oqimlarni ko‘zdan kechiring.</p>
+          </div>
+        `;
         return;
       }
 
-      try {
-        const snap = await db.collection('users').doc(user.uid).get();
-        if (snap.exists) {
-          const data = snap.data();
-          if (data.role !== 'publisher') {
-            window.location.href = '/dashboard/advertiser/';
-            return;
-          }
-          const name = data.name || user.displayName || 'Foydalanuvchi';
-          document.getElementById('user-name').textContent = name;
-          document.getElementById('greet-name').textContent = name.split(' ')[0];
-        } else {
-          document.getElementById('user-name').textContent = user.displayName || user.email;
-          document.getElementById('greet-name').textContent = (user.displayName || 'Foydalanuvchi').split(' ')[0];
-        }
-      } catch (e) {
-        document.getElementById('greet-name').textContent = 'Foydalanuvchi';
-      }
-    });
+      container.innerHTML = filtered.map(offer => {
+        const isSelected = Boolean(selectedCampaignsMap[offer.id]);
+        const refLink = `${offer.url}${offer.url.includes("?") ? "&" : "?"}pub=${encodeURIComponent(currentPublisherId)}&camp=${encodeURIComponent(offer.id)}`;
 
-    lucide.createIcons();
+        return `
+          <div class="editorial-card editorial-card-hover p-6 flex flex-col justify-between gap-5">
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <span class="font-mono text-[10px] font-bold uppercase px-2.5 py-1 rounded-full bg-[#EBE4D5] text-[#111111]">
+                  ${escapeHtml(offer.model)}
+                </span>
+                <span class="font-mono text-xs font-bold text-[#111111]">
+                  ${escapeHtml(offer.payout || (Number(offer.budget).toLocaleString() + " UZS"))}
+                </span>
+              </div>
+
+              <h3 class="font-worn-heading text-base sm:text-lg text-[#111111] mb-2">${escapeHtml(offer.title)}</h3>
+              <p class="text-sm text-[#4A4741] leading-relaxed mb-4">${escapeHtml(offer.brief || "Reklama beruvchi tomonidan taqdim etilgan rasmiy reklama oqimi.")}</p>
+
+              <div class="flex flex-wrap gap-2 font-mono text-[11px] text-[#4A4741]">
+                <span class="px-2.5 py-1 rounded-lg border border-[#111111]/25 bg-[#F5F1E8]">Hudud: <strong class="text-[#111111]">${escapeHtml(offer.region)}</strong></span>
+                <span class="px-2.5 py-1 rounded-lg border border-[#111111]/25 bg-[#F5F1E8]">Til: <strong class="text-[#111111]">${escapeHtml(offer.lang)}</strong></span>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-[#111111]/20 space-y-3">
+              ${isSelected ? `
+                <div class="flex items-center gap-2 p-2.5 rounded-xl border border-[#111111] bg-[#F5F1E8]">
+                  <input type="text" readonly value="${escapeHtml(refLink)}" class="w-full bg-transparent font-mono text-[11px] text-[#111111] outline-none" />
+                  <button type="button" onclick="copyTrackingLink('${escapeHtml(refLink)}', this)" class="px-3 py-1 rounded-lg bg-[#111111] text-[#F5F1E8] font-mono text-[10px] font-bold uppercase shrink-0">
+                    Nusxa
+                  </button>
+                </div>
+              ` : ""}
+
+              <button
+                type="button"
+                onclick="toggleSelectOffer('${offer.id}')"
+                class="w-full py-3 px-4 rounded-full font-worn-heading text-xs uppercase tracking-wider inline-flex items-center justify-center gap-2 ${
+                  isSelected ? "btn-outline" : "btn-ink"
+                }"
+              >
+                <i data-lucide="${isSelected ? "check-circle-2" : "plus-circle"}" class="w-4 h-4"></i>
+                <span>${isSelected ? "Tanlangan (Bekor qilish)" : "Oqimni tanlash"}</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      lucide.createIcons();
+    }
+
+    function renderStatistics() {
+      const container = document.getElementById("statistics-content");
+      const selectedArr = Object.values(selectedCampaignsMap);
+
+      if (selectedArr.length === 0) {
+        container.innerHTML = `
+          <div class="editorial-card p-12 sm:p-16 text-center max-w-xl mx-auto">
+            <div class="w-12 h-12 rounded-2xl border-2 border-[#111111] bg-[#EBE4D5] flex items-center justify-center mx-auto mb-4">
+              <i data-lucide="bar-chart-3" class="w-6 h-6 text-[#111111]"></i>
+            </div>
+            <h2 class="font-worn-heading text-lg sm:text-xl uppercase text-[#111111] mb-2">Ma’lumotlar mavjud emas</h2>
+            <p class="text-sm text-[#4A4741] mb-6">Statistikani kuzatish uchun avval mavjud reklama oqimlaridan birini tanlang.</p>
+            <button onclick="navigateTo('offers')" class="btn-ink px-6 py-3 rounded-full font-worn-heading text-xs uppercase tracking-wider inline-flex items-center gap-2">
+              <span>Oqimlarni ko‘rish</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="editorial-card p-6 sm:p-8">
+          <h2 class="font-worn-heading text-base uppercase text-[#111111] mb-5">Tanlangan oqimlar statistikasi</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b-2 border-[#111111] font-mono text-xs uppercase text-[#4A4741]">
+                  <th class="py-3 pr-4">Oqim nomi</th>
+                  <th class="py-3 pr-4">Model</th>
+                  <th class="py-3 pr-4">Ko‘rishlar</th>
+                  <th class="py-3 pr-4">Kliklar</th>
+                  <th class="py-3 text-right">Daromad</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#111111]/15 text-sm">
+                ${selectedArr.map(item => `
+                  <tr>
+                    <td class="py-3.5 pr-4 font-bold">${escapeHtml(item.title)}</td>
+                    <td class="py-3.5 pr-4 font-mono text-xs">${escapeHtml(item.model)}</td>
+                    <td class="py-3.5 pr-4 font-mono">${Number(item.impressions || 0).toLocaleString()}</td>
+                    <td class="py-3.5 pr-4 font-mono">${Number(item.clicks || 0).toLocaleString()}</td>
+                    <td class="py-3.5 text-right font-mono font-bold">${Number(item.earned || 0).toLocaleString()} UZS</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderWithdrawals() {
+      const tbody = document.getElementById("withdrawals-tbody");
+      if (withdrawalHistory.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" class="py-8 text-center font-mono text-xs text-[#4A4741]">Hozircha pul yechish so‘rovlari yo‘q.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = withdrawalHistory.map(w => `
+        <tr>
+          <td class="py-3.5 pr-4 font-mono text-xs">${escapeHtml(w.dateStr || "Bugun")}</td>
+          <td class="py-3.5 pr-4 font-medium">${escapeHtml(w.method)} • <span class="text-[#4A4741]">${escapeHtml(w.card)}</span></td>
+          <td class="py-3.5 pr-4">
+            <span class="font-mono text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full border border-[#111111]">
+              ${escapeHtml(w.status || "Kutilmoqda")}
+            </span>
+          </td>
+          <td class="py-3.5 text-right font-mono font-bold">${Number(w.amount).toLocaleString()} UZS</td>
+        </tr>
+      `).join("");
+    }
+
+    // Save or Remove Selected Campaign in Publisher's Firestore
+    window.toggleSelectOffer = async function (offerId) {
+      const offer = availableOffers.find(o => o.id === offerId);
+      if (!offer) return;
+
+      const exists = Boolean(selectedCampaignsMap[offerId]);
+      if (exists) {
+        delete selectedCampaignsMap[offerId];
+        setLocalData("selected_campaigns", selectedCampaignsMap);
+        if (!useLocalFallback && db) {
+          try {
+            await deleteDoc(doc(db, "publishers", currentPublisherId, "selectedCampaigns", offerId));
+          } catch {}
+        }
+      } else {
+        const savedRecord = {
+          ...offer,
+          publisherId: currentPublisherId,
+          impressions: 0,
+          clicks: 0,
+          earned: 0,
+          selectedAt: Date.now()
+        };
+        selectedCampaignsMap[offerId] = savedRecord;
+        setLocalData("selected_campaigns", selectedCampaignsMap);
+
+        if (!useLocalFallback && db) {
+          try {
+            await setDoc(doc(db, "publishers", currentPublisherId, "selectedCampaigns", offerId), {
+              ...savedRecord,
+              selectedAt: serverTimestamp()
+            });
+          } catch {}
+        }
+      }
+
+      renderAllViews();
+    };
+
+    window.filterOffers = function (filterType) {
+      currentOfferFilter = filterType;
+      document.querySelectorAll(".offer-filter-btn").forEach(btn => {
+        if (btn.dataset.filter === filterType) {
+          btn.className = "offer-filter-btn px-4 py-1.5 rounded-full border-2 border-[#111111] bg-[#111111] text-[#F5F1E8] font-mono text-xs font-bold uppercase";
+        } else {
+          btn.className = "offer-filter-btn px-4 py-1.5 rounded-full border-2 border-[#111111] bg-[#FAF7F0] text-[#111111] font-mono text-xs font-bold uppercase";
+        }
+      });
+      renderAvailableOffers();
+    };
+
+    window.copyTrackingLink = function (link, btnEl) {
+      navigator.clipboard.writeText(link).then(() => {
+        const prev = btnEl.textContent;
+        btnEl.textContent = "OK ✓";
+        setTimeout(() => (btnEl.textContent = prev), 1500);
+      });
+    };
+
+    window.submitWithdrawal = async function (e) {
+      e.preventDefault();
+      const statusEl = document.getElementById("wd-status");
+      const amount = Number(document.getElementById("wd-amount").value);
+      const method = document.getElementById("wd-method").value;
+      const card = document.getElementById("wd-card").value.trim();
+
+      const newReq = {
+        amount,
+        method,
+        card,
+        status: "Ko‘rib chiqilmoqda",
+        dateStr: new Date().toLocaleDateString("uz-UZ"),
+        createdAt: Date.now()
+      };
+
+      withdrawalHistory.unshift(newReq);
+      setLocalData("withdrawals", withdrawalHistory);
+
+      if (!useLocalFallback && db) {
+        try {
+          await addDoc(collection(db, "publishers", currentPublisherId, "withdrawals"), {
+            ...newReq,
+            createdAt: serverTimestamp()
+          });
+        } catch {}
+      }
+
+      document.getElementById("withdrawal-form").reset();
+      window.setCustomSelectValue("wd-method", "Uzcard");
+      renderWithdrawals();
+      statusEl.textContent = "So‘rov yuborildi ✓";
+      setTimeout(() => (statusEl.textContent = ""), 3000);
+    };
+
+    window.savePublisherSettings = async function (e) {
+      e.preventDefault();
+      const statusEl = document.getElementById("settings-save-status");
+      const payload = {
+        fullName: document.getElementById("set-fullname").value.trim(),
+        phone: document.getElementById("set-phone").value.trim(),
+        telegram: document.getElementById("set-telegram").value.trim(),
+        instagram: document.getElementById("set-instagram").value.trim(),
+        youtube: document.getElementById("set-youtube").value.trim(),
+        website: document.getElementById("set-website").value.trim(),
+        channelCategory: document.getElementById("chan-category").value,
+        channelSubscribers: Number(document.getElementById("chan-subscribers").value) || 0,
+        channelLang: document.getElementById("chan-lang").value,
+        channelInfo: document.getElementById("chan-info").value.trim(),
+        updatedAt: Date.now()
+      };
+
+      setLocalData("settings", payload);
+      if (!useLocalFallback && db) {
+        try {
+          await setDoc(doc(db, "publishers", currentPublisherId, "profile", "settings"), payload, { merge: true });
+        } catch {}
+      }
+
+      statusEl.textContent = "Barcha ma’lumotlar saqlandi ✓";
+      setTimeout(() => (statusEl.textContent = ""), 2500);
+    };
+
+    window.handleLogout = async function () {
+      if (auth) {
+        try { await signOut(auth); } catch {}
+      }
+      window.location.href = "/authentication/";
+    };
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+  </script>
+
+  <script>
+    // ========================================================================
+    // 1. 1:1 SQUARE ANIMATED ASCII GENERATORS (Lightweight ~14 FPS, No Borders)
+    // ========================================================================
+    (function initSquareAsciiArt() {
+      const deskEl = document.getElementById("ascii-desktop");
+      const mobEl = document.getElementById("ascii-mobile");
+      if (!deskEl && !mobEl) return;
+
+      const size = 21;
+      const ramp = " .:-=+*#%@█";
+      const chosenMode = 1 + Math.floor(Math.random() * 3); // 1, 2, or 3
+      let t = 0;
+      let lastFrame = 0;
+      const fpsInterval = 1000 / 14;
+
+      function computeFrame(time) {
+        let out = "";
+        for (let y = 0; y < size; y++) {
+          const ny = (y / (size - 1)) * 2 - 1;
+          for (let x = 0; x < size; x++) {
+            const nx = ((x / (size - 1)) * 2 - 1) * 0.92;
+            const r = Math.hypot(nx, ny);
+            const a = Math.atan2(ny, nx);
+            let val = 0;
+
+            if (chosenMode === 1) {
+              // Kinetic Geometric Vortex
+              const twist = a + r * 3.2 - time * 1.4;
+              const petals = Math.cos(twist * 4);
+              const mask = r < 0.92 ? (1 - r * 0.55) : 0;
+              val = petals > 0.15 ? petals * mask : 0;
+            } else if (chosenMode === 2) {
+              // Concentric Radar Pulse Rings
+              if (r < 0.95) {
+                const wave = Math.sin(r * 13 - time * 3.0);
+                val = wave > 0.25 ? (0.4 + 0.6 * wave) * (1 - r * 0.35) : 0;
+              }
+            } else {
+              // Brutalist Rotating Cross / Signal Beacon
+              const ca = Math.cos(time * 0.7);
+              const sa = Math.sin(time * 0.7);
+              const rx = nx * ca - ny * sa;
+              const ry = nx * sa + ny * ca;
+              const barX = Math.abs(ry) < 0.16 && Math.abs(rx) < 0.85;
+              const barY = Math.abs(rx) < 0.16 && Math.abs(ry) < 0.85;
+              const core = r < 0.24;
+              if (core) {
+                val = 1.0;
+              } else if (barX || barY) {
+                val = 0.65 + 0.35 * Math.sin(r * 8 - time * 2.5);
+              }
+            }
+
+            const idx = Math.min(ramp.length - 1, Math.max(0, Math.floor(val * (ramp.length - 1))));
+            out += ramp[idx] + " ";
+          }
+          out += "\n";
+        }
+        return out;
+      }
+
+      function loop(now) {
+        requestAnimationFrame(loop);
+        if (document.hidden) return;
+        if (now - lastFrame < fpsInterval) return;
+        lastFrame = now;
+        t += 0.08;
+        const frameStr = computeFrame(t);
+        if (deskEl) deskEl.textContent = frameStr;
+        if (mobEl) mobEl.textContent = frameStr;
+      }
+
+      requestAnimationFrame(loop);
+    })();
+
+    // ========================================================================
+    // 2. CUSTOM STYLED DROPDOWN MENUS
+    // ========================================================================
+    function initCustomDropdowns() {
+      document.querySelectorAll(".custom-select-wrapper").forEach(wrapper => {
+        const trigger = wrapper.querySelector(".custom-select-trigger");
+        const options = wrapper.querySelectorAll(".custom-select-option");
+        const hiddenInput = wrapper.querySelector("input[type='hidden']");
+        const labelSpan = wrapper.querySelector(".custom-select-label");
+
+        trigger.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const wasOpen = wrapper.classList.contains("is-open");
+          closeAllDropdowns();
+          if (!wasOpen) wrapper.classList.add("is-open");
+        });
+
+        options.forEach(opt => {
+          opt.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const val = opt.dataset.value;
+            const text = opt.querySelector("span").textContent;
+            hiddenInput.value = val;
+            labelSpan.textContent = text;
+
+            options.forEach(o => {
+              o.classList.remove("is-selected");
+              const icon = o.querySelector("svg, i");
+              if (icon) icon.remove();
+            });
+            opt.classList.add("is-selected");
+            opt.insertAdjacentHTML("beforeend", `<i data-lucide="check" class="w-3.5 h-3.5"></i>`);
+            lucide.createIcons();
+            wrapper.classList.remove("is-open");
+          });
+        });
+      });
+
+      document.addEventListener("click", closeAllDropdowns);
+    }
+
+    function closeAllDropdowns() {
+      document.querySelectorAll(".custom-select-wrapper.is-open").forEach(w => w.classList.remove("is-open"));
+    }
+
+    window.setCustomSelectValue = function (inputId, value) {
+      const hiddenInput = document.getElementById(inputId);
+      if (!hiddenInput) return;
+      const wrapper = hiddenInput.closest(".custom-select-wrapper");
+      if (!wrapper) return;
+      const labelSpan = wrapper.querySelector(".custom-select-label");
+      const options = wrapper.querySelectorAll(".custom-select-option");
+
+      hiddenInput.value = value;
+      options.forEach(o => {
+        o.classList.remove("is-selected");
+        const icon = o.querySelector("svg, i");
+        if (icon) icon.remove();
+        if (o.dataset.value === value) {
+          o.classList.add("is-selected");
+          labelSpan.textContent = o.querySelector("span").textContent;
+          o.insertAdjacentHTML("beforeend", `<i data-lucide="check" class="w-3.5 h-3.5"></i>`);
+        }
+      });
+      lucide.createIcons();
+    };
+
+    initCustomDropdowns();
+
+    // ========================================================================
+    // 3. PUBLISHER SIDEBAR NAVIGATION ITEMS
+    // ========================================================================
+    const NAV_ITEMS = [
+      { id: "homepage", label: "Bosh sahifa", icon: "layout-dashboard" },
+      { id: "offers", label: "Mavjud reklama oqimlari", icon: "megaphone" },
+      { id: "statistics", label: "Statistika", icon: "bar-chart-2" },
+      { id: "withdrawal", label: "Pul yechish", icon: "wallet" },
+      { id: "settings", label: "Sozlamalar", icon: "settings" }
+    ];
+
+    let activeSection = "homepage";
+
+    function renderNavMenus() {
+      const desktopList = document.getElementById("desktop-nav-list");
+      const mobileList = document.getElementById("mobile-nav-list");
+
+      const buildHtml = () => NAV_ITEMS.map(item => {
+        const isActive = item.id === activeSection;
+        return `
+          <button
+            type="button"
+            onclick="navigateTo('${item.id}')"
+            class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-worn-heading text-xs uppercase tracking-wider text-left transition-all ${
+              isActive
+                ? "bg-[#111111] text-[#F5F1E8] shadow-[3px_3px_0px_#7D786E]"
+                : "text-[#111111] hover:bg-[#EBE4D5]"
+            }"
+          >
+            <i data-lucide="${item.icon}" class="w-4 h-4 shrink-0"></i>
+            <span>${item.label}</span>
+          </button>
+        `;
+      }).join("");
+
+      if (desktopList) desktopList.innerHTML = buildHtml();
+      if (mobileList) mobileList.innerHTML = buildHtml();
+      lucide.createIcons();
+    }
+
+    function navigateTo(sectionId) {
+      activeSection = sectionId;
+      document.querySelectorAll(".dashboard-section").forEach(sec => sec.classList.remove("active"));
+      const target = document.getElementById("section-" + sectionId);
+      if (target) target.classList.add("active");
+      renderNavMenus();
+      closeMobileSidebar();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // ========================================================================
+    // 4. MOBILE RIGHT SIDEBAR & OVERLAY CONTROLS
+    // ========================================================================
+    function openMobileSidebar() {
+      const overlay = document.getElementById("mobile-overlay");
+      const sidebar = document.getElementById("mobile-sidebar");
+      overlay.classList.remove("hidden");
+      requestAnimationFrame(() => {
+        overlay.classList.remove("opacity-0");
+        sidebar.classList.remove("translate-x-full");
+      });
+    }
+
+    function closeMobileSidebar() {
+      const overlay = document.getElementById("mobile-overlay");
+      const sidebar = document.getElementById("mobile-sidebar");
+      overlay.classList.add("opacity-0");
+      sidebar.classList.add("translate-x-full");
+      setTimeout(() => {
+        overlay.classList.add("hidden");
+      }, 220);
+    }
+
+    renderNavMenus();
   </script>
 </body>
 </html>
